@@ -86,6 +86,16 @@ source .venv/bin/activate        # Linux / macOS
 
 ---
 
+## Pre-computed results
+
+The `results/` directory contains the pre-computed outputs used in the
+manuscript, including training histories, wetting profiles, and
+hyperparameter search records. Running the driver or search scripts will
+regenerate and overwrite these files. To restore the original state,
+check out the submission tag:
+
+    git checkout v1.0-submission
+
 ## Reproducing the results
 
 ### Running the best-trial configuration directly
