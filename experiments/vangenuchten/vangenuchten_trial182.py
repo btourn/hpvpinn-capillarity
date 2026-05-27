@@ -1,16 +1,30 @@
 """
-vangenuchten.py
-===============
-Driver script for the hp-VPINN inverse problem on the van Genuchten dataset.
+vangenuchten_trial182.py
+========================
+Driver script reproducing the best-performing \hpVPINN-es result for
+Case~2 (Whatman No.~1 filter paper, van~Genuchten diffusivity model).
+Hyperparameter configuration: 3 hidden layers, 32 units per layer, 
+tanh activation, N_el = 50 elements, polynomial degree p = 6,
+configuration type "-es", and initialisation seed 182.
 
-Pipeline
---------
-1. Load the synthetic Van Genuchten dataset.
-2. Normalise phi and theta.
-3. Optionally add measurement noise.
-4. Build the PINN (network + physical model with trainable Ks and m).
-5. Train with VPINNTrainer (Adam + optional L-BFGS).
-6. Report and plot results.
+Usage
+-----
+    uv run python experiments/vangenuchten/vangenuchten_trial182.py
+
+Outputs
+-------
+- Terminal: recovered diffusivity parameters (KsAlpha, m, l, theta_r),
+  chi2_nu on train and test sets, relative L2 error on the full
+  dataset, and elapsed training time.
+- Figures: training loss curves with parameter trajectories, and the
+  recovered moisture content profile overlaid on the observations.
+
+Data
+----
+Reads ``data/vangenuchten/data_vangenuchten.dat`` (phi, theta columns,
+one header line), containing experimental moisture content measurements
+from capillary imbibition into Whatman No.~1 filter paper. The dataset
+is included in the repository.
 """
 
 import numpy as np
