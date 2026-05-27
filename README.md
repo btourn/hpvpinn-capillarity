@@ -133,8 +133,8 @@ uv run python experiments/letd/hparam_search_letd.py \
 
 Results are written to `results/results_<case>_<config>/` as JSONL files.
 
-<!--The full search results reported in the paper are archived on Zenodo at
-[`https://doi.org/10.5281/zenodo.TODO`](https://doi.org/10.5281/zenodo.TODO).-->
+The full search results reported in the paper are archived on Zenodo at
+[`https://doi.org/10.5281/zenodo.20419271`](https://doi.org/10.5281/zenodo.20419271).
 
 ### Generating the figures
 
