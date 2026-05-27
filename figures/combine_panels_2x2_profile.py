@@ -1,30 +1,39 @@
 """
 combine_panels_2x2_profile.py
 ==============================
-Build a 2×2 compound figure of wetting profiles from pre-computed CSV files,
-matching the visual style of plot_profile() and the layout of fig2.png.
+Build the 2×2 wetting profile compound figure (Fig. 2 in the manuscript)
+from pre-computed CSV files.
 
-CSV format (all files)
------------------------
-Header line starting with '#', followed by two columns: phi, theta.
+Layout
+------
+    (a) Case 1, 1% noise,  hpVPINN-gb  — Grenoble sand
+    (b) Case 1, 2% noise,  hpVPINN-gb  — Grenoble sand
+    (c) Case 2, hpVPINN-es — Whatman, van Genuchten (with zoom inset)
+    (d) Case 3, hpVPINN-gb — Whatman, LETd
 
-Panel configuration
---------------------
-Each panel is described by a dict with the following keys:
+Input format
+------------
+Two-column CSV files (phi, theta) with an optional '#' header line.
+Each panel is configured via a dict; see the panel configuration
+section below for accepted keys.
 
-    sol        : path to the solution CSV (hp-VPINN prediction)
-    train      : path to the training data CSV
-    test       : path to the test data CSV
-    true       : path to the noise-free solution CSV  [optional, None if absent]
-    label      : panel label string, e.g. 'a)'
-    sol_legend : legend label for the solution curve
-    zoom       : ((x0, y0), (x1, y1)) zoom region    [optional, None if absent]
-    inset_pos  : [left, bottom, width, height] in axes-fraction coords
-                 [optional, defaults to [0.30, 0.35, 0.30, 0.55]]
+Panel configuration keys
+------------------------
+    sol        : path to the solution CSV (hp-VPINN prediction). Required.
+    test       : path to the test data CSV. Optional.
+    true       : path to the noise-free reference CSV. Optional.
+    label      : panel letter, e.g. 'a)'. Optional.
+    sol_legend : legend label for the solution curve.
+    zoom       : ((x0,y0),(x1,y1)) zoom region for inset. Optional.
+    inset_pos  : [left, bottom, width, height] in axes-fraction coords.
 
 Usage
 -----
-    python combine_panels_2x2_profile.py
+    uv run python figures/combine_panels_2x2_profile.py
+
+Output
+------
+    figures/fig2.eps
 """
 
 import shutil

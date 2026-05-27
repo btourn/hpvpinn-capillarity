@@ -1,3 +1,34 @@
+"""
+combine_panels_2x2_history.py
+==============================
+Build the 2×2 convergence history figure (Fig. 4 in the manuscript) for
+the hpVPINN-gb configurations on Case 1 (Grenoble sand) at 1% and 2%
+noise.
+
+Layout
+------
+    Row 1: physics loss L_phys and its EMA L_phys_hat vs epochs, with
+            the convergence threshold (dashed) and freeze epoch (dotted).
+    Row 2: recovered parameter trajectories KsAlpha and m vs epochs
+            (twin-axis), with true values (dashed) and freeze epoch (dotted).
+
+Input format
+------------
+Parquet files with one row per training epoch. Column indices used:
+    2 : physics loss
+    5 : EMA of physics loss
+    6 : EMA freeze flag (bool)
+    7 : KsAlpha trajectory
+    8 : m trajectory
+
+Usage
+-----
+    uv run python figures/combine_panels_2x2_history.py
+
+Output
+------
+    figures/fig4.eps
+"""
 
 import shutil
 import matplotlib
