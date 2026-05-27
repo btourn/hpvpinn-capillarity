@@ -63,14 +63,22 @@ pip install uv
 Then clone the repository and install all dependencies in one step:
 
 ```bash
-git clone https://github.com/TODO/hpvpinn-capillarity.git
+git clone https://github.com/btourn/hpvpinn-capillarity.git
 cd hpvpinn-capillarity
 uv sync
 ```
 
 This creates a `.venv` virtual environment, installs all dependencies listed
 in `uv.lock`, and installs the `hpvpinn` package in editable mode.
-No additional steps are required.
+No additional steps are required. All scripts can be run by prefixing
+`uv run` as shown in the examples below.
+
+Alternatively, if you prefer to work in an activated shell session:
+
+```bash
+source .venv/bin/activate        # Linux / macOS
+.venv\Scripts\activate           # Windows
+```
 
 **VSCode users**: after running `uv sync`, open the Command Palette
 (`Ctrl+Shift+P`) → *Python: Select Interpreter* → select
@@ -87,17 +95,17 @@ hyperparameter configuration reported in the paper:
 
 ```bash
 # Case 1 — Grenoble sand, 1% noise, hpVPINN-gb
-uv run python experiments/grenoblesand/grenoblesand.py
+uv run python experiments/grenoblesand/grenoblesand_trial226.py
+
+# Case 1 — Grenoble sand, 2% noise, hpVPINN-gb
+uv run python experiments/grenoblesand/grenoblesand_trial236.py
 
 # Case 2 — Whatman paper, Van Genuchten, hpVPINN-es
-uv run python experiments/vangenuchten/vangenuchten.py
+uv run python experiments/vangenuchten/vangenuchten_trial182.py
 
 # Case 3 — Whatman paper, LETd, hpVPINN-gb
-uv run python experiments/letd/letd.py
+uv run python experiments/letd/letd_trial72.py
 ```
-
-To reproduce the 2% noise results for Case 1, set `sigma = 0.064` in
-`experiments/grenoblesand/grenoblesand.py`.
 
 ### Running the hyperparameter search
 
@@ -114,8 +122,9 @@ uv run python experiments/letd/hparam_search_letd.py \
 ```
 
 Results are written to `results/results_<case>_<config>/` as JSONL files.
-The full search results reported in the paper are archived on Zenodo at
-[`https://doi.org/10.5281/zenodo.TODO`](https://doi.org/10.5281/zenodo.TODO).
+
+<!--The full search results reported in the paper are archived on Zenodo at
+[`https://doi.org/10.5281/zenodo.TODO`](https://doi.org/10.5281/zenodo.TODO).-->
 
 ### Generating the figures
 
@@ -128,7 +137,7 @@ uv run python figures/combine_panels_2x2_profile.py
 
 # Supplementary Information diagnostics
 uv run python postprocessing/hparam_postprocess.py \
-    --case grenoblesand --es-or-gb gb --noise-level 0.01
+    --case grenoblesand --config gb --noise-level 0.01
 ```
 
 ---
