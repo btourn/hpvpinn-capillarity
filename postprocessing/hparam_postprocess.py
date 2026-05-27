@@ -14,8 +14,8 @@ Two figures are produced per study:
 
 Usage
 -----
-    python hparam_postprocess.py --case letd --es-or-gb gb
-    python hparam_postprocess.py --case grenoblesand --es-or-gb gb --noise-level 0.01
+    python hparam_postprocess.py --case letd --config gb
+    python hparam_postprocess.py --case grenoblesand --config gb --noise-level 0.01
 """
 
 import argparse
@@ -665,7 +665,7 @@ def main() -> None:
 
     parser.add_argument("--results-dir", default="./results")
     parser.add_argument("--figures-dir", default="./figures")
-    parser.add_argument("--es-or-gb", choices=["es", "gb"], default=None)
+    parser.add_argument("--config", choices=["es", "gb"], default=None)
     parser.add_argument("--n-top", type=int, default=20)
     parser.add_argument(
         "--clip-upper", type=float, default=2.0,
