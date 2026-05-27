@@ -1,80 +1,36 @@
 """
-hparam_search.py
-================
-Optuna-based hyperparameter search for the hp-VPINN inverse problem.
-
-Search space
-------------
-  nn_n_layers   : number of hidden layers in the MLP (depth)
-  nn_width      : number of units per hidden layer (width, same for all layers)
-  activation    : hidden-layer activation function
-  n_elements    : number of elements in the hp-VPINN grid
-  poly_degree   : number of Legendre bubble test functions per element
-  noise_level   : measurement noise standard deviation (sigma)
-
-Everything else (training budget, LR schedule, diffusivity starting values)
-is fixed across all trials so that differences in the objective are
-attributable to the network/VPINN architecture only.
-
-Noise fairness
---------------
-Each noise level in NOISE_LEVELS gets exactly one fixed noisy dataset,
-generated once in prepare_data() before the search begins.  All trials
-that share the same noise_level train on identical data, making
-hyperparameter comparisons within a noise stratum unambiguous and
-removing the confound of different noise realisations.
-
-Train / test split
-------------------
-A fraction TEST_FRACTION of the data is held out as a test set for each
-noise level.  The test set carries an independent noise realisation (distinct
-random seed from the training set) so that chi2_nu_test is an unbiased
-estimate of generalisation quality.  Crucially, the model never sees the
-test points during training, making chi2_nu_test the primary Optuna objective.
-chi2_nu_train is saved alongside as a diagnostic for detecting overfitting
-(chi2_nu_train << chi2_nu_test signals overfitting).
-
-Objective
----------
-Single scalar minimised by Optuna:
-
-    obj = max(0, chi2_nu_test - 1) + chi2_nu_test * relative_gap
-
-where relative_gap = min(gap / chi2_nu_train, 10) and
-gap = max(0, chi2_nu_test - chi2_nu_train).
-
-The first term penalises underfitting (test χ²/ν > 1 means the model
-cannot explain the data at the noise level).  The second term penalises
-overfitting (test loss significantly exceeding train loss).  Values
-near 0 indicate a well-calibrated fit with no overfitting.
-
-obj_recovery (mean relative parameter error) is still saved to the
-JSONL file as a post-hoc diagnostic but is NOT an Optuna objective,
-because (a) it requires oracle knowledge of the true parameters and
-(b) it is not in genuine tension with data-fit quality — the two
-cannot form a meaningful Pareto front.
-
-Results
--------
-After every trial the full result record (hyperparameters + metrics) is
-appended to  results/hparam_results<sigma>.jsonl  (one JSON object per line).
-The Optuna study is also persisted to  results/study.db  via SQLite so
-that optuna-dashboard can visualise it live:
-
-    optuna-dashboard sqlite:///results/study.db
+hparam_search_grenoblesand.py
+==============================
+Optuna-based hyperparameter search for the \hpVPINN inverse problem
+on the Grenoble sand benchmark (Case 1).
 
 Usage
 -----
-    python hparam_search.py --noise-level 0.02
-    python hparam_search.py --noise-level 0.02 --n-trials 80
+    uv run python experiments/grenoblesand/hparam_search_grenoblesand.py \
+        --noise-level 0.01 --config gb --n-trials 250
 
-JAX parallelism note
---------------------
-JAX uses all available accelerators within a single process.  Running
-multiple Optuna workers in parallel (--n-jobs > 1) via multiprocessing
-would spawn independent JAX processes, each of which would still JIT-
-compile from scratch, and they would compete for the same GPU memory.
-Keep --n-jobs 1 unless you have separate GPUs per worker.
+Arguments
+---------
+    --noise-level  : noise std dev as fraction of moisture content range;
+                     must be one of the values defined in NOISE_LEVELS.
+                     Required.
+    --config       : weighting strategy: 'gb' (gradient balancing, default)
+                     or 'es' (exponential schedule).
+    --n-trials     : number of Optuna trials (default: 50).
+    --results-dir  : output directory (default: ./results/results_grenoblesand).
+    --study-name   : Optuna study name (default: vpinn_hparam_search).
+    --data         : path to the dataset file.
+
+Search space
+------------
+    nn_n_layers  {1, 2, 3}           nn_width     {8, 16, 32}
+    activation   {tanh, sigmoid,      n_elements   {10, 20, 30, 40, 50}
+                  GeLU, Swish}        poly_degree  {3, 4, 5, 6}
+
+Results
+-------
+Results are appended trial-by-trial to <results-dir>/hparam_results.jsonl
+and persisted to <results-dir>/study.db (viewable with optuna-dashboard).
 """
 
 import argparse

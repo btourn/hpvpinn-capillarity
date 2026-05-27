@@ -1,48 +1,39 @@
 """
 hparam_search_letd.py
 =====================
-Optuna-based hyperparameter search for the hp-VPINN inverse problem on
-the LETd dataset.
-
-Search space
-------------
-  nn_n_layers        : number of hidden layers in the MLP
-  nn_width           : number of units per hidden layer
-  activation         : hidden-layer activation function
-  n_elements         : number of elements in the hp-VPINN grid
-  poly_degree        : number of Legendre bubble test functions per element
-  element_clustering : power-law grading exponent for element density near phi=0
-
-Everything else (training budget, LR schedule, diffusivity starting values)
-is fixed across all trials.
-
-Key difference from hparam_search.py (Grenoble sand)
------------------------------------------------------
-The LETd dataset ships with per-point standard deviations (column 3 of the
-data file).  Measurement uncertainty is therefore taken directly from the
-data rather than being added artificially.  There is no noise_level
-hyperparameter and no multi-stratum data preparation.
-
-Objective
----------
-abs(chi2_nu_test - 1.0) + gap_penalty
-where gap = max(0, chi2_nu_test - chi2_nu_train) penalises overfitting.
-Values close to 0 indicate a test-set fit consistent with the noise level
-and no overfitting.
-
-Results
--------
-After every trial the full result record is appended to
-  results_letd/hparam_results_letd.jsonl  (one JSON object per line).
-The Optuna study is persisted to  results_letd/study.db  for
-optuna-dashboard:
-
-    optuna-dashboard sqlite:///results_letd/study.db
+Optuna-based hyperparameter search for the \hpVPINN inverse problem
+on the LETd dataset (Case 3, Whatman No.~1 filter paper).
 
 Usage
 -----
-    python hparam_search_letd.py
-    python hparam_search_letd.py --n-trials 100 --data data_letd.dat
+    uv run python experiments/letd/hparam_search_letd.py \
+        --config gb --n-trials 250
+
+Arguments
+---------
+    --config       : weighting strategy: 'gb' (gradient balancing, default)
+                     or 'es' (exponential schedule).
+    --n-trials     : number of Optuna trials (default: 50).
+    --results-dir  : output directory (default: ./results/results_letd).
+    --study-name   : Optuna study name (default: vpinn_hparam_search).
+    --data         : path to the dataset file.
+
+Search space
+------------
+    nn_n_layers  {1, 2, 3}           nn_width     {8, 16, 32}
+    activation   {tanh, sigmoid,      n_elements   {10, 20, 30, 40, 50}
+                  GeLU, Swish}        poly_degree  {3, 4, 5, 6}
+
+Note
+----
+The LETd dataset provides per-point measurement uncertainties (column 3
+of the data file), used directly as sigma. No noise level argument is
+required and no synthetic noise is added.
+
+Results
+-------
+Results are appended trial-by-trial to <results-dir>/hparam_results_letd.jsonl
+and persisted to <results-dir>/study.db (viewable with optuna-dashboard).
 """
 
 import argparse
