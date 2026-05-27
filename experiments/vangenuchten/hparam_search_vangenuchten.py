@@ -46,6 +46,7 @@ Usage
 """
 
 import argparse
+import collections
 import json
 import os
 import time
@@ -446,6 +447,16 @@ def main():
 
     objective = make_objective(data, results_path, warmup_epochs, transition_epochs)
     study.optimize(objective, n_trials=args.n_trials, n_jobs=1)
+
+    complete_trials = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
+    if not complete_trials:
+        print("\nNo complete trials were found in the study.")
+        print("Study trial counts:")
+        states = collections.Counter(t.state for t in study.trials)
+        for state, count in states.items():
+            print(f"  {state}: {count}")
+        print("Nothing to report for best_trial.")
+        return
 
     best = study.best_trial
     print("\n" + "=" * 60)

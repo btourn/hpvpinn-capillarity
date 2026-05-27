@@ -53,6 +53,7 @@ import warnings
 
 import jax
 import jax.numpy as jnp
+from matplotlib import collections
 import numpy as np
 import optax
 import optuna
@@ -402,20 +403,20 @@ def main():
     parser.add_argument("--n-trials",    type=int, default=50)
     parser.add_argument("--results-dir", default="./results/results_letd")
     parser.add_argument("--study-name",  default="vpinn_hparam_search_letd")
-    parser.add_argument("--method",      default="gb", choices=["gb", "es"])
+    parser.add_argument("--config",      default="gb", choices=["gb", "es"])
     args = parser.parse_args()
 
     results_dir = args.results_dir
-    if args.method == "es":
+    if args.config == "es":
         results_dir += "_es"
         warmup_epochs = MAX_EPOCHS
         transition_epochs = 0
-    elif args.method == "gb":
+    elif args.config == "gb":
          results_dir += "_gb"
          warmup_epochs = 0
          transition_epochs = 20_000
     else:
-        raise ValueError(f"Unknown method: {args.method}")
+        raise ValueError(f"Unknown config: {args.config}")
 
     os.makedirs(results_dir, exist_ok=True)
     results_path = os.path.join(results_dir, "hparam_results_letd.jsonl")
@@ -449,6 +450,16 @@ def main():
 
     objective = make_objective(data, results_path, warmup_epochs, transition_epochs)
     study.optimize(objective, n_trials=args.n_trials, n_jobs=1)
+
+    complete_trials = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
+    if not complete_trials:
+        print("\nNo complete trials were found in the study.")
+        print("Study trial counts:")
+        states = collections.Counter(t.state for t in study.trials)
+        for state, count in states.items():
+            print(f"  {state}: {count}")
+        print("Nothing to report for best_trial.")
+        return
 
     best = study.best_trial
     print("\n" + "=" * 60)

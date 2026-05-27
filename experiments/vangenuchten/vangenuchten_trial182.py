@@ -27,7 +27,7 @@ from hpvpinn.constitutive_model import FixedParam, FreeParam, LowerBoundedParam,
 from hpvpinn.transformations import CapillarityScaling
 from hpvpinn.datasets import MeasurementSet
 from hpvpinn.train_vpinn import VPINNTrainer
-from hpvpinn.plot_utils import *
+from hpvpinn.plot_utils import plot_training_losses, plot_profile
 
 
 # ---------------------------------------------------------------------------
