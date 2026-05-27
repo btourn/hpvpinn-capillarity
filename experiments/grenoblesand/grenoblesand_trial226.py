@@ -1,26 +1,22 @@
 """
-grenoblesand.py
-===============
-Driver script for the hp-VPINN inverse problem on the Grenoble sand
-benchmark (Case 1 of Tourn et al., 2025). Runs the best-performing
-configuration identified by the hyperparameter search: 2 hidden layers,
-32 units per layer, tanh activation, N_el = 40 elements, polynomial
-degree p = 5, and initialisation seed 226.
+grenoblesand_trial226.py
+========================
+Driver script reproducing the best-performing \hpVPINN-gb result for
+Case~1 (Grenoble sand, 1% noise).
+Hyperparameter configuration: 2 hidden layers, 32 units per layer,
+tanh activation, N_el = 40 elements, polynomial degree p = 5,
+configuration type "-gb", and initialisation seed 226.
 
 Usage
 -----
-    uv run python experiments/grenoblesand/grenoblesand.py
-
-The noise level is controlled by the ``sigma`` variable (default: 0.032,
-corresponding to approximately 1% noise relative to the wet-end moisture
-content). Set ``sigma = 0.064`` to reproduce the 2% noise results.
+    uv run python experiments/grenoblesand/grenoblesand_trial226.py
 
 Outputs
 -------
 - Terminal: recovered KsAlpha and m, chi2_nu on train and test sets,
   relative L2 error on the full dataset, and elapsed training time.
 - Figures: training loss curves with parameter trajectories, and the
-  recovered moisture content profile overlaid on the data.
+  recovered moisture content profile overlaid on the observations.
 
 Data
 ----
@@ -42,7 +38,7 @@ from hpvpinn.constitutive_model import FixedParam, LowerBoundedParam, BoundedPar
 from hpvpinn.transformations import CapillarityScaling
 from hpvpinn.datasets import MeasurementSet
 from hpvpinn.train_vpinn import VPINNTrainer
-from hpvpinn.plot_utils import *
+from hpvpinn.plot_utils import plot_training_losses, plot_profile
 
 
 # ---------------------------------------------------------------------------
