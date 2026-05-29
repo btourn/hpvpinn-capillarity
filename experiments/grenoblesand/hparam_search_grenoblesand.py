@@ -1,7 +1,7 @@
 """
 hparam_search_grenoblesand.py
 ==============================
-Optuna-based hyperparameter search for the \hpVPINN inverse problem
+Optuna-based hyperparameter search for the hp-VPINN inverse problem
 on the Grenoble sand benchmark (Case 1).
 
 Usage

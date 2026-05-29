@@ -1,7 +1,7 @@
 """
 letd_trial72.py
 ===============
-Driver script reproducing the best-performing \hpVPINN-gb result for
+Driver script reproducing the best-performing hp-VPINN-gb result for
 Case~3 (Whatman No.~1 filter paper, LETd diffusivity model).
 Hyperparameter configuration: 2 hidden layers, 32 units per layer,
 tanh activation, N_el = 50 elements, polynomial degree p = 6,

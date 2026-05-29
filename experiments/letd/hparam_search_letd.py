@@ -1,7 +1,7 @@
 """
 hparam_search_letd.py
 =====================
-Optuna-based hyperparameter search for the \hpVPINN inverse problem
+Optuna-based hyperparameter search for the hp-VPINN inverse problem
 on the LETd dataset (Case 3, Whatman No.~1 filter paper).
 
 Usage

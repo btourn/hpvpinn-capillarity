@@ -1,7 +1,7 @@
 """
 vangenuchten_trial182.py
 ========================
-Driver script reproducing the best-performing \hpVPINN-es result for
+Driver script reproducing the best-performing hp-VPINN-es result for
 Case~2 (Whatman No.~1 filter paper, van~Genuchten diffusivity model).
 Hyperparameter configuration: 3 hidden layers, 32 units per layer, 
 tanh activation, N_el = 50 elements, polynomial degree p = 6,

@@ -1,7 +1,7 @@
 """
 grenoblesand_trial226.py
 ========================
-Driver script reproducing the best-performing \hpVPINN-gb result for
+Driver script reproducing the best-performing hp-VPINN-gb result for
 Case~1 (Grenoble sand, 1% noise).
 Hyperparameter configuration: 2 hidden layers, 32 units per layer,
 tanh activation, N_el = 40 elements, polynomial degree p = 5,

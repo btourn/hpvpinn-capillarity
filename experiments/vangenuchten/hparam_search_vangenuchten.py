@@ -1,7 +1,7 @@
 """
 hparam_search_vangenuchten.py
 ==============================
-Optuna-based hyperparameter search for the \hpVPINN inverse problem
+Optuna-based hyperparameter search for the hp-VPINN inverse problem
 on the van~Genuchten dataset (Case 2, Whatman No.~1 filter paper).
 
 Usage
