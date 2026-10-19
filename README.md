@@ -53,7 +53,11 @@ column with the standard deviation of each point.
 run with a development version of `Frontx`, which is not part of this
 repository; their results are available upon reasonable request. The
 `--model frontx` option of the search drivers and the conventional-inversion
-scripts require the `frontx` package.
+scripts require the `frontx` package, which is not installed by `uv sync`
+(`benchmark_conventional.py` and `conventional_inverse.py` stop with
+`ModuleNotFoundError` without it). The conventional-inversion scripts follow the
+reference example of upstream [`gerlero/frontx`](https://github.com/gerlero/frontx)
+at commit `e04d264` (2026-09-18).
 
 ## Repository structure
 
@@ -263,7 +267,12 @@ Training is deterministic for a fixed seed on a fixed hardware and software
 configuration. Exact bitwise reproducibility across platforms cannot be
 guaranteed, because floating-point reductions in JAX/XLA are not
 order-invariant under parallel execution; results are reproducible in a
-statistical sense (ten seeds per selected configuration). The Optuna searches
+statistical sense (ten seeds per selected configuration). On the laptop that
+produced the final runs, a fresh clone of this repository (environment from
+`uv.lock`, Python 3.13) reproduced seed 1001 of the Case 1 final run (1 % noise,
+`-gb`, 200 000 epochs) with `history.npz`, `curves.npz` and `model.eqx`
+byte-identical to the stored files; two repeated short runs gave identical files
+as well. This was checked for that run only. The Optuna searches
 used five parallel workers on a shared database, so the order of the trials,
 and therefore the sampler state, is not reproducible bit by bit.
 
