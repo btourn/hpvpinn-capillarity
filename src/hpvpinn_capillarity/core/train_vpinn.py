@@ -34,7 +34,7 @@ import equinox as eqx
 import optax
 from jaxopt import LBFGS
 
-from vpinn_loss import VPINNLoss
+from hpvpinn_capillarity.core.vpinn_loss import VPINNLoss
 
 from typing import NamedTuple
 
