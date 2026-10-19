@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "hpvpinn-capillarity: hp-VPINN for inverse hydraulic parameter recovery in unsaturated porous media"
+type: software
+authors:
+  - family-names: "Tourn"
+    given-names: "Benjamin A."
+    # TODO(release): add ORCID, affiliation and the co-authors the authors agree to list.
+license: Apache-2.0
+repository-code: "https://github.com/btourn/hpvpinn-capillarity"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20419270"
+    description: "Concept DOI: all archived versions"
+# TODO(release): add `version` and `date-released` of the revised release, and the
+# paper as `preferred-citation` once its reference is available.
