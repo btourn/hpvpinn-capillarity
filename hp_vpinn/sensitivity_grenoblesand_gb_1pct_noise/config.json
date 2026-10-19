@@ -1,0 +1,31 @@
+{
+ "winner": {
+  "combo": {
+   "nn_n_layers": 2,
+   "nn_width": 16,
+   "activation": "tanh",
+   "n_elements": 10,
+   "poly_degree": 3
+  },
+  "init_seed": 90,
+  "trial": 90,
+  "occurrences_in_search": 33,
+  "obj": 1.2724810687832973,
+  "final_physics": 7.53387987946596e-10,
+  "KsAlpha_top1": 320.69006245310845,
+  "m_top1": 0.5497013271797674,
+  "results_path": "hp_vpinn/results_grenoblesand_gb_1pct_noise/hparam_results_1pct_noise.jsonl"
+ },
+ "n_realisations": 25,
+ "fractions": [
+  1.0,
+  0.5,
+  0.25,
+  0.125
+ ],
+ "subsample": "stride",
+ "schedule": "gb",
+ "noise_level": 0.01,
+ "max_steps": 200000,
+ "data": "data_grenoblesand.dat"
+}

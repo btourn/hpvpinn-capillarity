@@ -1,0 +1,11 @@
+{\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{4pt}
+\begin{tabular}{c c c c c c c}
+\toprule
+\makecell{$N_{\mathrm{train}}$\\($f$)} & Acc./Total & \makecell{$K_s/\alpha$ [\si{cm^2/h}]\\median [IQR]} & \makecell{$m$\\median [IQR]} & \makecell{$\tilde\varepsilon_{K_s/\alpha}$\\{[\%]}} & \makecell{$\tilde\varepsilon_{m}$\\{[\%]}} & \makecell{med.\ $\chi^2_{\nu}$\\train / test} \\
+\midrule
+80 (\num{1}) & 23/25 & \makecell{\num{317.1}\\{[\num{298.2}, \num{342.6}]}} & \makecell{\num{0.558}\\{[\num{0.532}, \num{0.588}]}} & \num{12.0} & \num{10.7} & \num{0.97} / \num{1.08} \\
+40 (\num{0.5}) & 16/25 & \makecell{\num{291.8}\\{[\num{275.2}, \num{347.2}]}} & \makecell{\num{0.598}\\{[\num{0.524}, \num{0.629}]}} & \num{18.0} & \num{17.4} & \num{1.15} / \num{1.14} \\
+20 (\num{0.25}) & 3/25 & \makecell{\num{269.2}\\{[\num{262.2}, \num{288.6}]}} & \makecell{\num{0.651}\\{[\num{0.622}, \num{0.671}]}} & \num{24.3} & \num{27.8} & \num{8.27} / \num{14.14} \\
+10 (\num{0.125}) & 0/25 & --- & --- & --- & --- & \num{9.76} / \num{19.43} \\
+\bottomrule
+\end{tabular}}
