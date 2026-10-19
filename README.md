@@ -51,63 +51,66 @@ column with the standard deviation of each point.
 
 **Not included.** The collocation PINN configurations of the manuscript were
 run with a development version of `Frontx`, which is not part of this
-repository; their results are available upon reasonable request. The
-`--model frontx` option of the search drivers and the conventional-inversion
-scripts require the `frontx` package, which is not installed by `uv sync`
-(`benchmark_conventional.py` and `conventional_inverse.py` stop with
-`ModuleNotFoundError` without it). The conventional-inversion scripts follow the
-reference example of upstream [`gerlero/frontx`](https://github.com/gerlero/frontx)
-at commit `e04d264` (2026-09-18).
+repository; their results are available upon reasonable request, and the search
+drivers contain only the *hp*-VPINN backend. The conventional-inversion scripts
+(`conventional/`) need the upstream package
+[`gerlero/frontx`](https://github.com/gerlero/frontx), which `uv sync` does not
+install; without it they stop with `ModuleNotFoundError`. They follow the
+reference example of upstream commit `e04d264` (2026-09-18).
 
 ## Repository structure
 
 ```
 hpvpinn-capillarity/
-├── hp_vpinn/                      # solver library and final-run scripts (uv project)
-│   ├── constitutive_model.py      # van Genuchten, LETd, Brooks and Corey diffusivities
-│   ├── train_vpinn.py             # Adam training loop, adaptive weighting
-│   ├── vpinn_loss.py              # weak-form (hp-VPINN) loss
-│   ├── strong_form_residual.py    # strong-form residual on a fine grid (diagnostic)
-│   ├── final_run_common.py        # multi-seed final runs
-│   ├── grenoblesand.py, vangenuchten.py, letd.py    # final runs of Cases 1-3
-│   ├── combined_profiles.py, profile_figures.py     # wetting-profile figures
-│   ├── early_stopping_analysis.py # early-stopping rule on stored histories
-│   ├── multistart.py              # multi-start over the initial parameters
-│   └── pyproject.toml, uv.lock    # pinned environment
-├── hparam_search_<case>.py        # Optuna search, one per case (--model hp_vpinn)
-├── hparam_postprocess.py          # trial classification, winners, tables, SI figures
-├── quadrature_check_grenoblesand.py
-├── sensitivity_noise_density.py, postprocess_sensitivity.py
-├── benchmark_conventional.py, conventional_inverse.py,
-│   final_runs_to_forward_check.py, rerun_forward_check_tight.sh
+├── src/hpvpinn_capillarity/
+│   ├── paths.py                   # locations of the data and of the results
+│   ├── core/                      # solver library
+│   │   ├── constitutive_model.py  #   van Genuchten, LETd, Brooks and Corey diffusivities
+│   │   ├── train_vpinn.py         #   Adam training loop, adaptive weighting
+│   │   ├── vpinn_loss.py          #   weak-form (hp-VPINN) loss
+│   │   └── strong_form_residual.py#   strong-form residual on a fine grid (diagnostic)
+│   ├── hpo/                       # Optuna searches (search_<case>.py) and post-processing
+│   ├── final_runs/                # multi-seed final runs, wetting-profile figures
+│   ├── analysis/                  # early stopping, multi-start, quadrature check, sensitivity
+│   └── conventional/              # conventional inversion and forward checks (need frontx)
+├── data/                          # data_<case>.dat
+├── results/                       # recorded outputs (see below)
+├── scripts/                       # rerun_forward_check_tight.sh
 ├── slurm/                         # cluster launchers (see below)
-├── data_*.dat
-└── PROVENANCE.md                  # source commits and sha256 of the files above
+├── pyproject.toml, uv.lock        # pinned environment
+└── PROVENANCE.md                  # origin of every file
 ```
 
-Scripts compute their paths from their own location. Run them from the
-repository root, and keep them where they are.
+`results/` has the same layout the scripts write to:
+`results/hp_vpinn/{results_<study>,Figures,sensitivity_*,quadrature_check_*}`,
+`results/multistart/` and `results/conventional/`. The repository holds the
+recorded hyperparameter-search results, the generated tables and the summaries of
+the supplementary analyses. The large outputs (final runs with their training
+histories, multi-start runs, Optuna databases, figures) are archived on Zenodo
+with the release; extract that archive inside `results/` so that
+`results/hp_vpinn/final_runs/<tag>/` exists. The location of the results and of
+the data can be changed with the environment variables `HPVPINN_RESULTS` and
+`HPVPINN_DATA` (see `src/hpvpinn_capillarity/paths.py`).
 
 ---
 
 ## Installation
 
-The project uses [`uv`](https://docs.astral.sh/uv/) (Python >= 3.13). The
-environment lives in `hp_vpinn/`:
+The project uses [`uv`](https://docs.astral.sh/uv/) (Python >= 3.13):
 
 ```bash
 git clone https://github.com/btourn/hpvpinn-capillarity.git
-cd hpvpinn-capillarity/hp_vpinn
+cd hpvpinn-capillarity
 uv sync
-cd ..
-source hp_vpinn/.venv/bin/activate        # Linux / macOS
+source .venv/bin/activate        # Linux / macOS
 ```
 
-All commands below are run from the repository root with this environment
-active. The final runs of the manuscript were produced on a laptop CPU
-(Intel Core i7-1355U, no GPU) with Python 3.14.4, JAX/jaxlib 0.9.0.1 and
-64-bit precision; each run records its own environment in `record.json`.
-`uv.lock` pins the versions of the environment of this repository.
+`uv sync` installs the package `hpvpinn_capillarity` in editable mode with the
+versions of `uv.lock`. All commands below are run from the repository root with
+this environment active. Importing the package enables 64-bit precision in JAX,
+as in all the runs of the manuscript. The final runs of the manuscript were
+produced on a laptop CPU (Intel Core i7-1355U, no GPU) with Python 3.14.4,
+JAX/jaxlib 0.9.0.1; each run records its own environment in `record.json`.
 
 ---
 
@@ -122,19 +125,19 @@ weighting schedule (`gb`: `--warmup-epochs 0 --transition-epochs 20000`; `es`:
 each); see [`slurm/`](#cluster-launchers).
 
 ```bash
-python hparam_search_grenoblesand.py --model hp_vpinn --noise-level 0.01 \
+python -m hpvpinn_capillarity.hpo.search_grenoblesand --model hp_vpinn --noise-level 0.01 \
     --warmup-epochs 0 --transition-epochs 20000 --n-trials 50
-python hparam_search_letd.py --model hp_vpinn --warmup-epochs 0 --transition-epochs 20000
+python -m hpvpinn_capillarity.hpo.search_letd --model hp_vpinn --warmup-epochs 0 --transition-epochs 20000
 ```
 
-Results go to `hp_vpinn/results_<case>_<es|gb>[_<n>pct_noise]/`.
+Results go to `results/hp_vpinn/results_<case>_<es|gb>[_<n>pct_noise]/`.
 
 **2. Selection of the winners.**
 
 ```bash
-python hparam_postprocess.py --model hp_vpinn --case letd --es-or-gb gb
-python hparam_postprocess.py --model hp_vpinn --trial-counts
-python hparam_postprocess.py --model hp_vpinn --winners
+python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --case letd --es-or-gb gb
+python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --trial-counts
+python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --winners
 ```
 
 `--winners` writes `winners.json`, which the final-run scripts read.
@@ -143,47 +146,46 @@ python hparam_postprocess.py --model hp_vpinn --winners
 initialisation seeds (1000-1009) and the ensemble is reported.
 
 ```bash
-python hp_vpinn/grenoblesand.py --noise-level 0.01
-python hp_vpinn/vangenuchten.py
-python hp_vpinn/letd.py
-python hp_vpinn/grenoblesand.py --noise-level 0.01 --n-seeds 2 --epochs 2000   # smoke test
-python hp_vpinn/grenoblesand.py --noise-level 0.01 --aggregate-only            # figures from saved seeds
+python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01
+python -m hpvpinn_capillarity.final_runs.vangenuchten
+python -m hpvpinn_capillarity.final_runs.letd
+python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --n-seeds 2 --epochs 2000   # smoke test
+python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --aggregate-only            # figures from saved seeds
 ```
 
 `--arch "W=16,L=2,act=tanh,Nel=30,p=5" --schedule gb` bypasses `winners.json`.
-Outputs are written to `hp_vpinn/final_runs/<tag>/` and `hp_vpinn/Figures/`.
-Case 4 has a search driver but no final-run script.
+Outputs are written to `results/hp_vpinn/final_runs/<tag>/` and
+`results/hp_vpinn/Figures/`. Case 4 has a search driver but no final-run script.
 
-**4. Figures, tables and supplementary analyses.**
+**4. Figures, tables and supplementary analyses.** Modules are run with
+`python -m hpvpinn_capillarity.<module>`.
 
-| Item of the manuscript | Script |
+| Item of the manuscript | Module |
 |---|---|
-| Winners and ranked-trial tables, diagnostic figures (SI) | `hparam_postprocess.py` |
-| Wetting-profile figure (main text) | `hp_vpinn/combined_profiles.py` |
-| Early-stopping rule (main text) | `hp_vpinn/early_stopping_analysis.py --root hp_vpinn/final_runs --out hp_vpinn/Figures/early_stopping` |
-| Multi-start over the initial parameters (SI) | `hp_vpinn/multistart.py` |
-| Quadrature convergence check (SI) | `quadrature_check_grenoblesand.py` |
-| Noise realisation and training-data density (SI) | `sensitivity_noise_density.py`, then `postprocess_sensitivity.py` |
-| Conventional inversion and forward check with the exact solver (SI) | `benchmark_conventional.py`, `final_runs_to_forward_check.py`, `rerun_forward_check_tight.sh` (need `frontx`) |
+| Winners and ranked-trial tables, diagnostic figures (SI) | `hpo.postprocess` |
+| Wetting-profile figure (main text) | `final_runs.combined_profiles` |
+| Early-stopping rule (main text) | `analysis.early_stopping` |
+| Multi-start over the initial parameters (SI) | `analysis.multistart` |
+| Quadrature convergence check (SI) | `analysis.quadrature_check` |
+| Noise realisation and training-data density (SI) | `analysis.sensitivity_noise_density`, then `analysis.postprocess_sensitivity` |
+| Conventional inversion and forward check with the exact solver (SI) | `conventional.benchmark`, `conventional.forward_check_bridge`, `scripts/rerun_forward_check_tight.sh` (need `frontx`) |
 
 Main-text Figures 4-6 and the bounds-test figure of the SI are not generated by
 scripts of this repository.
 
 ### Cluster launchers
 
-`slurm/` holds the SLURM scripts of the original runs, copied unchanged:
-`submit_all_<case>.sh` submits the workers of every (noise level, schedule)
-combination of a case (five workers per study, 250 trials in total for
-*hp*-VPINN) and `slurm_run_hparam_<case>.sh` is the job script. The
-`run_hparam_*.sh` files are earlier single-job scripts (150 trials, one
-schedule) and do not reproduce the studies of the paper; use `submit_all_*.sh`
-for that. The scripts contain settings of the original cluster (partition,
-`v3-20cores` constraint, and `cd ~/manuscript_review_runs`, which must be
-changed to your clone). Submit them from `slurm/`:
+`slurm/` holds the SLURM scripts of the runs: `submit_all_<case>.sh` submits
+the workers of every (noise level, schedule) combination of a case (five workers
+per study, 250 trials in total) and `slurm_run_hparam_<case>.sh` is the job
+script. The `run_hparam_*.sh` files are earlier single-job scripts (150 trials,
+one schedule) and do not reproduce the studies of the paper; use `submit_all_*.sh`
+for that. The scripts change to the repository root themselves and use its
+`.venv`; they keep the cluster-specific settings of the original runs (partition,
+`v3-20cores` constraint, time and memory), which you may need to adapt:
 
 ```bash
-cd slurm
-bash submit_all_grenoblesand.sh --model hp_vpinn --dry-run
+bash slurm/submit_all_grenoblesand.sh --model hp_vpinn --dry-run
 ```
 
 ---
@@ -269,10 +271,15 @@ guaranteed, because floating-point reductions in JAX/XLA are not
 order-invariant under parallel execution; results are reproducible in a
 statistical sense (ten seeds per selected configuration). On the laptop that
 produced the final runs, a fresh clone of this repository (environment from
-`uv.lock`, Python 3.13) reproduced seed 1001 of the Case 1 final run (1 % noise,
-`-gb`, 200 000 epochs) with `history.npz`, `curves.npz` and `model.eqx`
-byte-identical to the stored files; two repeated short runs gave identical files
-as well. This was checked for that run only. The Optuna searches
+`uv.lock`, Python 3.13) reproduced seed 1001 of each of the five final runs of the
+manuscript (Case 1 at 1 % and 2 % noise, Case 2 `-es`, Case 3 `-es` and `-gb`;
+200 000 epochs each): `reference.npz`, `history.npz` and `model.eqx` are
+byte-identical to the stored files, and the arrays of `curves.npz` are identical
+(the stored `curves.npz` of four of these runs predate two arrays, `residual` and
+`residual_phi_nd`, that the code writes now). Repeated runs gave identical files.
+This was checked for one seed per final run and on one machine; the stored run of
+Case 3 `-es` was obtained with the configuration selected at the time, so it is
+reproduced with `--arch` and not with `winners.json`. The Optuna searches
 used five parallel workers on a shared database, so the order of the trials,
 and therefore the sampler state, is not reproducible bit by bit.
 
