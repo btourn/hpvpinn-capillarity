@@ -4,3 +4,16 @@ __pycache__/
 src/*.egg-info/
 results/**/*.db
 .vscode/
+# revision layout
+*.db
+logs/
+logs_postprocess/
+final_runs/
+Figures/
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*-eps-converted-to.pdf
+.claude/
