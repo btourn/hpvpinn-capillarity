@@ -10,7 +10,7 @@
 #SBATCH --error=logs/multistart_%A_%a.err
 
 # One array task = one start of multistart/manifest.csv (row id = SLURM_ARRAY_TASK_ID).
-#   python hp_vpinn/multistart.py manifest
+#   python -m hpvpinn_capillarity.analysis.multistart manifest
 #   mkdir -p logs
 #   sbatch --array=0-<N-1>%100 slurm_run_multistart.sh        # N printed by the manifest step
 # Re-run only failed tasks with e.g.:  sbatch --array=7,23,41 slurm_run_multistart.sh
@@ -18,7 +18,7 @@
 export OMP_NUM_THREADS=10
 export XLA_FLAGS="--xla_cpu_multi_thread_eigen=true"
 
-cd ~/manuscript_review_runs   # repo root (contains hp_vpinn/ with multistart.py and final_run_common.py, hparam_search_*.py)
-source "hp_vpinn/.venv/bin/activate"
+cd "${HPVPINN_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}"   # clone of the repository (submit from its root)
+source .venv/bin/activate
 
-python hp_vpinn/multistart.py run --task-id $SLURM_ARRAY_TASK_ID
+python -m hpvpinn_capillarity.analysis.multistart run --task-id $SLURM_ARRAY_TASK_ID

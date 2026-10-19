@@ -35,14 +35,15 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-LOG_DIR="hp_vpinn/logs"
+cd "$(dirname "${BASH_SOURCE[0]}")/.."   # repository root
+LOG_DIR="results/hp_vpinn/logs"
 mkdir -p "$LOG_DIR"
 
-source hp_vpinn/.venv/bin/activate
-python sensitivity_noise_density.py --schedule "$SCHED" --noise-level "$NOISE" \
+source .venv/bin/activate
+python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --schedule "$SCHED" --noise-level "$NOISE" \
     --n-realisations "$NREAL" --fractions $FRACS --subsample "$SUBSAMPLE" --list
 echo "--- Frozen configuration (check it matches the SI identifiability table) ---"
-python sensitivity_noise_density.py --schedule "$SCHED" --noise-level "$NOISE" --show-winner || exit 1
+python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --schedule "$SCHED" --noise-level "$NOISE" --show-winner || exit 1
 deactivate 2>/dev/null || true
 
 NOISE_TAG=$(python3 -c "print(f'{int(float(\"$NOISE\")*100)}pct')")
@@ -58,7 +59,7 @@ CMD=(sbatch
      --output="${LOG_DIR}/%x_%A_%a.out"
      --error="${LOG_DIR}/%x_%A_%a.err"
      --export=ALL
-     slurm_run_sensitivity.sh)
+     slurm/slurm_run_sensitivity.sh)
 
 if $DRY_RUN; then
     echo "[DRY RUN] SCHED=$SCHED NOISE=$NOISE NREAL=$NREAL FRACS='$FRACS' SUBSAMPLE=$SUBSAMPLE N_TASKS=$N_TASKS"

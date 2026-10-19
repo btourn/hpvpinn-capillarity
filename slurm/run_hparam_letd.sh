@@ -29,11 +29,11 @@ echo "Fecha  : $(date)"
 echo "Model  : $MODEL"
 echo "=============================="
 
-cd ~/manuscript_review_runs   # repo root: contains hp_vpinn/, frontx/, and hparam_search_letd.py
+cd "${HPVPINN_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}"   # clone of the repository (submit from its root)
 
-source "${MODEL}/.venv/bin/activate"
+source .venv/bin/activate
 
-python hparam_search_letd.py \
+python -m hpvpinn_capillarity.hpo.search_letd \
     --model $MODEL \
     --n-trials 150 \
     --warmup-epochs 200000 \

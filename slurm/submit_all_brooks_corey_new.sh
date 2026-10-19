@@ -14,10 +14,12 @@
 # (hp_vpinn/... or frontx/...), same base results-dir name for both.
 #
 # Usage:
-#   bash submit_all_brooks_corey_new.sh                       # both models, full matrix
-#   bash submit_all_brooks_corey_new.sh --model hp_vpinn       # one model only, full matrix
-#   bash submit_all_brooks_corey_new.sh --model frontx --dry-run
-#   bash submit_all_brooks_corey_new.sh --dry-run --model hp_vpinn   # order doesn't matter
+#   bash slurm/submit_all_brooks_corey_new.sh                       # both models, full matrix
+#   bash slurm/submit_all_brooks_corey_new.sh --model hp_vpinn       # one model only, full matrix
+#   bash slurm/submit_all_brooks_corey_new.sh --model frontx --dry-run
+#   bash slurm/submit_all_brooks_corey_new.sh --dry-run --model hp_vpinn   # order doesn't matter
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."   # repository root
 
 DRY_RUN=false
 MODEL_FILTER=""
@@ -34,20 +36,20 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown argument: $1" >&2
-            echo "Usage: $0 [--model {hp_vpinn,frontx}] [--dry-run]" >&2
+            echo "Usage: $0 [--model {hp_vpinn}] [--dry-run]" >&2
             exit 1
             ;;
     esac
 done
 
 if [[ -n "$MODEL_FILTER" ]]; then
-    if [[ "$MODEL_FILTER" != "hp_vpinn" && "$MODEL_FILTER" != "frontx" ]]; then
-        echo "Error: --model must be hp_vpinn or frontx, got: $MODEL_FILTER" >&2
+    if [[ "$MODEL_FILTER" != "hp_vpinn" ]]; then
+        echo "Error: --model must be hp_vpinn, got: $MODEL_FILTER" >&2
         exit 1
     fi
     MODELS=("$MODEL_FILTER")
 else
-    MODELS=("hp_vpinn" "frontx")
+    MODELS=("hp_vpinn")
 fi
 
 N_WORKERS=5
@@ -59,7 +61,7 @@ N_WORKERS=5
 # so 120 trials is enough. N_WORKERS stays the same for both so the two
 # models keep the same degree of SLURM parallelism; only the per-worker
 # trial count changes.
-declare -A TRIALS_PER_WORKER=( [hp_vpinn]=50 [frontx]=24 )   # hp_vpinn: 5*50=250; frontx: 5*24=120
+declare -A TRIALS_PER_WORKER=( [hp_vpinn]=50 )   # 5 workers * 50 = 250 trials
 
 # ---------------------------------------------------------------------------
 # Noise/schedule combination matrix, shared by both models
@@ -85,7 +87,7 @@ echo "    Total jobs:         ${TOTAL_JOBS}"
 echo ""
 
 for MODEL in "${MODELS[@]}"; do
-    LOG_DIR="${MODEL}/logs"   # --model's value IS the subdirectory name now
+    LOG_DIR="results/${MODEL}/logs"   # --model's value IS the subdirectory name now
     mkdir -p "$LOG_DIR"   # must exist before sbatch, or --output/--error fail at submission
     TPW="${TRIALS_PER_WORKER[$MODEL]}"
 
@@ -103,7 +105,7 @@ for MODEL in "${MODELS[@]}"; do
                 --output=${LOG_DIR}/%x_%j.out \
                 --error=${LOG_DIR}/%x_%j.err \
                 --export=MODEL=${MODEL},NOISE_LEVEL=${NOISE},WARMUP_EPOCHS=${WARMUP},TRANSITION_EPOCHS=${TRANSITION},N_TRIALS=${TPW} \
-                slurm_run_hparam_brooks_corey_new.sh"
+                slurm/slurm_run_hparam_brooks_corey_new.sh"
 
             if $DRY_RUN; then
                 echo "    [DRY RUN] $CMD"

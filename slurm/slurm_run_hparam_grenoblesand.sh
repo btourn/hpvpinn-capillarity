@@ -19,8 +19,8 @@
 export OMP_NUM_THREADS=10
 export XLA_FLAGS="--xla_cpu_multi_thread_eigen=true"
 
-cd ~/manuscript_review_runs   # repo root: contains hp_vpinn/, frontx/, and hparam_search_grenoblesand.py
-source "${MODEL}/.venv/bin/activate"
+cd "${HPVPINN_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}"   # clone of the repository (submit from its root)
+source .venv/bin/activate
 
 # Stagger workers to avoid SQLite race condition on schema creation.
 # Each (model, noise, schedule) combination writes to its own results_dir
@@ -31,7 +31,7 @@ SLEEP_S=$(( RANDOM % 60 ))
 echo "Sleeping ${SLEEP_S}s before starting to stagger DB access..."
 sleep $SLEEP_S
 
-python hparam_search_grenoblesand.py \
+python -m hpvpinn_capillarity.hpo.search_grenoblesand \
     --model              $MODEL \
     --noise-level        $NOISE_LEVEL \
     --warmup-epochs      $WARMUP_EPOCHS \

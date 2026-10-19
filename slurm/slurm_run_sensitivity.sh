@@ -16,10 +16,10 @@
 export OMP_NUM_THREADS=10
 export XLA_FLAGS="--xla_cpu_multi_thread_eigen=true"
 
-cd ~/manuscript_review_runs
-source hp_vpinn/.venv/bin/activate
+cd "${HPVPINN_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}"   # clone of the repository (submit from its root)
+source .venv/bin/activate
 
-python sensitivity_noise_density.py \
+python -m hpvpinn_capillarity.analysis.sensitivity_noise_density \
     --schedule       $SCHED \
     --noise-level    $NOISE \
     --n-realisations $NREAL \

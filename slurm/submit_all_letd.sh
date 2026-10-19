@@ -12,10 +12,12 @@
 # (hp_vpinn/... or frontx/...).
 #
 # Usage:
-#   bash submit_all_letd.sh
-#   bash submit_all_letd.sh --model hp_vpinn
-#   bash submit_all_letd.sh --model frontx --dry-run
-#   bash submit_all_letd.sh --dependency afterany:111:222:333
+#   bash slurm/submit_all_letd.sh
+#   bash slurm/submit_all_letd.sh --model hp_vpinn
+#   bash slurm/submit_all_letd.sh --model frontx --dry-run
+#   bash slurm/submit_all_letd.sh --dependency afterany:111:222:333
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."   # repository root
 
 DRY_RUN=false
 MODEL_FILTER=""
@@ -41,20 +43,20 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown argument: $1" >&2
-            echo "Usage: $0 [--model {hp_vpinn,frontx}] [--dry-run] [--dependency SPEC]" >&2
+            echo "Usage: $0 [--model {hp_vpinn}] [--dry-run] [--dependency SPEC]" >&2
             exit 1
             ;;
     esac
 done
 
 if [[ -n "$MODEL_FILTER" ]]; then
-    if [[ "$MODEL_FILTER" != "hp_vpinn" && "$MODEL_FILTER" != "frontx" ]]; then
-        echo "Error: --model must be hp_vpinn or frontx, got: $MODEL_FILTER" >&2
+    if [[ "$MODEL_FILTER" != "hp_vpinn" ]]; then
+        echo "Error: --model must be hp_vpinn, got: $MODEL_FILTER" >&2
         exit 1
     fi
     MODELS=("$MODEL_FILTER")
 else
-    MODELS=("hp_vpinn" "frontx")
+    MODELS=("hp_vpinn")
 fi
 
 DEP_FLAG=""
@@ -71,7 +73,7 @@ N_WORKERS=5
 # so 120 trials is enough. N_WORKERS stays the same for both so the two
 # models keep the same degree of SLURM parallelism; only the per-worker
 # trial count changes.
-declare -A TRIALS_PER_WORKER=( [hp_vpinn]=50 [frontx]=24 )   # hp_vpinn: 5*50=250; frontx: 5*24=120
+declare -A TRIALS_PER_WORKER=( [hp_vpinn]=50 )   # 5 workers * 50 = 250 trials
 
 # ---------------------------------------------------------------------------
 # Schedule variants, shared by both models
@@ -100,7 +102,7 @@ fi
 echo ""
 
 for MODEL in "${MODELS[@]}"; do
-    LOG_DIR="${MODEL}/logs"
+    LOG_DIR="results/${MODEL}/logs"
     mkdir -p "$LOG_DIR"   # must exist before sbatch, or --output/--error fail at submission
     TPW="${TRIALS_PER_WORKER[$MODEL]}"
 
@@ -117,7 +119,7 @@ for MODEL in "${MODELS[@]}"; do
                 --error=${LOG_DIR}/%x_%j.err \
                 $DEP_FLAG \
                 --export=MODEL=${MODEL},WARMUP_EPOCHS=${WARMUP},TRANSITION_EPOCHS=${TRANSITION},N_TRIALS=${TPW} \
-                slurm_run_hparam_letd.sh"
+                slurm/slurm_run_hparam_letd.sh"
 
             if $DRY_RUN; then
                 echo "    [DRY RUN] $CMD"
