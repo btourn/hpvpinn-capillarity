@@ -1,0 +1,22 @@
+__pycache__/
+.venv/
+
+# Results and data are untracked by design (CLAUDE.md)
+results_*/
+final_runs/
+old_results_original_manuscript/
+quadrature_check_*/
+sensitivity_*/
+__results_r1_provisory/
+logs_postprocess/
+Figures/
+*.db
+
+# Build artefacts
+*.egg-info/
+
+# Personal editor config (settings.json stays tracked)
+.vscode/launch.json
+
+# Backups are forbidden; never commit one by accident
+*.bak
