@@ -1,11 +1,10 @@
 """
-hparam_search_letd.py
+hpvpinn_capillarity.hpo.search_letd
 =======================
 Unified Optuna hyperparameter search for the LETd EXPERIMENTAL inverse
-problem, covering both models via a single --model flag:
+problem, for the hp-VPINN model (selected with --model hp_vpinn):
 
     --model hp_vpinn hp-VPINN weak-form model      (hp_vpinn/)
-    --model frontx   frontx strong-form PINN model (frontx/)
 
 Same architecture as hparam_search_vangenuchten.py (see that file's
 docstring for the full rationale) -- lives at the repo root, results land
@@ -14,8 +13,7 @@ place the dataset is loaded and split, consumed by both branches.
 
 Usage
 -----
-    python hparam_search_letd.py --model hp_vpinn
-    python hparam_search_letd.py --model frontx --n-trials 80
+    python -m hpvpinn_capillarity.hpo.search_letd --model hp_vpinn
 """
 
 import argparse
@@ -30,13 +28,14 @@ import jax
 
 jax.config.update("jax_enable_x64", True)  # noqa: FBT003
 
+from hpvpinn_capillarity import paths
+
 import jax.numpy as jnp
 import numpy as np
 import optax
 import optuna
 from optuna.samplers import TPESampler
 
-REPO_ROOT = Path(__file__).resolve().parent
 
 
 # ---------------------------------------------------------------------------
@@ -96,8 +95,8 @@ E_INIT       = 1.0
 T_INIT       = 0.0
 THETA_R_INIT = 0.01
 
-N_STARTUP_TRIALS = dict(hp_vpinn=25, frontx=15)   # matches search-space dimensionality (5 vs 3)
-STUDY_NAME_PREFIX = dict(hp_vpinn="vpinn_hparam_search_letd", frontx="neural_letd_hparam_search")
+N_STARTUP_TRIALS = dict(hp_vpinn=25)   # matches search-space dimensionality (5 vs 3)
+STUDY_NAME_PREFIX = dict(hp_vpinn="vpinn_hparam_search_letd")
 BASE_RESULTS_DIR = "results_letd"   # same base name for both models, disambiguated
                                      # by which model subdirectory they're written under
 
@@ -107,41 +106,25 @@ BASE_RESULTS_DIR = "results_letd"   # same base name for both models, disambigua
 # ---------------------------------------------------------------------------
 
 def _load_vpinn_backend():
-    hp_vpinn_dir = str(REPO_ROOT / "hp_vpinn")
-    if hp_vpinn_dir not in sys.path:
-        sys.path.insert(0, hp_vpinn_dir)
 
     global FeedForwardNN, CapillarityBoltzmannPDE, PINN
     global BoundedParam, FreeParam, LowerBoundedParam, LETdDiffusivity
     global CapillarityScaling, MeasurementSet, VPINNTrainer, VPINNLoss
     global evaluate_strong_form_rms_vpinn, ACTIVATIONS_VPINN
 
-    from nn_model import FeedForwardNN
-    from pde import CapillarityBoltzmannPDE
-    from pinn_model import PINN
-    from constitutive_model import (
+    from hpvpinn_capillarity.core.nn_model import FeedForwardNN
+    from hpvpinn_capillarity.core.pde import CapillarityBoltzmannPDE
+    from hpvpinn_capillarity.core.pinn_model import PINN
+    from hpvpinn_capillarity.core.constitutive_model import (
         BoundedParam, FreeParam, LowerBoundedParam, LETdDiffusivity,
     )
-    from transformations import CapillarityScaling
-    from datasets import MeasurementSet
-    from train_vpinn import VPINNTrainer
-    from vpinn_loss import VPINNLoss
-    from strong_form_residual import evaluate_strong_form_rms as evaluate_strong_form_rms_vpinn
+    from hpvpinn_capillarity.core.transformations import CapillarityScaling
+    from hpvpinn_capillarity.core.datasets import MeasurementSet
+    from hpvpinn_capillarity.core.train_vpinn import VPINNTrainer
+    from hpvpinn_capillarity.core.vpinn_loss import VPINNLoss
+    from hpvpinn_capillarity.core.strong_form_residual import evaluate_strong_form_rms as evaluate_strong_form_rms_vpinn
 
     ACTIVATIONS_VPINN = {
-        "tanh": jax.nn.tanh, "sigmoid": jax.nn.sigmoid,
-        "swish": jax.nn.swish, "gelu": jax.nn.gelu,
-    }
-
-
-def _load_frontx_backend():
-    global frontx, LETd, ACTIVATIONS_FRONTX
-
-    import frontx
-    import frontx.neural
-    from frontx.models import LETd
-
-    ACTIVATIONS_FRONTX = {
         "tanh": jax.nn.tanh, "sigmoid": jax.nn.sigmoid,
         "swish": jax.nn.swish, "gelu": jax.nn.gelu,
     }
@@ -303,93 +286,6 @@ def run_vpinn_trial(trial, sampled, data, warmup_epochs, transition_epochs):
 
 
 # ---------------------------------------------------------------------------
-# frontx branch
-# ---------------------------------------------------------------------------
-
-def _frontx_chi2_nu(sol, o, theta, std, n_params):
-    pred = np.array(sol(jnp.array(o)), dtype=np.float64)
-    return float(np.sum(((pred - theta) / std) ** 2) / max(len(o) - n_params, 1))
-
-
-def _frontx_get_param(p):
-    v = p.value
-    return float(v() if callable(v) else v)
-
-
-def sample_frontx_hparams(trial: optuna.Trial) -> dict:
-    return dict(
-        nn_n_layers = trial.suggest_int("nn_n_layers", 1, 3),
-        nn_width    = trial.suggest_categorical("nn_width", [8, 12, 16, 24, 32]),
-        activation  = trial.suggest_categorical("activation", ACTIVATIONS_NAMES),
-    )
-
-
-def run_frontx_trial(trial, sampled, data, warmup_epochs, transition_epochs):
-    hparams = dict(
-        **sampled,
-        warmup_epochs=warmup_epochs, transition_epochs=transition_epochs,
-        init_seed=trial.number,
-    )
-
-    D_train = LETd(
-        Dwt         = frontx.Param(value=data["oi"] ** 2, min=0.0),   # matches hp_vpinn's phi_ref**2 exactly
-        L           = frontx.Param(value=L_INIT),
-        E           = frontx.Param(value=E_INIT, min=0.0),
-        T           = frontx.Param(value=T_INIT),
-        theta_range = (frontx.Param(value=THETA_R_INIT, min=0.0, max=float(THETA_I)), float(THETA_S)),
-    )
-
-    t0 = time.perf_counter()
-    sol, history = frontx.neural.fit(
-        D_train,
-        data["o_train"], data["theta_train"], data["std_train"],
-        i=float(THETA_I), b=float(THETA_B),
-        oi=data["oi"],   # shared oi, not derived from o_train alone
-        width=sampled["nn_width"], depth=sampled["nn_n_layers"],
-        activation=ACTIVATIONS_FRONTX[sampled["activation"]],
-        lambda_bc=LAMBDA_BC,
-        key=jax.random.PRNGKey(trial.number),
-        max_steps=MAX_STEPS,
-        warmup_epochs=warmup_epochs, transition_epochs=transition_epochs,
-        freeze_on_convergence=False,   # always run the full budget during HPO
-    )
-    elapsed = time.perf_counter() - t0
-
-    final_total      = float(np.mean(history.total_loss[-10_000:]))
-    final_data       = float(np.mean(history.data_loss[-10_000:]))
-    final_physics    = float(np.mean(history.physics_loss[-10_000:]))
-    final_pde        = float(np.mean(history.pde_loss[-10_000:]))
-    final_dirichlet  = float(np.mean(history.dirichlet_loss[-10_000:]))
-    final_derivative = float(np.mean(history.derivative_loss[-10_000:]))
-
-    if np.isnan(final_physics) or np.isnan(final_data):
-        return hparams, dict(elapsed_s=elapsed), True, None
-
-    chi2_train = _frontx_chi2_nu(sol, data["o_train"], data["theta_train"], data["std_train"], N_PARAMS)
-    chi2_test  = _frontx_chi2_nu(sol, data["o_test"],  data["theta_test"],  data["std_test"],  N_PARAMS)
-
-    strong_form_rms = frontx.neural.evaluate_strong_form_rms(sol, PHI_DENSE)
-
-    D_fit = sol.D
-    recovered = dict(
-        Dwt     = _frontx_get_param(D_fit.Dwt),
-        L       = _frontx_get_param(D_fit.L),
-        E       = _frontx_get_param(D_fit.E),
-        T       = _frontx_get_param(D_fit.T),
-        theta_r = _frontx_get_param(D_fit.theta_range[0]),
-    )
-
-    metrics = dict(
-        chi2_nu_train=chi2_train, chi2_nu_test=chi2_test,
-        final_total=final_total, final_data=final_data, final_physics=final_physics,
-        final_pde=final_pde, final_dirichlet=final_dirichlet, final_derivative=final_derivative,
-        strong_form_rms=strong_form_rms, n_grid_eval=N_GRID,
-        elapsed_s=elapsed,
-    )
-    return hparams, metrics, False, recovered
-
-
-# ---------------------------------------------------------------------------
 # Shared objective machinery
 # ---------------------------------------------------------------------------
 
@@ -397,10 +293,6 @@ BACKENDS = dict(
     hp_vpinn=dict(
         loader=_load_vpinn_backend, prepare=_vpinn_prepare,
         sample=sample_vpinn_hparams, run_trial=run_vpinn_trial,
-    ),
-    frontx=dict(
-        loader=_load_frontx_backend, prepare=lambda shared: shared,
-        sample=sample_frontx_hparams, run_trial=run_frontx_trial,
     ),
 )
 
@@ -480,10 +372,10 @@ def _save_result(path, trial_number, hparams, metrics, failed, pruned=False):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Unified hp-VPINN / frontx hyperparameter search — LETd (experimental)"
+        description="hp-VPINN hyperparameter search — LETd (experimental)"
     )
-    parser.add_argument("--model", required=True, choices=["hp_vpinn", "frontx"])
-    parser.add_argument("--data", default=str(REPO_ROOT / "data_letd.dat"),
+    parser.add_argument("--model", required=True, choices=["hp_vpinn"])
+    parser.add_argument("--data", default=str(paths.data_file("data_letd.dat")),
                         help="Path to the single canonical experimental dataset "
                              "(phi, theta, std columns), shared by both models.")
     parser.add_argument("--n-trials", type=int, default=50)
@@ -503,7 +395,7 @@ def main():
     base_results_dir = args.results_dir or BASE_RESULTS_DIR
     study_prefix      = args.study_name or STUDY_NAME_PREFIX[model]
 
-    results_dir = REPO_ROOT / model / f"{base_results_dir}_{sched_tag}"
+    results_dir = paths.model_dir(model) / f"{base_results_dir}_{sched_tag}"
     results_dir.mkdir(parents=True, exist_ok=True)
 
     results_path = results_dir / "hparam_results_letd.jsonl"

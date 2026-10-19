@@ -1,5 +1,5 @@
 """
-hparam_search_brooks_corey_new.py
+hpvpinn_capillarity.hpo.search_brooks_corey_new
 ==============================
 Unified Optuna hyperparameter search for the Brooks-Corey inverse problem
 (synthetic case derived from Grenoble sand: exact curve generated with frontx,
@@ -7,7 +7,6 @@ then corrupted with Gaussian noise), covering BOTH candidate models via a
 single --model flag:
 
     --model hp_vpinn hp-VPINN weak-form model      (hp_vpinn/)
-    --model frontx   frontx strong-form PINN model (frontx/)
 
 Unknowns (2): KsAlpha = Ks/alpha  and  n.   Fixed: l = 1, theta_r = 0, alpha = 1
 (frontx side: only Ks/alpha is identifiable, so alpha is pinned to 1 and the
@@ -19,9 +18,7 @@ model's own subdirectory.
 
 Usage
 -----
-    python hparam_search_brooks_corey_new.py --model hp_vpinn --noise-level 0.01
-    python hparam_search_brooks_corey_new.py --model frontx   --noise-level 0.01
-    python hparam_search_brooks_corey_new.py --model frontx   --noise-level 0.01 --n-trials 80
+    python -m hpvpinn_capillarity.hpo.search_brooks_corey_new --model hp_vpinn --noise-level 0.01
 """
 
 import argparse
@@ -39,13 +36,14 @@ import jax
 # harmless.
 jax.config.update("jax_enable_x64", True)  # noqa: FBT003
 
+from hpvpinn_capillarity import paths
+
 import jax.numpy as jnp
 import numpy as np
 import optax
 import optuna
 from optuna.samplers import TPESampler
 
-REPO_ROOT = Path(__file__).resolve().parent
 
 
 # ---------------------------------------------------------------------------
@@ -118,9 +116,8 @@ STAGE = "search"
 ACTIVATIONS_NAMES = ["tanh", "sigmoid", "swish", "gelu"]
 
 # Per-model fixed settings that legitimately differ
-N_STARTUP_TRIALS = dict(hp_vpinn=25, frontx=15)
-STUDY_NAME_PREFIX = dict(hp_vpinn="vpinn_hparam_search_brooks_corey_new",
-                         frontx="neural_hparam_search_brooks_corey_new")
+N_STARTUP_TRIALS = dict(hp_vpinn=25)
+STUDY_NAME_PREFIX = dict(hp_vpinn="vpinn_hparam_search_brooks_corey_new")
 BASE_RESULTS_DIR  = "results_brooks_corey_new"  # same base name for both models --
                                                 # disambiguated by model subdirectory
 
@@ -130,41 +127,25 @@ BASE_RESULTS_DIR  = "results_brooks_corey_new"  # same base name for both models
 # ---------------------------------------------------------------------------
 
 def _load_vpinn_backend():
-    hp_vpinn_dir = str(REPO_ROOT / "hp_vpinn")
-    if hp_vpinn_dir not in sys.path:
-        sys.path.insert(0, hp_vpinn_dir)
 
     global FeedForwardNN, CapillarityBoltzmannPDE, PINN
     global FixedParam, LowerBoundedParam, BrooksAndCoreyDiffusivity
     global CapillarityScaling, MeasurementSet, VPINNTrainer, VPINNLoss
     global evaluate_strong_form_rms_vpinn, ACTIVATIONS_VPINN
 
-    from nn_model import FeedForwardNN
-    from pde import CapillarityBoltzmannPDE
-    from pinn_model import PINN
-    from constitutive_model import (
+    from hpvpinn_capillarity.core.nn_model import FeedForwardNN
+    from hpvpinn_capillarity.core.pde import CapillarityBoltzmannPDE
+    from hpvpinn_capillarity.core.pinn_model import PINN
+    from hpvpinn_capillarity.core.constitutive_model import (
         FixedParam, LowerBoundedParam, BrooksAndCoreyDiffusivity,
     )
-    from transformations import CapillarityScaling
-    from datasets import MeasurementSet
-    from train_vpinn import VPINNTrainer
-    from vpinn_loss import VPINNLoss
-    from strong_form_residual import evaluate_strong_form_rms as evaluate_strong_form_rms_vpinn
+    from hpvpinn_capillarity.core.transformations import CapillarityScaling
+    from hpvpinn_capillarity.core.datasets import MeasurementSet
+    from hpvpinn_capillarity.core.train_vpinn import VPINNTrainer
+    from hpvpinn_capillarity.core.vpinn_loss import VPINNLoss
+    from hpvpinn_capillarity.core.strong_form_residual import evaluate_strong_form_rms as evaluate_strong_form_rms_vpinn
 
     ACTIVATIONS_VPINN = {
-        "tanh": jax.nn.tanh, "sigmoid": jax.nn.sigmoid,
-        "swish": jax.nn.swish, "gelu": jax.nn.gelu,
-    }
-
-
-def _load_frontx_backend():
-    global frontx, BrooksAndCorey, ACTIVATIONS_FRONTX
-
-    import frontx
-    import frontx.neural
-    from frontx.models import BrooksAndCorey
-
-    ACTIVATIONS_FRONTX = {
         "tanh": jax.nn.tanh, "sigmoid": jax.nn.sigmoid,
         "swish": jax.nn.swish, "gelu": jax.nn.gelu,
     }
@@ -356,96 +337,6 @@ def run_vpinn_trial(trial, sampled, data, noise_level, warmup_epochs, transition
 
 
 # ---------------------------------------------------------------------------
-# frontx branch
-# ---------------------------------------------------------------------------
-
-def _frontx_chi2_nu(sol, o, theta, sigma, n_params):
-    pred = np.array(sol(jnp.array(o)), dtype=np.float64)
-    n = len(o)
-    if sigma > 0.0:
-        return float(np.sum(((pred - theta) / sigma) ** 2) / max(n - n_params, 1))
-    return float(np.mean((pred - theta) ** 2))
-
-
-def _frontx_get_param(p):
-    v = p.value
-    return float(v() if callable(v) else v)
-
-
-def sample_frontx_hparams(trial: optuna.Trial) -> dict:
-    return dict(
-        nn_n_layers = trial.suggest_int("nn_n_layers", 1, 3),
-        nn_width    = trial.suggest_categorical("nn_width", [8, 12, 16, 24, 32]),
-        activation  = trial.suggest_categorical("activation", ACTIVATIONS_NAMES),
-    )
-
-
-def run_frontx_trial(trial, sampled, data, noise_level, warmup_epochs, transition_epochs):
-    hparams = dict(
-        **sampled,
-        warmup_epochs=warmup_epochs, transition_epochs=transition_epochs,
-        noise_level=noise_level, init_seed=trial.number,
-    )
-
-    # Exactly two trainable parameters. D depends only on Ks/alpha, so alpha
-    # is pinned to 1 and the fitted Ks equals KsAlpha = Ks/alpha.
-    D_train = BrooksAndCorey(
-        Ks          = frontx.Param(value=KSALPHA_INIT, min=0.0),
-        n           = frontx.Param(value=N_INIT, min=0.0),
-        l           = L_FIXED,
-        alpha       = 1.0,
-        theta_range = (THETA_R, THETA_S),
-    )
-
-    sigma_fit = noise_level if noise_level > 0.0 else None
-    t0 = time.perf_counter()
-    sol, history = frontx.neural.fit(
-        D_train,
-        data["o_train"], data["theta_train"], sigma_fit,
-        i=I_BC, b=B_BC,
-        oi=data["oi"],  # shared oi, not derived from o_train alone
-        width=sampled["nn_width"], depth=sampled["nn_n_layers"],
-        activation=ACTIVATIONS_FRONTX[sampled["activation"]],
-        key=jax.random.PRNGKey(trial.number),
-        max_steps=MAX_STEPS,
-        warmup_epochs=warmup_epochs, transition_epochs=transition_epochs,
-        lambda_bc=LAMBDA_BC,
-        freeze_on_convergence=False,  # always run the full budget during HPO
-    )
-    elapsed = time.perf_counter() - t0
-
-    final_total      = float(np.mean(history.total_loss[-10_000:]))
-    final_data       = float(np.mean(history.data_loss[-10_000:]))
-    final_physics    = float(np.mean(history.physics_loss[-10_000:]))
-    final_pde        = float(np.mean(history.pde_loss[-10_000:]))
-    final_dirichlet  = float(np.mean(history.dirichlet_loss[-10_000:]))
-    final_derivative = float(np.mean(history.derivative_loss[-10_000:]))
-
-    if np.isnan(final_physics) or np.isnan(final_data):
-        return hparams, dict(elapsed_s=elapsed), True, None
-
-    sigma_eval = noise_level if noise_level > 0.0 else 0.0
-    chi2_train = _frontx_chi2_nu(sol, data["o_train"], data["theta_train"], sigma_eval, N_PARAMS)
-    chi2_test  = _frontx_chi2_nu(sol, data["o_test"],  data["theta_test"],  sigma_eval, N_PARAMS)
-
-    strong_form_rms = frontx.neural.evaluate_strong_form_rms(sol, PHI_DENSE)
-
-    recovered = dict(
-        KsAlpha = _frontx_get_param(sol.D.Ks),  # alpha == 1  =>  Ks == Ks/alpha
-        n       = _frontx_get_param(sol.D.n),
-    )
-
-    metrics = dict(
-        chi2_nu_train=chi2_train, chi2_nu_test=chi2_test,
-        final_total=final_total, final_data=final_data, final_physics=final_physics,
-        final_pde=final_pde, final_dirichlet=final_dirichlet, final_derivative=final_derivative,
-        strong_form_rms=strong_form_rms, n_grid_eval=N_GRID,
-        elapsed_s=elapsed,
-    )
-    return hparams, metrics, False, recovered
-
-
-# ---------------------------------------------------------------------------
 # Shared objective machinery
 # ---------------------------------------------------------------------------
 
@@ -453,10 +344,6 @@ BACKENDS = dict(
     hp_vpinn=dict(
         loader=_load_vpinn_backend, prepare=_vpinn_prepare,
         sample=sample_vpinn_hparams, run_trial=run_vpinn_trial,
-    ),
-    frontx=dict(
-        loader=_load_frontx_backend, prepare=lambda shared: shared,  # frontx consumes shared dict as-is
-        sample=sample_frontx_hparams, run_trial=run_frontx_trial,
     ),
 )
 
@@ -536,10 +423,10 @@ def main():
     valid_noise_strs = [str(s) for s in NOISE_LEVELS]
 
     parser = argparse.ArgumentParser(
-        description="Unified hp-VPINN / frontx hyperparameter search — Brooks and Corey (new, noisy)"
+        description="hp-VPINN hyperparameter search — Brooks and Corey (new, noisy)"
     )
-    parser.add_argument("--model", required=True, choices=["hp_vpinn", "frontx"])
-    parser.add_argument("--data", default=str(REPO_ROOT / "data_brooks_corey_new.dat"),
+    parser.add_argument("--model", required=True, choices=["hp_vpinn"])
+    parser.add_argument("--data", default=str(paths.data_file("data_brooks_corey_new.dat")),
                         help="Path to the single canonical noise-free, comma-separated "
                              "reference curve (o, theta), shared by both models.")
     parser.add_argument("--n-trials", type=int, default=50)
@@ -566,7 +453,7 @@ def main():
     base_results_dir = args.results_dir or BASE_RESULTS_DIR
     study_prefix      = args.study_name or STUDY_NAME_PREFIX[model]
 
-    results_dir = REPO_ROOT / model / f"{base_results_dir}_{sched_tag}_{noise_tag}"
+    results_dir = paths.model_dir(model) / f"{base_results_dir}_{sched_tag}_{noise_tag}"
     results_dir.mkdir(parents=True, exist_ok=True)
 
     results_path = results_dir / f"hparam_results_{noise_tag}.jsonl"

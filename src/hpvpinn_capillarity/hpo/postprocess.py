@@ -14,25 +14,19 @@ Two figures are produced per study:
 
 Location and layout
 -------------------
-This file lives at the repo root, next to the hparam_search_<case>.py
-scripts and the two model subdirectories:
+The results of the searches are read from (see hpvpinn_capillarity.paths):
 
-    <repo>/hparam_postprocess.py
-    <repo>/hp_vpinn/results_<case>_<es|gb>[_<n>pct_noise]/hparam_results_*.jsonl
-    <repo>/frontx/results_<case>_<es|gb>[_<n>pct_noise]/hparam_results_*.jsonl
+    <results>/hp_vpinn/results_<case>_<es|gb>[_<n>pct_noise]/hparam_results_*.jsonl
 
---model selects which subdirectory is read. By default, figures and LaTeX
-tables go to <repo>/<model>/Figures (as when the script lived inside each
-model directory); per-run CSVs go to the run's own results directory.
+By default, figures and LaTeX tables go to <results>/<model>/Figures;
+per-run CSVs go to the run's own results directory.
 
 Usage
 -----
-    python hparam_postprocess.py --model hp_vpinn --case letd --es-or-gb gb
-    python hparam_postprocess.py --model frontx --case grenoblesand --es-or-gb gb --noise-level 0.01
-    python hparam_postprocess.py --model hp_vpinn --case brooks_corey_new --es-or-gb es --noise-level 0.01
-    python hparam_postprocess.py --model frontx   --case brooks_corey_new --es-or-gb es --noise-level 0.01
-    python hparam_postprocess.py --model hp_vpinn --trial-counts
-    python hparam_postprocess.py --model hp_vpinn --winners
+    python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --case letd --es-or-gb gb
+    python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --case brooks_corey_new --es-or-gb es --noise-level 0.01
+    python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --trial-counts
+    python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --winners
 
 --winners builds the winning-architecture summary for every case,
 configuration and noise level of one model (non-admissible winners
@@ -56,6 +50,8 @@ import pandas as pd
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from hpvpinn_capillarity import paths
+
 
 # ---------------------------------------------------------------------------
 # LaTeX configuration
@@ -78,25 +74,22 @@ matplotlib.rcParams.update({
 # Models and repository layout
 # ---------------------------------------------------------------------------
 
-REPO_ROOT = Path(__file__).resolve().parent
-
-# --model values are also the subdirectory names under REPO_ROOT, exactly as
-# in the hparam_search_<case>.py scripts.
-MODELS = ("hp_vpinn", "frontx")
+# --model values are also the subdirectory names under the results root, exactly
+# as in the search scripts.
+MODELS = ("hp_vpinn",)
 
 # Configuration label used in the trial-count table, per model
 # (matches the manuscript macros / naming: \hpVPINN-es, PINN-gb, ...).
 MODEL_CONFIG_LABEL = {
     "hp_vpinn": r"\hpVPINN-",
-    "frontx":   "PINN-",
 }
 
 
 def model_dir(model: str) -> Path:
-    """Root directory of one model's results (<repo>/<model>)."""
+    """Root directory of one model's results (<results>/<model>)."""
     if model not in MODELS:
         raise ValueError(f"Unknown model {model!r}; expected one of {MODELS}")
-    return REPO_ROOT / model
+    return paths.model_dir(model)
 
 
 def default_figures_dir(model: str) -> str:
