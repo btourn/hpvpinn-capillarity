@@ -16,7 +16,7 @@ epoch below is the one an online implementation would produce; only the stop *ti
 (t_compile + stop_epoch * per_epoch).
 
 Usage (from the repo root):
-  python hp_vpinn/early_stopping_analysis.py --root hp_vpinn/final_runs --out hp_vpinn/Figures/early_stopping
+  python -m hpvpinn_capillarity.analysis.early_stopping
   # optional: --tags grenoblesand_gb_1pct_noise grenoblesand_gb_2pct_noise letd_gb
 """
 import argparse, csv, json

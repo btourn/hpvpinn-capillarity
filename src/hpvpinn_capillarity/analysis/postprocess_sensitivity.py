@@ -43,10 +43,10 @@ non-diverged runs, and the largest physics-metric value among accepted runs
 
 Usage
 -----
-  python postprocess_sensitivity.py --list-studies
-  python postprocess_sensitivity.py                        # gb, 1%, stride
-  python postprocess_sensitivity.py --noise-level 0.02     # the 2% case
-  python postprocess_sensitivity.py --physics-metric train # previous rule
+  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --list-studies
+  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity                        # gb, 1%, stride
+  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --noise-level 0.02     # the 2% case
+  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --physics-metric train # previous rule
 """
 
 import argparse

@@ -55,11 +55,11 @@ postprocess_sensitivity.py.
 
 Usage
 -----
-  python sensitivity_noise_density.py --list
-  python sensitivity_noise_density.py --show-winner      # check the frozen config, no training
-  python sensitivity_noise_density.py --task-id 0 --n-tasks 20
-  python sensitivity_noise_density.py --run-index 0          # single run
-  python sensitivity_noise_density.py --schedule gb --noise-level 0.01 \\
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --list
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --show-winner      # check the frozen config, no training
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --task-id 0 --n-tasks 20
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --run-index 0          # single run
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --schedule gb --noise-level 0.01 \\
          --n-realisations 25 --fractions 1.0 0.5 0.25 0.125 --subsample stride
 """
 

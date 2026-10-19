@@ -7,23 +7,23 @@ final run is, the outputs, and the options.
 
 Usage
 -----
-    # configuration selected by hparam_postprocess.py --winners, 10 fresh seeds
-    python grenoblesand.py --noise-level 0.01
-    python grenoblesand.py --noise-level 0.02 --n-seeds 5
+    # configuration selected by hpvpinn_capillarity.hpo.postprocess --winners, 10 fresh seeds
+    python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01
+    python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.02 --n-seeds 5
 
     # the winner of a given schedule instead of the selected one
-    python grenoblesand.py --noise-level 0.01 --schedule es
+    python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --schedule es
 
     # user-defined configuration
-    python grenoblesand.py --noise-level 0.01 --schedule gb \\
+    python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --schedule gb \\
         --arch "W=16,L=2,act=tanh,Nel=30,p=5"
 
     # quick smoke test (separate run directory, tag suffix _ep2000)
-    python grenoblesand.py --noise-level 0.01 --n-seeds 2 --epochs 2000
+    python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --n-seeds 2 --epochs 2000
 
     # rebuild figures and tables from the saved seeds (no training, no JAX)
-    python grenoblesand.py --noise-level 0.01 --aggregate-only
-    python grenoblesand.py --noise-level 0.01 --show-config
+    python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --aggregate-only
+    python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --show-config
 """
 
 from pathlib import Path

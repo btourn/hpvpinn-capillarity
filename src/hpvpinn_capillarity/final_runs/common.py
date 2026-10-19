@@ -22,7 +22,7 @@ and reports the ensemble:
 Configuration
 -------------
 Default: the configuration selected for the case by
-    hparam_postprocess.py --model hp_vpinn --winners
+    hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --winners
 i.e. winners.json["selected"][<case>[_<n>pct_noise]] (the -es/-gb winner
 whose final_physics is below the threshold).
     --schedule es|gb     use that schedule's winner instead
@@ -223,7 +223,7 @@ def resolve_config(spec: CaseSpec, args) -> dict:
 
     wpath = Path(args.winners) if args.winners else paths.model_dir(MODEL) / "Figures" / "winners.json"
     if not wpath.exists():
-        raise SystemExit(f"{wpath} not found. Run 'python hparam_postprocess.py --model {MODEL} "
+        raise SystemExit(f"{wpath} not found. Run 'python -m hpvpinn_capillarity.hpo.postprocess --model {MODEL} "
                          f"--winners' first, or pass --winners PATH, or use --arch.")
     payload = json.loads(wpath.read_text())
 
@@ -235,7 +235,7 @@ def resolve_config(spec: CaseSpec, args) -> dict:
         tag = payload.get("selected", {}).get(key)
         if tag is None:
             raise SystemExit(f"No selected configuration for {key!r} in {wpath} "
-                             f"(re-run hparam_postprocess.py --winners, or pass --schedule).")
+                             f"(re-run the post-processing with --winners, or pass --schedule).")
         how = "selected (winners.json)"
 
     entry = payload["winners"].get(tag)

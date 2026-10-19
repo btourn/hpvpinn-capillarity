@@ -24,16 +24,16 @@ Place at the repo root, next to hparam_search_grenoblesand.py.
 Usage
 -----
     # everything, serially (slow: see README note in the job commands)
-    python quadrature_check_grenoblesand.py
+    python -m hpvpinn_capillarity.analysis.quadrature_check
 
     # one Q_train, all seeds (one SLURM job per Q_train)
-    python quadrature_check_grenoblesand.py --q-train 16
+    python -m hpvpinn_capillarity.analysis.quadrature_check --q-train 16
 
     # smoke test (seconds): one run, few steps
-    python quadrature_check_grenoblesand.py --q-train 10 --seeds 1 --epochs 2000 --out-dir /tmp/qc_smoke
+    python -m hpvpinn_capillarity.analysis.quadrature_check --q-train 10 --seeds 1 --epochs 2000 --out-dir /tmp/qc_smoke
 
     # aggregate existing runs
-    python quadrature_check_grenoblesand.py --summarize
+    python -m hpvpinn_capillarity.analysis.quadrature_check --summarize
 """
 
 import argparse

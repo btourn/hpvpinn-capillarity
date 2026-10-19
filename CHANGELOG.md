@@ -39,6 +39,19 @@ are not comparable number by number with those of the original submission.
 ### Repository
 
 - The layout of the original submission (`src/hpvpinn/`, `experiments/`,
-  `postprocessing/`, `figures/`, `data/`, `results/`) is replaced by the
-  layout described in `README.md`. It remains available in `v1.0-submission`.
-- `PROVENANCE.md` records the source commits and the sha256 of the copied files.
+  `postprocessing/`, `figures/`, `data/`, `results/`) is replaced. It remains
+  available in `v1.0-submission`.
+- The code is an installable package, `hpvpinn_capillarity` (`src/` layout), with
+  the subpackages `core`, `hpo`, `final_runs`, `analysis` and `conventional`, a
+  `paths` module that defines where data and results are read and written, and a
+  single environment at the repository root (`uv sync`). Importing the package
+  enables 64-bit precision.
+- Data files are in `data/`; recorded outputs are in `results/` with the layout
+  the scripts write to (`results/hp_vpinn/...`, `results/multistart/`,
+  `results/conventional/`). The location of data and results can be set with the
+  environment variables `HPVPINN_DATA` and `HPVPINN_RESULTS`.
+- The collocation-PINN (`frontx`) backend of the search drivers is not part of
+  the package; the search drivers accept only `--model hp_vpinn`.
+- The scripts are run as modules (`python -m hpvpinn_capillarity....`); the SLURM
+  launchers in `slurm/` do the same and change to the repository root themselves.
+- `PROVENANCE.md` records where every file comes from and how it changed.

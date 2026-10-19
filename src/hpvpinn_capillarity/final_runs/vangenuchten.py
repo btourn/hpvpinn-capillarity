@@ -14,21 +14,21 @@ with the data (no synthetic noise, hence no --noise-level).
 
 Usage
 -----
-    # configuration selected by hparam_postprocess.py --winners, 10 fresh seeds
-    uv run python vangenuchten.py
+    # configuration selected by hpvpinn_capillarity.hpo.postprocess --winners, 10 fresh seeds
+    python -m hpvpinn_capillarity.final_runs.vangenuchten
 
     # the winner of a given schedule instead of the selected one
-    uv run python vangenuchten.py --schedule es
+    python -m hpvpinn_capillarity.final_runs.vangenuchten --schedule es
 
     # user-defined configuration
-    uv run python vangenuchten.py --schedule gb --arch "W=16,L=2,act=tanh,Nel=30,p=5"
+    python -m hpvpinn_capillarity.final_runs.vangenuchten --schedule gb --arch "W=16,L=2,act=tanh,Nel=30,p=5"
 
     # smoke test (separate run directory, tag suffix _ep2000)
-    uv run python vangenuchten.py --n-seeds 2 --epochs 2000
+    python -m hpvpinn_capillarity.final_runs.vangenuchten --n-seeds 2 --epochs 2000
 
     # rebuild figures and tables from the saved seeds (no training)
-    uv run python vangenuchten.py --aggregate-only
-    uv run python vangenuchten.py --show-config
+    python -m hpvpinn_capillarity.final_runs.vangenuchten --aggregate-only
+    python -m hpvpinn_capillarity.final_runs.vangenuchten --show-config
 """
 
 from hpvpinn_capillarity import paths

@@ -15,17 +15,17 @@ from the repo root (the SLURM script does so).
 
 Workflow
 --------
-  1. python hp_vpinn/multistart.py manifest     # writes <repo>/multistart/manifest.csv (no JAX)
+  1. python -m hpvpinn_capillarity.analysis.multistart manifest     # writes <results>/multistart/manifest.csv (no JAX)
   2. sbatch --array=0-<N-1>%100 slurm_run_multistart.sh
-  3. python hp_vpinn/multistart.py aggregate    # tables, figures, console digest (no JAX)
+  3. python -m hpvpinn_capillarity.analysis.multistart aggregate    # tables, figures, console digest (no JAX)
 
 Smoke test (2000 epochs, separate run directory with suffix _ep2000; ignored by aggregate):
-  python hp_vpinn/multistart.py run --task-id 0 --epochs 2000
+  python -m hpvpinn_capillarity.analysis.multistart run --task-id 0 --epochs 2000
 
 Outputs
 -------
   <repo>/hp_vpinn/final_runs/<tag>_multistart/run_<id>/seeds/seed_<seed>/...   (as final runs)
-  <repo>/multistart/manifest.csv
+  <results>/multistart/manifest.csv
   <repo>/multistart/summary_<block>.csv, latex_multistart_<block>.tex,
   <repo>/multistart/multistart_<block>.eps, multistart_summary.json
 

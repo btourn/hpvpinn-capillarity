@@ -18,8 +18,8 @@ Bridge between the hp-VPINN final runs and the exact-solver forward check
 
 Place it at the repo root (next to benchmark_conventional.py) and run it from there.
 
-    python3 final_runs_to_forward_check.py                 # convert the four tags below
-    python3 final_runs_to_forward_check.py --summarise     # after the forward checks
+    python3 -m hpvpinn_capillarity.conventional.forward_check_bridge                 # convert the four tags below
+    python3 -m hpvpinn_capillarity.conventional.forward_check_bridge --summarise     # after the forward checks
 """
 import argparse
 import csv

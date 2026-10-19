@@ -31,13 +31,13 @@ Modes
 
 Usage
 -----
-    python benchmark_conventional.py --case letd --pilot --dry-run
-    python benchmark_conventional.py --case grenoblesand --noise-level 0.02 --profile-scan
-    python benchmark_conventional.py --case letd --seeds 0 --max-minutes 60
-    python benchmark_conventional.py --case grenoblesand --noise-level 0.02 --pilot
-    python benchmark_conventional.py --case letd --pilot
-    python benchmark_conventional.py --case vangenuchten --seeds 0 1 2 3 4 5 6 7 8 9
-    python benchmark_conventional.py --case brooks_corey --seeds 0-19 --preset upstream
+    python -m hpvpinn_capillarity.conventional.benchmark --case letd --pilot --dry-run
+    python -m hpvpinn_capillarity.conventional.benchmark --case grenoblesand --noise-level 0.02 --profile-scan
+    python -m hpvpinn_capillarity.conventional.benchmark --case letd --seeds 0 --max-minutes 60
+    python -m hpvpinn_capillarity.conventional.benchmark --case grenoblesand --noise-level 0.02 --pilot
+    python -m hpvpinn_capillarity.conventional.benchmark --case letd --pilot
+    python -m hpvpinn_capillarity.conventional.benchmark --case vangenuchten --seeds 0 1 2 3 4 5 6 7 8 9
+    python -m hpvpinn_capillarity.conventional.benchmark --case brooks_corey --seeds 0-19 --preset upstream
 
 Results are appended (one JSON record per line) to
     conventional/results_<case>[_<k>pct_noise].jsonl

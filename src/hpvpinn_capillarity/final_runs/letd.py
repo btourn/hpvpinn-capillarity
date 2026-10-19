@@ -14,21 +14,21 @@ synthetic noise, hence no --noise-level). Same dataset as Case 2.
 
 Usage
 -----
-    # configuration selected by hparam_postprocess.py --winners, 10 fresh seeds
-    uv run python letd.py
+    # configuration selected by hpvpinn_capillarity.hpo.postprocess --winners, 10 fresh seeds
+    python -m hpvpinn_capillarity.final_runs.letd
 
     # the winner of a given schedule instead of the selected one
-    uv run python letd.py --schedule es
+    python -m hpvpinn_capillarity.final_runs.letd --schedule es
 
     # user-defined configuration
-    uv run python letd.py --schedule gb --arch "W=16,L=2,act=tanh,Nel=30,p=5"
+    python -m hpvpinn_capillarity.final_runs.letd --schedule gb --arch "W=16,L=2,act=tanh,Nel=30,p=5"
 
     # smoke test (separate run directory, tag suffix _ep2000)
-    uv run python letd.py --n-seeds 2 --epochs 2000
+    python -m hpvpinn_capillarity.final_runs.letd --n-seeds 2 --epochs 2000
 
     # rebuild figures and tables from the saved seeds (no training)
-    uv run python letd.py --aggregate-only
-    uv run python letd.py --show-config
+    python -m hpvpinn_capillarity.final_runs.letd --aggregate-only
+    python -m hpvpinn_capillarity.final_runs.letd --show-config
 """
 
 from hpvpinn_capillarity import paths
