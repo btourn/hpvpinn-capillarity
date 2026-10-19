@@ -196,7 +196,7 @@ The recommendations below summarise the protocol of the manuscript and the
 evidence in its Discussion and Supplementary Information (SI). They describe
 what was done and observed for the four cases; the thresholds were fixed
 empirically and their transfer to other data was not tested. The simplest
-route is to copy `hparam_search_<case>.py` and `hp_vpinn/<case>.py` of the
+route is to copy `hpo/search_<case>.py` and `final_runs/<case>.py` of the
 closest case and adapt the data, the constants and the model.
 
 **Scope.** The framework applies to one-dimensional horizontal flow with
@@ -224,7 +224,7 @@ diffusivities, with parameters declared as fixed, free or bounded.
 **2. Choose the parameter ranges and the initial values.**
 - The initial values are fixed in the search drivers, so the ranking of
   architectures is conditional on them. Run several starting points
-  (`hp_vpinn/multistart.py`). In Case 1, about 40-50 % of the starts did not
+  (`analysis/multistart.py`). In Case 1, about 40-50 % of the starts did not
   converge, and the non-convergent runs are flagged by `obj`.
 - Bounds that exclude the true value are not detected by the fit: qualified
   runs ended on or next to the bound with errors of 12-240 % in a parameter.
@@ -246,7 +246,7 @@ diffusivities, with parameters declared as fixed, free or bounded.
 - The physics loss at the training nodes can underestimate its value at held-out
   nodes (a factor of about 30 at $Q=24$ in Case 1), so judge enforcement on the
   held-out evaluation and on the strong-form residual
-  (`strong_form_residual.py`).
+  (`core/strong_form_residual.py`).
 
 **4. Interpret the convergence.**
 - In Case 1 the data loss falls below the nominal noise level within about
