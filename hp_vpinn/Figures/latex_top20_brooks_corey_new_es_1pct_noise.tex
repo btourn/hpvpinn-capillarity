@@ -1,0 +1,29 @@
+\begin{tabular}{lcc cccc ccccccc cc}
+\toprule
+& & & \multicolumn{4}{c}{Optimal HPs} & \multicolumn{7}{c}{Metrics} & \multicolumn{2}{c}{Recovery error} \\
+\cmidrule(lr){4-7}\cmidrule(lr){8-14}\cmidrule(lr){15-16}
+& Trial & Time & W$\times$L & Act. & $N_{\mathrm{el}}$ & $p$ & $\chi^2_{\nu,\mathrm{train}}$ & $\chi^2_{\nu,\mathrm{test}}$ & $\mathrm{obj}$ & $\mathcal{L}_{\mathrm{physics}}^{\mathrm{train}}$ & $\mathcal{L}_{\mathrm{pde}}^{\mathrm{train}}$ & $\mathcal{L}_{\mathrm{pde}}^{\mathrm{eval}}$ & $r_{\mathrm{RMS}}^{\mathrm{strong}}$ & $\varepsilon_{K_{\mathrm{s}}/\alpha}$ & $\varepsilon_{n}$ \\
+No. & No. & [s] &  &  &  &  &  &  &  & $\times 10^{-6}$ & $\times 10^{-6}$ & $\times 10^{-5}$ & $\times 10^{-1}$ & [\%] & [\%] \\
+\midrule
+  1 & 112$^\dagger$ & 313.1 & 24$\times$3 & tanh & 20 & 6 & \num{0.3228} & \num{0.7323} & \num{1.055} & 16.55 & 16.55 & 1.74 & 35.04 & \num{99.95} & \num{5.276e+06} \\
+  2 & 109$^\dagger$ & 308.5 & 24$\times$3 & tanh & 20 & 6 & \num{0.3229} & \num{0.7749} & \num{1.098} & 17.82 & 17.82 & 1.93 & 12.25 & \num{99.96} & \num{6.597e+06} \\
+  3 & 19$^\dagger$ & 56.6 & 12$\times$2 & tanh & 10 & 3 & \num{0.3927} & \num{0.718} & \num{1.111} & 14.72 & 14.72 & 128.65 & 13.85 & \num{99.94} & \num{5.916e+06} \\
+  4 & 131$^\dagger$ & 396.8 & 24$\times$3 & sigmoid & 20 & 3 & \num{0.3266} & \num{0.8221} & \num{1.149} & 9.11 & 9.11 & 71.76 & 55.08 & \num{99.96} & \num{7.085e+06} \\
+  5 & 57$^\dagger$ & 55.7 & 8$\times$2 & gelu & 10 & 6 & \num{0.5427} & \num{0.6094} & \num{1.152} & 263.84 & 263.84 & 106.33 & 198.54 & \num{4.967e+04} & \num{3.869e+05} \\
+  6 & 182$^\dagger$ & 179.0 & 8$\times$3 & sigmoid & 30 & 3 & \num{0.4101} & \num{0.7582} & \num{1.168} & 20.35 & 20.35 & 17.98 & 55.16 & \num{99.99} & \num{3.011e+05} \\
+  7 & 173$^\dagger$ & 104.4 & 24$\times$2 & tanh & 10 & 4 & \num{0.3729} & \num{0.819} & \num{1.192} & 16.88 & 16.88 & 72.41 & 14.99 & \num{99.95} & \num{6.077e+06} \\
+  8 & 206$^\dagger$ & 306.3 & 24$\times$3 & tanh & 20 & 4 & \num{0.3254} & \num{0.8836} & \num{1.209} & 25.40 & 25.40 & 2.65 & 13.33 & \num{99.97} & \num{1.043e+07} \\
+  9 & 96$^\dagger$ & 156.9 & 8$\times$3 & swish & 20 & 6 & \num{0.4299} & \num{0.7797} & \num{1.21} & 14.72 & 14.72 & 6.17 & 14.79 & \num{99.95} & \num{6.823e+06} \\
+  10 & 34$^\dagger$ & 183.5 & 8$\times$3 & tanh & 40 & 6 & \num{0.3507} & \num{0.8595} & \num{1.21} & 10.53 & 10.52 & 1.55 & 10.46 & \num{99.93} & \num{4.743e+06} \\
+  11 & 194$^\dagger$ & 181.2 & 24$\times$3 & tanh & 10 & 4 & \num{0.3233} & \num{0.8885} & \num{1.212} & 8.59 & 8.59 & 259.99 & 19.70 & \num{99.95} & \num{5.679e+06} \\
+  12 & 18$^\dagger$ & 57.7 & 12$\times$2 & tanh & 10 & 3 & \num{0.4087} & \num{0.8034} & \num{1.212} & 18.31 & 18.31 & 116.90 & 12.73 & \num{99.96} & \num{7.263e+06} \\
+  13 & 71$^\dagger$ & 70.2 & 8$\times$2 & tanh & 20 & 6 & \num{0.4037} & \num{0.8168} & \num{1.221} & 22.59 & 22.59 & 3.89 & 8.68 & \num{99.94} & \num{5.444e+06} \\
+  14 & 16$^\dagger$ & 57.7 & 12$\times$2 & tanh & 10 & 3 & \num{0.4108} & \num{0.8153} & \num{1.226} & 17.92 & 17.92 & 87.72 & 12.79 & \num{99.94} & \num{5.573e+06} \\
+  15 & 17$^\dagger$ & 55.5 & 12$\times$2 & tanh & 10 & 3 & \num{0.409} & \num{0.8182} & \num{1.227} & 15.16 & 15.16 & 115.20 & 13.59 & \num{99.93} & \num{4.228e+06} \\
+  16 & 70$^\dagger$ & 64.8 & 8$\times$2 & tanh & 20 & 6 & \num{0.4084} & \num{0.8194} & \num{1.228} & 34.58 & 34.58 & 4.57 & 9.99 & \num{99.12} & \num{7.632e+07} \\
+  17 & 209$^\dagger$ & 128.4 & 16$\times$3 & tanh & 10 & 5 & \num{0.3611} & \num{0.891} & \num{1.252} & 9.10 & 9.10 & 66.19 & 17.88 & \num{99.96} & \num{8.504e+06} \\
+  18 & 61$^\dagger$ & 91.2 & 16$\times$2 & swish & 10 & 6 & \num{0.4236} & \num{0.8352} & \num{1.259} & 23.02 & 23.02 & 85.04 & 18.11 & \num{99.9} & \num{5.919e+06} \\
+  19 & 123$^\dagger$ & 97.0 & 8$\times$2 & swish & 20 & 6 & \num{0.4432} & \num{0.8315} & \num{1.275} & 46.72 & 46.72 & 4.75 & 5.81 & \num{98.97} & \num{1.001e+07} \\
+  20 & 212$^\dagger$ & 325.1 & 24$\times$3 & tanh & 20 & 4 & \num{0.3251} & \num{0.9584} & \num{1.284} & 23.52 & 23.52 & 2.40 & 12.82 & \num{99.98} & \num{1.03e+07} \\
+\bottomrule
+\end{tabular}

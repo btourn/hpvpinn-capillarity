@@ -1,0 +1,13 @@
+\begin{tabular}{llc}
+\toprule
+Quantity & Hardware & Value \\
+\midrule
+JIT compilation [s] & 13th Gen Intel Core i7-1355U & \num{0.7} [\num{0.7}, \num{1.3}] \\
+Training, \num{200000} epochs [s] & 13th Gen Intel Core i7-1355U & \num{198.6} [\num{185.6}, \num{207.5}] \\
+Per epoch [ms] & 13th Gen Intel Core i7-1355U & \num{0.99} [\num{0.924}, \num{1.03}] \\
+HPO gb search (250 trials) [h] & cluster & \num{12.6} \\
+HPO es search (250 trials) [h] & cluster & \num{14.2} \\
+HPO total (all studies of the case) [h] & cluster & \num{26.9} \\
+\bottomrule
+\end{tabular}
+% Median [min, max] over 10 seeds, run sequentially. Local: 13th Gen Intel(R) Core(TM) i7-1355U, 12 logical CPUs, jax 0.9.0.1.

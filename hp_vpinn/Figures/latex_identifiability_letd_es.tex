@@ -1,0 +1,22 @@
+\begin{tabular}{lccccc}
+\toprule
+\multicolumn{6}{l}{24$\times$2, sigmoid, $N_{\mathrm{el}}=10$, $p=3$ \quad $N=15$ qualified runs of 15} \\
+\midrule
+Parameter & Mean & Std & CV & Min & Max \\
+ &  &  & [\%] &  & \\
+\midrule
+  $D_{wt}$ & \num{0.001272} & \num{0.001177} & \num{92.5} & \num{1.714e-06} & \num{0.003493} \\
+  $L$ & \num{1.477} & \num{0.6998} & \num{47.4} & \num{-0.6511} & \num{2.066} \\
+  $E$ & \num{8571} & \num{6451} & \num{75.3} & \num{338.1} & \num{1.959e+04} \\
+  $T$ & \num{1.127} & \num{0.5571} & \num{49.4} & \num{0.7636} & \num{3.024} \\
+  $\theta_r$ & \num{0.00342} & \num{0.007474} & \num{219} & \num{2.943e-08} & \num{0.02401} \\
+\midrule
+\multicolumn{6}{l}{Correlation: Pearson (lower), Spearman (upper)} \\
+ & $D_{wt}$ & $L$ & $E$ & $T$ & $\theta_r$ \\
+  $D_{wt}$ & 1 & \num{0.79} & \num{0.93} & \num{-0.90} & \num{-0.24} \\
+  $L$ & \num{0.65} & 1 & \num{0.56} & \num{-0.90} & \num{-0.60} \\
+  $E$ & \num{0.92} & \num{0.53} & 1 & \num{-0.71} & \num{-0.02} \\
+  $T$ & \num{-0.57} & \num{-0.96} & \num{-0.56} & 1 & \num{0.36} \\
+  $\theta_r$ & \num{-0.13} & \num{-0.17} & \num{0.15} & \num{-0.03} & 1 \\
+\bottomrule
+\end{tabular}

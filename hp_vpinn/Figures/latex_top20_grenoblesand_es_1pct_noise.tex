@@ -1,0 +1,29 @@
+\begin{tabular}{lcc cccc ccccccc cc}
+\toprule
+& & & \multicolumn{4}{c}{Optimal HPs} & \multicolumn{7}{c}{Metrics} & \multicolumn{2}{c}{Recovery error} \\
+\cmidrule(lr){4-7}\cmidrule(lr){8-14}\cmidrule(lr){15-16}
+& Trial & Time & W$\times$L & Act. & $N_{\mathrm{el}}$ & $p$ & $\chi^2_{\nu,\mathrm{train}}$ & $\chi^2_{\nu,\mathrm{test}}$ & $\mathrm{obj}$ & $\mathcal{L}_{\mathrm{physics}}^{\mathrm{train}}$ & $\mathcal{L}_{\mathrm{pde}}^{\mathrm{train}}$ & $\mathcal{L}_{\mathrm{pde}}^{\mathrm{eval}}$ & $r_{\mathrm{RMS}}^{\mathrm{strong}}$ & $\varepsilon_{K_{\mathrm{s}}/\alpha}$ & $\varepsilon_{m}$ \\
+No. & No. & [s] &  &  &  &  &  &  &  & $\times 10^{-4}$ & $\times 10^{-4}$ & $\times 10^{-4}$ &  & [\%] & [\%] \\
+\midrule
+  1 & 195$^\dagger$ & 270.0 & 16$\times$2 & tanh & 40 & 4 & \num{0.3407} & \num{0.5922} & \num{0.933} & 3.06 & 3.06 & 3.11 & 1.48 & \num{99.98} & \num{95.51} \\
+  2 & 152$^\dagger$ & 324.3 & 12$\times$3 & tanh & 40 & 6 & \num{0.408} & \num{0.5584} & \num{0.9664} & 1.84 & 1.84 & 1.84 & 1.54 & \num{99.99} & \num{11.78} \\
+  3 & 16$^\dagger$ & 68.4 & 12$\times$2 & tanh & 10 & 3 & \num{0.3915} & \num{0.5949} & \num{0.9864} & 15.41 & 15.41 & 28.41 & 1.90 & \num{100} & \num{34.91} \\
+  4 & 207$^\dagger$ & 469.3 & 16$\times$3 & sigmoid & 40 & 4 & \num{0.3906} & \num{0.6148} & \num{1.005} & 2.69 & 2.69 & 2.64 & 1.59 & \num{99.96} & \num{95.69} \\
+  5 & 251$^\dagger$ & 345.5 & 24$\times$2 & sigmoid & 30 & 6 & \num{0.2767} & \num{0.7337} & \num{1.01} & 2.23 & 2.23 & 2.23 & 1.62 & \num{99.66} & \num{96.1} \\
+  6 & 39$^\dagger$ & 353.4 & 12$\times$3 & gelu & 40 & 5 & \num{0.4443} & \num{0.5837} & \num{1.028} & 2.18 & 2.18 & 2.16 & 1.57 & \num{99.82} & \num{2.798} \\
+  7 & 151$^\dagger$ & 323.9 & 12$\times$3 & tanh & 40 & 6 & \num{0.404} & \num{0.6321} & \num{1.036} & 1.80 & 1.80 & 1.79 & 1.75 & \num{99.89} & \num{92.22} \\
+  8 & 248$^\dagger$ & 342.9 & 24$\times$2 & sigmoid & 30 & 6 & \num{0.3309} & \num{0.7139} & \num{1.045} & 1.96 & 1.96 & 1.96 & 1.38 & \num{99.98} & \num{92.04} \\
+  9 & 62$^\dagger$ & 270.8 & 16$\times$2 & tanh & 40 & 4 & \num{0.3857} & \num{0.6714} & \num{1.057} & 2.85 & 2.85 & 2.84 & 1.52 & \num{99.97} & \num{95.42} \\
+  10 & 4$^\dagger$ & 202.6 & 8$\times$2 & swish & 40 & 5 & \num{0.4545} & \num{0.6126} & \num{1.067} & 2.50 & 2.50 & 2.50 & 1.41 & \num{99.33} & \num{13.37} \\
+  11 & 68$^\dagger$ & 255.1 & 8$\times$3 & sigmoid & 40 & 5 & \num{0.4432} & \num{0.6264} & \num{1.07} & 2.47 & 2.47 & 2.47 & 1.52 & \num{99.86} & \num{0.3466} \\
+  12 & 235$^\dagger$ & 225.5 & 12$\times$2 & tanh & 40 & 4 & \num{0.3747} & \num{0.6959} & \num{1.071} & 2.92 & 2.92 & 2.90 & 1.62 & \num{100} & \num{95.95} \\
+  13 & 98$^\dagger$ & 244.3 & 12$\times$2 & sigmoid & 40 & 5 & \num{0.427} & \num{0.6477} & \num{1.075} & 2.50 & 2.50 & 2.50 & 1.34 & \num{99.88} & \num{57.42} \\
+  14 & 178$^\dagger$ & 241.4 & 32$\times$2 & gelu & 30 & 5 & \num{0.4093} & \num{0.6679} & \num{1.077} & 2.11 & 2.11 & 2.10 & 1.38 & \num{99.97} & \num{55.17} \\
+  15 & 61$^\dagger$ & 61.4 & 8$\times$2 & sigmoid & 10 & 6 & \num{0.4476} & \num{0.6335} & \num{1.081} & 16.21 & 16.21 & 17.87 & 1.45 & \num{99.94} & \num{7.145} \\
+  16 & 157$^\dagger$ & 321.0 & 16$\times$2 & swish & 40 & 6 & \num{0.4552} & \num{0.626} & \num{1.081} & 2.08 & 2.08 & 2.08 & 1.33 & \num{98.6} & \num{68.73} \\
+  17 & 18$^\dagger$ & 69.2 & 12$\times$2 & tanh & 10 & 3 & \num{0.4185} & \num{0.6665} & \num{1.085} & 7.55 & 7.55 & 11.27 & 3.35 & \num{99.98} & \num{2.051} \\
+  18 & 9$^\dagger$ & 122.8 & 8$\times$2 & swish & 20 & 6 & \num{0.4485} & \num{0.6366} & \num{1.085} & 6.31 & 6.31 & 6.31 & 1.31 & \num{99.67} & \num{42.15} \\
+  19 & 126$^\dagger$ & 562.6 & 24$\times$3 & swish & 40 & 6 & \num{0.3893} & \num{0.6966} & \num{1.086} & 2.04 & 2.04 & 2.03 & 1.40 & \num{99.9} & \num{84.7} \\
+  20 & 252$^\dagger$ & 345.0 & 24$\times$2 & sigmoid & 30 & 6 & \num{0.4191} & \num{0.6704} & \num{1.089} & 1.91 & 1.91 & 1.90 & 1.34 & \num{99.99} & \num{94.58} \\
+\bottomrule
+\end{tabular}

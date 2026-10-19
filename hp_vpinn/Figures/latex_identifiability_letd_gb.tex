@@ -1,0 +1,22 @@
+\begin{tabular}{lccccc}
+\toprule
+\multicolumn{6}{l}{8$\times$3, sigmoid, $N_{\mathrm{el}}=40$, $p=6$ \quad $N=21$ qualified runs of 21} \\
+\midrule
+Parameter & Mean & Std & CV & Min & Max \\
+ &  &  & [\%] &  & \\
+\midrule
+  $D_{wt}$ & \num{0.0008138} & \num{5.472e-05} & \num{6.72} & \num{0.00068} & \num{0.000966} \\
+  $L$ & \num{0.8745} & \num{0.1591} & \num{18.2} & \num{0.4467} & \num{1.217} \\
+  $E$ & \num{1.085e+04} & \num{223.4} & \num{2.06} & \num{1.061e+04} & \num{1.153e+04} \\
+  $T$ & \num{1.293} & \num{0.02174} & \num{1.68} & \num{1.242} & \num{1.354} \\
+  $\theta_r$ & \num{8.792e-06} & \num{4.029e-05} & \num{458} & \num{2.982e-10} & \num{0.0001846} \\
+\midrule
+\multicolumn{6}{l}{Correlation: Pearson (lower), Spearman (upper)} \\
+ & $D_{wt}$ & $L$ & $E$ & $T$ & $\theta_r$ \\
+  $D_{wt}$ & 1 & \num{0.99} & \num{-0.97} & \num{-1.00} & \num{-0.72} \\
+  $L$ & \num{0.96} & 1 & \num{-0.99} & \num{-1.00} & \num{-0.71} \\
+  $E$ & \num{-0.84} & \num{-0.95} & 1 & \num{0.98} & \num{0.68} \\
+  $T$ & \num{-0.99} & \num{-0.99} & \num{0.91} & 1 & \num{0.73} \\
+  $\theta_r$ & \num{-0.56} & \num{-0.62} & \num{0.69} & \num{0.65} & 1 \\
+\bottomrule
+\end{tabular}

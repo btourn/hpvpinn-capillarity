@@ -1,0 +1,19 @@
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{7}{l}{16$\times$2, tanh, $N_{\mathrm{el}}=10$, $p=3$, gb \quad $N=8$ qualified of 10 seeds} \\
+\midrule
+Parameter & True & Mean & Std & Min & Max & Bias [\%] \\
+\midrule
+  $K_s/\alpha$ (cm$^2$/h) & \num{355.8} & \num{319.5} & \num{1.66} & \num{316.4} & \num{321.6} & \num[retain-explicit-plus]{-10.2} \\
+  $m$ & \num{0.5096} & \num{0.5523} & \num{0.00217} & \num{0.5493} & \num{0.5551} & \num[retain-explicit-plus]{+8.38} \\
+\midrule
+\multicolumn{7}{l}{Metrics (mean $\pm$ std)} \\
+  $\chi^2_{\nu,\mathrm{train}}$ & \multicolumn{6}{l}{\num{0.535} $\pm$ \num{0.00042}} \\
+  $\chi^2_{\nu,\mathrm{test}}$ & \multicolumn{6}{l}{\num{0.739} $\pm$ \num{0.00077}} \\
+  $\mathrm{obj}$ & \multicolumn{6}{l}{\num{1.273} $\pm$ \num{0.00084}} \\
+  $\mathcal{L}_{\mathrm{phys}}^{\mathrm{train}}$ & \multicolumn{6}{l}{\num{1.09e-09} $\pm$ \num{5.7e-10}} \\
+  $\mathcal{L}_{\mathrm{pde}}^{\mathrm{train}}$ & \multicolumn{6}{l}{\num{9.40e-10} $\pm$ \num{4e-10}} \\
+  $\mathcal{L}_{\mathrm{pde}}^{\mathrm{eval}}$ & \multicolumn{6}{l}{\num{5.55e-07} $\pm$ \num{4e-07}} \\
+  $r_{\mathrm{RMS}}^{\mathrm{strong}}$ & \multicolumn{6}{l}{\num{4.83e+00} $\pm$ \num{0.37}} \\
+\bottomrule
+\end{tabular}

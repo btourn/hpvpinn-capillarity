@@ -1,0 +1,16 @@
+\begin{tabular}{lccccccc}
+\toprule
+\multicolumn{8}{l}{16$\times$3, tanh, $N_{\mathrm{el}}=20$, $p=4$ \quad $N=32$ qualified runs of 34} \\
+\midrule
+Parameter & True & Mean & Std & CV & Min & Max & Bias \\
+ &  &  &  & [\%] &  &  & [\%] \\
+\midrule
+  $K_{\mathrm{s}}/\alpha$ & \num{355.8} & \num{283.7} & \num{1.849} & \num{0.652} & \num{275.3} & \num{286.9} & \num[retain-explicit-plus]{-20.3} \\
+  $m$ & \num{0.5096} & \num{0.5902} & \num{0.003095} & \num{0.524} & \num{0.5871} & \num{0.6049} & \num[retain-explicit-plus]{+15.8} \\
+\midrule
+\multicolumn{8}{l}{Correlation: Pearson (lower), Spearman (upper)} \\
+ & $K_{\mathrm{s}}/\alpha$ & $m$ &  &  &  &  &  \\
+  $K_{\mathrm{s}}/\alpha$ & 1 & \num{-0.88} &  &  &  &  &  \\
+  $m$ & \num{-0.97} & 1 &  &  &  &  &  \\
+\bottomrule
+\end{tabular}

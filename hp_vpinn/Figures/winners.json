@@ -1,0 +1,874 @@
+{
+  "model": "hp_vpinn",
+  "selection_rule": "combination with the most qualified runs (admissible and calibrated; >= 10 required); ties: higher qualified fraction, then lower median obj; fallback: same on admissible runs only; reported trial = run with the median obj. Failed trials excluded, pruned trials included.",
+  "thresholds": {
+    "calibrated_obj": 4.0,
+    "admissible_physics": 1e-05,
+    "physics_metric": "pde_loss_eval",
+    "min_qualified_runs": 10
+  },
+  "selection_rule_configuration": "per case [+ noise level]: the -es/-gb configuration with a reproducible admissible combination; if both, qualified basis first, then more qualified runs, higher fraction, lower median obj",
+  "selected": {
+    "grenoblesand_1pct_noise": "grenoblesand_gb_1pct_noise",
+    "grenoblesand_2pct_noise": "grenoblesand_gb_2pct_noise",
+    "vangenuchten": "vangenuchten_es",
+    "letd": "letd_gb",
+    "brooks_corey_new_1pct_noise": "brooks_corey_new_gb_1pct_noise"
+  },
+  "winners": {
+    "grenoblesand_es_1pct_noise": {
+      "tag": "grenoblesand_es_1pct_noise",
+      "model": "hp_vpinn",
+      "case": "grenoblesand",
+      "case_label": "Case 1",
+      "config": "es",
+      "noise_level": 0.01,
+      "results_path": "hp_vpinn/results_grenoblesand_es_1pct_noise/hparam_results_1pct_noise.jsonl",
+      "status": "ok",
+      "trial": 195,
+      "init_seed": 195,
+      "n_completed": 156,
+      "calibrated": true,
+      "admissible": false,
+      "physics_converged": false,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 0.00031091517086305573
+      },
+      "n_admissible_in_search": 0,
+      "n_admissible_same_arch": 0,
+      "n_stats": 0,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": null,
+          "std": null
+        },
+        "chi2_nu_test": {
+          "mean": null,
+          "std": null
+        },
+        "obj": {
+          "mean": null,
+          "std": null
+        },
+        "physics": {
+          "mean": null,
+          "std": null,
+          "gmean": null,
+          "gsd": null
+        },
+        "strong_form_rms": {
+          "mean": null,
+          "std": null,
+          "gmean": null,
+          "gsd": null
+        }
+      },
+      "combination": {
+        "basis": "none",
+        "n_runs": 5,
+        "n_admissible": 0,
+        "n_qualified": 0,
+        "frac_qualified": 0.0,
+        "median_obj": null
+      },
+      "hparams": {
+        "nn_n_layers": 2,
+        "nn_width": 16,
+        "activation": "tanh",
+        "n_elements": 40,
+        "poly_degree": 4
+      },
+      "metrics": {
+        "obj": 0.9329595399105428,
+        "chi2_nu_train": 0.34074446112394624,
+        "chi2_nu_test": 0.5922150787865966,
+        "final_physics": 0.00030579655502998204,
+        "final_pde": 0.0003057706950118035,
+        "final_dirichlet": 3.80900500761337e-12,
+        "final_derivative": 2.582192812855508e-09,
+        "pde_loss_eval": 0.00031091517086305573,
+        "strong_form_rms": 1.4805009713753623,
+        "elapsed_s": 270.01010774399765
+      },
+      "recovered": {
+        "KsAlpha": 0.05973854590895919,
+        "m": 0.9962952379339354
+      },
+      "recovery_error": {
+        "KsAlpha": 0.999832094653008,
+        "m": 0.9550534496348808
+      },
+      "selected": false,
+      "selection_reason": null
+    },
+    "grenoblesand_gb_1pct_noise": {
+      "tag": "grenoblesand_gb_1pct_noise",
+      "model": "hp_vpinn",
+      "case": "grenoblesand",
+      "case_label": "Case 1",
+      "config": "gb",
+      "noise_level": 0.01,
+      "results_path": "hp_vpinn/results_grenoblesand_gb_1pct_noise/hparam_results_1pct_noise.jsonl",
+      "status": "ok",
+      "trial": 77,
+      "init_seed": 77,
+      "n_completed": 243,
+      "calibrated": true,
+      "admissible": true,
+      "physics_converged": true,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 1.0975654294085908e-06
+      },
+      "n_admissible_in_search": 236,
+      "n_admissible_same_arch": 33,
+      "n_stats": 25,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": 0.5346812367946194,
+          "std": 0.0005315320147665316
+        },
+        "chi2_nu_test": {
+          "mean": 0.7389284376392738,
+          "std": 0.0007067758623906188
+        },
+        "obj": {
+          "mean": 1.2736096744338934,
+          "std": 0.000748079483988097
+        },
+        "physics": {
+          "mean": 5.116513960479372e-07,
+          "std": 3.642567102080994e-07,
+          "gmean": 3.427870301167047e-07,
+          "gsd": 3.1099771348752645
+        },
+        "strong_form_rms": {
+          "mean": 4.685468765300664,
+          "std": 0.3831413805141924,
+          "gmean": 4.6701955347871005,
+          "gsd": 1.0864093933062915
+        }
+      },
+      "combination": {
+        "basis": "qualified",
+        "n_runs": 33,
+        "n_admissible": 33,
+        "n_qualified": 25,
+        "frac_qualified": 0.7575757575757576,
+        "median_obj": 1.2734652856350424
+      },
+      "hparams": {
+        "nn_n_layers": 2,
+        "nn_width": 16,
+        "activation": "tanh",
+        "n_elements": 10,
+        "poly_degree": 3
+      },
+      "metrics": {
+        "obj": 1.2734652856350424,
+        "chi2_nu_train": 0.5341965629999798,
+        "chi2_nu_test": 0.7392687226350626,
+        "final_physics": 3.9938162589857185e-10,
+        "final_pde": 3.6555643844236606e-10,
+        "final_dirichlet": 1.4564372904972454e-15,
+        "final_derivative": 3.3810623083300883e-12,
+        "pde_loss_eval": 1.0975654294085908e-06,
+        "strong_form_rms": 4.6093980445840055,
+        "elapsed_s": 81.81453080800202
+      },
+      "recovered": {
+        "KsAlpha": 318.2499327652801,
+        "m": 0.5511605019487678
+      },
+      "recovery_error": {
+        "KsAlpha": 0.10550441799218596,
+        "m": 0.08155514511139658
+      },
+      "selected": true,
+      "selection_reason": "only configuration with a reproducible admissible combination"
+    },
+    "grenoblesand_es_2pct_noise": {
+      "tag": "grenoblesand_es_2pct_noise",
+      "model": "hp_vpinn",
+      "case": "grenoblesand",
+      "case_label": "Case 1",
+      "config": "es",
+      "noise_level": 0.02,
+      "results_path": "hp_vpinn/results_grenoblesand_es_2pct_noise/hparam_results_2pct_noise.jsonl",
+      "status": "ok",
+      "trial": 142,
+      "init_seed": 142,
+      "n_completed": 150,
+      "calibrated": true,
+      "admissible": false,
+      "physics_converged": false,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 0.00038329828119262795
+      },
+      "n_admissible_in_search": 0,
+      "n_admissible_same_arch": 0,
+      "n_stats": 0,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": null,
+          "std": null
+        },
+        "chi2_nu_test": {
+          "mean": null,
+          "std": null
+        },
+        "obj": {
+          "mean": null,
+          "std": null
+        },
+        "physics": {
+          "mean": null,
+          "std": null,
+          "gmean": null,
+          "gsd": null
+        },
+        "strong_form_rms": {
+          "mean": null,
+          "std": null,
+          "gmean": null,
+          "gsd": null
+        }
+      },
+      "combination": {
+        "basis": "none",
+        "n_runs": 3,
+        "n_admissible": 0,
+        "n_qualified": 0,
+        "frac_qualified": 0.0,
+        "median_obj": null
+      },
+      "hparams": {
+        "nn_n_layers": 3,
+        "nn_width": 32,
+        "activation": "swish",
+        "n_elements": 40,
+        "poly_degree": 4
+      },
+      "metrics": {
+        "obj": 0.970752722730346,
+        "chi2_nu_train": 0.29087045375575626,
+        "chi2_nu_test": 0.6798822689745897,
+        "final_physics": 0.0003860199172095901,
+        "final_pde": 0.0003860199172095901,
+        "final_dirichlet": 1.8752294258958422e-274,
+        "final_derivative": 6.708454260511088e-267,
+        "pde_loss_eval": 0.00038329828119262795,
+        "strong_form_rms": 2.0923685695553575,
+        "elapsed_s": 605.0388090260003
+      },
+      "recovered": {
+        "KsAlpha": 2.7995212991258245,
+        "m": 0.9993341000852968
+      },
+      "recovery_error": {
+        "KsAlpha": 0.9921314690876879,
+        "m": 0.9610166799162022
+      },
+      "selected": false,
+      "selection_reason": null
+    },
+    "grenoblesand_gb_2pct_noise": {
+      "tag": "grenoblesand_gb_2pct_noise",
+      "model": "hp_vpinn",
+      "case": "grenoblesand",
+      "case_label": "Case 1",
+      "config": "gb",
+      "noise_level": 0.02,
+      "results_path": "hp_vpinn/results_grenoblesand_gb_2pct_noise/hparam_results_2pct_noise.jsonl",
+      "status": "ok",
+      "trial": 172,
+      "init_seed": 172,
+      "n_completed": 238,
+      "calibrated": true,
+      "admissible": true,
+      "physics_converged": true,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 1.3131103849556873e-07
+      },
+      "n_admissible_in_search": 226,
+      "n_admissible_same_arch": 34,
+      "n_stats": 32,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": 0.5325925938962808,
+          "std": 0.00012336946357986993
+        },
+        "chi2_nu_test": {
+          "mean": 0.7430767516316945,
+          "std": 0.00023382333247956856
+        },
+        "obj": {
+          "mean": 1.2756693455279753,
+          "std": 0.00031653327785537806
+        },
+        "physics": {
+          "mean": 2.225145546122225e-07,
+          "std": 1.331420316275526e-07,
+          "gmean": 1.8800468415462005e-07,
+          "gsd": 1.856099334615978
+        },
+        "strong_form_rms": {
+          "mean": 2.070389004324712,
+          "std": 0.3641299588979304,
+          "gmean": 2.0406701903502524,
+          "gsd": 1.187123460963003
+        }
+      },
+      "combination": {
+        "basis": "qualified",
+        "n_runs": 34,
+        "n_admissible": 34,
+        "n_qualified": 32,
+        "frac_qualified": 0.9411764705882353,
+        "median_obj": 1.2756167128206377
+      },
+      "hparams": {
+        "nn_n_layers": 3,
+        "nn_width": 16,
+        "activation": "tanh",
+        "n_elements": 20,
+        "poly_degree": 4
+      },
+      "metrics": {
+        "obj": 1.2756084137597434,
+        "chi2_nu_train": 0.5326814264011649,
+        "chi2_nu_test": 0.7429269873585786,
+        "final_physics": 1.4468722703389337e-09,
+        "final_pde": 1.4105342807942463e-09,
+        "final_dirichlet": 1.1894851558325016e-14,
+        "final_derivative": 3.6219041029104282e-12,
+        "pde_loss_eval": 1.3131103849556873e-07,
+        "strong_form_rms": 1.7484758505399323,
+        "elapsed_s": 230.23392507500012
+      },
+      "recovered": {
+        "KsAlpha": 281.33546665086993,
+        "m": 0.5940348243640897
+      },
+      "recovery_error": {
+        "KsAlpha": 0.20925880550959128,
+        "m": 0.16568843085574894
+      },
+      "selected": true,
+      "selection_reason": "only configuration with a reproducible admissible combination"
+    },
+    "vangenuchten_es": {
+      "tag": "vangenuchten_es",
+      "model": "hp_vpinn",
+      "case": "vangenuchten",
+      "case_label": "Case 2",
+      "config": "es",
+      "noise_level": null,
+      "results_path": "hp_vpinn/results_vangenuchten_es/hparam_results_vangenuchten.jsonl",
+      "status": "ok",
+      "trial": 170,
+      "init_seed": 170,
+      "n_completed": 246,
+      "calibrated": true,
+      "admissible": true,
+      "physics_converged": true,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 1.3757398686827056e-06
+      },
+      "n_admissible_in_search": 77,
+      "n_admissible_same_arch": 21,
+      "n_stats": 21,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": 0.4034864642883265,
+          "std": 0.004300251802774825
+        },
+        "chi2_nu_test": {
+          "mean": 0.19128493028223392,
+          "std": 0.019856915191114044
+        },
+        "obj": {
+          "mean": 0.5947713945705604,
+          "std": 0.018564338893445873
+        },
+        "physics": {
+          "mean": 2.838309338819331e-06,
+          "std": 2.3829488010901145e-06,
+          "gmean": 2.228241085043796e-06,
+          "gsd": 1.9274482006102125
+        },
+        "strong_form_rms": {
+          "mean": 30.812725790752456,
+          "std": 11.105576350803577,
+          "gmean": 29.228382432531117,
+          "gsd": 1.3852088138994854
+        }
+      },
+      "combination": {
+        "basis": "qualified",
+        "n_runs": 34,
+        "n_admissible": 21,
+        "n_qualified": 21,
+        "frac_qualified": 0.6176470588235294,
+        "median_obj": 0.5891094486880182
+      },
+      "hparams": {
+        "nn_n_layers": 2,
+        "nn_width": 24,
+        "activation": "tanh",
+        "n_elements": 10,
+        "poly_degree": 3
+      },
+      "metrics": {
+        "obj": 0.5891094486880182,
+        "chi2_nu_train": 0.4112469507201742,
+        "chi2_nu_test": 0.17786249796784395,
+        "final_physics": 5.054533917609066e-07,
+        "final_pde": 5.036865705695681e-07,
+        "final_dirichlet": 1.3850838104645048e-12,
+        "final_derivative": 1.752970353233813e-10,
+        "pde_loss_eval": 1.3757398686827056e-06,
+        "strong_form_rms": 20.369513891101775,
+        "elapsed_s": 133.39084683300098
+      },
+      "recovered": {
+        "KsAlpha": 7.137584070623879e-07,
+        "m": 0.8240506170856357,
+        "l": 0.5339370556400264,
+        "theta_r": 5.4976473159698504e-08
+      },
+      "selected": true,
+      "selection_reason": "both admissible; qualified basis, most qualified runs (21/34), then fraction, then median obj"
+    },
+    "vangenuchten_gb": {
+      "tag": "vangenuchten_gb",
+      "model": "hp_vpinn",
+      "case": "vangenuchten",
+      "case_label": "Case 2",
+      "config": "gb",
+      "noise_level": null,
+      "results_path": "hp_vpinn/results_vangenuchten_gb/hparam_results_vangenuchten.jsonl",
+      "status": "ok",
+      "trial": 73,
+      "init_seed": 73,
+      "n_completed": 249,
+      "calibrated": false,
+      "admissible": true,
+      "physics_converged": true,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 5.12366552172471e-10
+      },
+      "n_admissible_in_search": 243,
+      "n_admissible_same_arch": 31,
+      "n_stats": 31,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": 2.5237101002614297,
+          "std": 0.029857787229348575
+        },
+        "chi2_nu_test": {
+          "mean": 2.9682165198575685,
+          "std": 0.09373294293857957
+        },
+        "obj": {
+          "mean": 5.491926620118998,
+          "std": 0.12347616742156765
+        },
+        "physics": {
+          "mean": 5.161522927984495e-10,
+          "std": 2.510978242695306e-10,
+          "gmean": 4.5948084350312227e-10,
+          "gsd": 1.6485204838025278
+        },
+        "strong_form_rms": {
+          "mean": 0.1253183167591336,
+          "std": 0.030215000389152636,
+          "gmean": 0.12135038524417359,
+          "gsd": 1.30780632542885
+        }
+      },
+      "combination": {
+        "basis": "admissible",
+        "n_runs": 31,
+        "n_admissible": 31,
+        "n_qualified": 0,
+        "frac_qualified": 0.0,
+        "median_obj": 5.443465568606705
+      },
+      "hparams": {
+        "nn_n_layers": 2,
+        "nn_width": 32,
+        "activation": "tanh",
+        "n_elements": 40,
+        "poly_degree": 6
+      },
+      "metrics": {
+        "obj": 5.443465568606705,
+        "chi2_nu_train": 2.51296161399631,
+        "chi2_nu_test": 2.9305039546103946,
+        "final_physics": 3.227520662483643e-10,
+        "final_pde": 3.2275183708312885e-10,
+        "final_dirichlet": 3.754697425252609e-20,
+        "final_derivative": 2.2878976576573313e-17,
+        "pde_loss_eval": 5.12366552172471e-10,
+        "strong_form_rms": 0.12427606291577559,
+        "elapsed_s": 437.01517083798535
+      },
+      "recovered": {
+        "KsAlpha": 2.9148661713081138e-06,
+        "m": 0.9520098790351678,
+        "l": 0.5895527509660661,
+        "theta_r": 6.174995881147318e-10
+      },
+      "selected": false,
+      "selection_reason": null
+    },
+    "letd_es": {
+      "tag": "letd_es",
+      "model": "hp_vpinn",
+      "case": "letd",
+      "case_label": "Case 3",
+      "config": "es",
+      "noise_level": null,
+      "results_path": "hp_vpinn/results_letd_es/hparam_results_letd.jsonl",
+      "status": "ok",
+      "trial": 99,
+      "init_seed": 99,
+      "n_completed": 250,
+      "calibrated": true,
+      "admissible": true,
+      "physics_converged": true,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 1.3729037966301711e-06
+      },
+      "n_admissible_in_search": 59,
+      "n_admissible_same_arch": 15,
+      "n_stats": 15,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": 0.45398685309818304,
+          "std": 0.058077623551881424
+        },
+        "chi2_nu_test": {
+          "mean": 0.33115968928816675,
+          "std": 0.23933810382282164
+        },
+        "obj": {
+          "mean": 0.7851465423863498,
+          "std": 0.2927004394278641
+        },
+        "physics": {
+          "mean": 1.6037064418843263e-06,
+          "std": 6.245829840800199e-07,
+          "gmean": 1.512882358468395e-06,
+          "gsd": 1.401056324300331
+        },
+        "strong_form_rms": {
+          "mean": 18.15915490554768,
+          "std": 9.479685510161632,
+          "gmean": 16.25939204491186,
+          "gsd": 1.6147730573163792
+        }
+      },
+      "combination": {
+        "basis": "qualified",
+        "n_runs": 15,
+        "n_admissible": 15,
+        "n_qualified": 15,
+        "frac_qualified": 1.0,
+        "median_obj": 0.6659989218655892
+      },
+      "hparams": {
+        "nn_n_layers": 2,
+        "nn_width": 24,
+        "activation": "sigmoid",
+        "n_elements": 10,
+        "poly_degree": 3
+      },
+      "metrics": {
+        "obj": 0.6659989218655892,
+        "chi2_nu_train": 0.4417053040212906,
+        "chi2_nu_test": 0.22429361784429858,
+        "final_physics": 1.4175884023326737e-06,
+        "final_pde": 1.4175884023326737e-06,
+        "final_dirichlet": 3.6583962171230415e-53,
+        "final_derivative": 1.5810710009288118e-49,
+        "pde_loss_eval": 1.3729037966301711e-06,
+        "strong_form_rms": 12.889307106311184,
+        "elapsed_s": 160.69976812800087
+      },
+      "recovered": {
+        "Dwt": 8.100952418877235e-05,
+        "L": 1.3835723702277132,
+        "E": 946.0626167837746,
+        "T": 1.2008262405794186,
+        "theta_r": 5.0767099439398e-08
+      },
+      "selected": false,
+      "selection_reason": null
+    },
+    "letd_gb": {
+      "tag": "letd_gb",
+      "model": "hp_vpinn",
+      "case": "letd",
+      "case_label": "Case 3",
+      "config": "gb",
+      "noise_level": null,
+      "results_path": "hp_vpinn/results_letd_gb/hparam_results_letd.jsonl",
+      "status": "ok",
+      "trial": 136,
+      "init_seed": 136,
+      "n_completed": 250,
+      "calibrated": true,
+      "admissible": true,
+      "physics_converged": true,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 1.7614231882975397e-09
+      },
+      "n_admissible_in_search": 248,
+      "n_admissible_same_arch": 21,
+      "n_stats": 21,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": 1.1003784334733413,
+          "std": 0.056679035612768755
+        },
+        "chi2_nu_test": {
+          "mean": 0.7818689693617807,
+          "std": 0.05085257668474682
+        },
+        "obj": {
+          "mean": 1.882247402835122,
+          "std": 0.06768740537819123
+        },
+        "physics": {
+          "mean": 9.782122891963714e-10,
+          "std": 3.661250077289234e-10,
+          "gmean": 9.096922227281539e-10,
+          "gsd": 1.4982045762322878
+        },
+        "strong_form_rms": {
+          "mean": 0.01127602160657774,
+          "std": 0.0037299880550391473,
+          "gmean": 0.010741911030193176,
+          "gsd": 1.3705859175811113
+        }
+      },
+      "combination": {
+        "basis": "qualified",
+        "n_runs": 21,
+        "n_admissible": 21,
+        "n_qualified": 21,
+        "frac_qualified": 1.0,
+        "median_obj": 1.8612404300895788
+      },
+      "hparams": {
+        "nn_n_layers": 3,
+        "nn_width": 8,
+        "activation": "sigmoid",
+        "n_elements": 40,
+        "poly_degree": 6
+      },
+      "metrics": {
+        "obj": 1.8612404300895788,
+        "chi2_nu_train": 1.0874690004363134,
+        "chi2_nu_test": 0.7737714296532654,
+        "final_physics": 1.6993376666349619e-09,
+        "final_pde": 1.6993264740403769e-09,
+        "final_dirichlet": 2.4108658082992208e-18,
+        "final_derivative": 1.1168485926855674e-15,
+        "pde_loss_eval": 1.7614231882975397e-09,
+        "strong_form_rms": 0.012763515432185952,
+        "elapsed_s": 231.466279201999
+      },
+      "recovered": {
+        "Dwt": 0.000803715513055726,
+        "L": 0.9073694775945268,
+        "E": 10729.416117169207,
+        "T": 1.2936250638423206,
+        "theta_r": 1.1485811639219815e-09
+      },
+      "selected": true,
+      "selection_reason": "both admissible; qualified basis, most qualified runs (21/21), then fraction, then median obj"
+    },
+    "brooks_corey_new_es_1pct_noise": {
+      "tag": "brooks_corey_new_es_1pct_noise",
+      "model": "hp_vpinn",
+      "case": "brooks_corey_new",
+      "case_label": "Case 4",
+      "config": "es",
+      "noise_level": 0.01,
+      "results_path": "hp_vpinn/results_brooks_corey_new_es_1pct_noise/hparam_results_1pct_noise.jsonl",
+      "status": "ok",
+      "trial": 112,
+      "init_seed": 112,
+      "n_completed": 250,
+      "calibrated": true,
+      "admissible": false,
+      "physics_converged": false,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 1.7386450946581975e-05
+      },
+      "n_admissible_in_search": 0,
+      "n_admissible_same_arch": 0,
+      "n_stats": 0,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": null,
+          "std": null
+        },
+        "chi2_nu_test": {
+          "mean": null,
+          "std": null
+        },
+        "obj": {
+          "mean": null,
+          "std": null
+        },
+        "physics": {
+          "mean": null,
+          "std": null,
+          "gmean": null,
+          "gsd": null
+        },
+        "strong_form_rms": {
+          "mean": null,
+          "std": null,
+          "gmean": null,
+          "gsd": null
+        }
+      },
+      "combination": {
+        "basis": "none",
+        "n_runs": 5,
+        "n_admissible": 0,
+        "n_qualified": 0,
+        "frac_qualified": 0.0,
+        "median_obj": null
+      },
+      "hparams": {
+        "nn_n_layers": 3,
+        "nn_width": 24,
+        "activation": "tanh",
+        "n_elements": 20,
+        "poly_degree": 6
+      },
+      "metrics": {
+        "obj": 1.055119673813637,
+        "chi2_nu_train": 0.3228348837438932,
+        "chi2_nu_test": 0.7322847900697439,
+        "final_physics": 1.6545138733944653e-05,
+        "final_pde": 1.6545138733872967e-05,
+        "final_dirichlet": 1.485024257635876e-20,
+        "final_derivative": 7.15392560415821e-18,
+        "pde_loss_eval": 1.7386450946581975e-05,
+        "strong_form_rms": 3.504280846917189,
+        "elapsed_s": 313.1210598150001
+      },
+      "recovered": {
+        "KsAlpha": 8.57572616522149e-06,
+        "n": 67941.33288263068
+      },
+      "recovery_error": {
+        "KsAlpha": 0.9995116050933868,
+        "n": 52764.86896756033
+      },
+      "selected": false,
+      "selection_reason": null
+    },
+    "brooks_corey_new_gb_1pct_noise": {
+      "tag": "brooks_corey_new_gb_1pct_noise",
+      "model": "hp_vpinn",
+      "case": "brooks_corey_new",
+      "case_label": "Case 4",
+      "config": "gb",
+      "noise_level": 0.01,
+      "results_path": "hp_vpinn/results_brooks_corey_new_gb_1pct_noise/hparam_results_1pct_noise.jsonl",
+      "status": "ok",
+      "trial": 213,
+      "init_seed": 213,
+      "n_completed": 250,
+      "calibrated": true,
+      "admissible": true,
+      "physics_converged": true,
+      "physics_metric": {
+        "name": "pde_loss_eval",
+        "value": 7.527142853877533e-10
+      },
+      "n_admissible_in_search": 244,
+      "n_admissible_same_arch": 30,
+      "n_stats": 29,
+      "metrics_stats": {
+        "chi2_nu_train": {
+          "mean": 0.5970134619254023,
+          "std": 0.11958496788729593
+        },
+        "chi2_nu_test": {
+          "mean": 0.8464227699747849,
+          "std": 0.06675235458190104
+        },
+        "obj": {
+          "mean": 1.4434362319001868,
+          "std": 0.1837786079352179
+        },
+        "physics": {
+          "mean": 1.9538986939636966e-07,
+          "std": 5.888136082341877e-07,
+          "gmean": 2.505092860355483e-08,
+          "gsd": 8.675901281630738
+        },
+        "strong_form_rms": {
+          "mean": 0.6638392919592403,
+          "std": 0.28410466060699696,
+          "gmean": 0.6103705135334049,
+          "gsd": 1.5161617535624956
+        }
+      },
+      "combination": {
+        "basis": "qualified",
+        "n_runs": 30,
+        "n_admissible": 30,
+        "n_qualified": 29,
+        "frac_qualified": 0.9666666666666667,
+        "median_obj": 1.4050043737890534
+      },
+      "hparams": {
+        "nn_n_layers": 3,
+        "nn_width": 12,
+        "activation": "tanh",
+        "n_elements": 40,
+        "poly_degree": 3
+      },
+      "metrics": {
+        "obj": 1.4050043737890534,
+        "chi2_nu_train": 0.5784174117818757,
+        "chi2_nu_test": 0.8265869620071777,
+        "final_physics": 1.5989106897107225e-10,
+        "final_pde": 1.5981834156082785e-10,
+        "final_dirichlet": 1.824632047605464e-17,
+        "final_derivative": 7.25449470396237e-15,
+        "pde_loss_eval": 7.527142853877533e-10,
+        "strong_form_rms": 0.5321288084495069,
+        "elapsed_s": 275.63035335205495
+      },
+      "recovered": {
+        "KsAlpha": 0.016893887386703547,
+        "n": 1.2135852170757606
+      },
+      "recovery_error": {
+        "KsAlpha": 0.0378787296142408,
+        "n": 0.05748274535899306
+      },
+      "selected": true,
+      "selection_reason": "only configuration with a reproducible admissible combination"
+    }
+  }
+}

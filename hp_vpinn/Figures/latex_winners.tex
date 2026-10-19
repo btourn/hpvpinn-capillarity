@@ -1,0 +1,22 @@
+\begin{tabular}{ll cc ccccc c}
+\toprule
+& & \multicolumn{2}{c}{Winning HPs} & \multicolumn{5}{c}{Metrics (mean $\pm$ std)} & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-9}
+\textbf{Case} & \textbf{Config.} & W$\times$L, act. & $N_{\mathrm{el}}, p$ & $\chi^2_{\nu,\mathrm{train}}$ & $\chi^2_{\nu,\mathrm{test}}$ & $\mathrm{obj}$ & $\mathcal{L}_{\mathrm{pde}}^{\mathrm{eval}}$ & $r_{\mathrm{RMS}}^{\mathrm{strong}}$ & $N$ \\
+\midrule
+  Case~1, \num{1}\% noise & \hpVPINN-es & 16$\times$2, tanh & 40, 4 & --- & --- & --- & --- & --- & --- \\
+   & \textbf{\hpVPINN-gb} & 16$\times$2, tanh & 10, 3 & \shortstack{\num{0.53}\\{\scriptsize$\pm$\num{0.00}}} & \shortstack{\num{0.74}\\{\scriptsize$\pm$\num{0.00}}} & \shortstack{\num{1.27}\\{\scriptsize$\pm$\num{0.00}}} & \shortstack{\num{3.43e-07}\\{\scriptsize$\times\!/\!\div$\num{3.11}}} & \shortstack{\num{4.67e+00}\\{\scriptsize$\times\!/\!\div$\num{1.09}}} & 25 \\
+\addlinespace
+  Case~1, \num{2}\% noise & \hpVPINN-es & 32$\times$3, swish & 40, 4 & --- & --- & --- & --- & --- & --- \\
+   & \textbf{\hpVPINN-gb} & 16$\times$3, tanh & 20, 4 & \shortstack{\num{0.53}\\{\scriptsize$\pm$\num{0.00}}} & \shortstack{\num{0.74}\\{\scriptsize$\pm$\num{0.00}}} & \shortstack{\num{1.28}\\{\scriptsize$\pm$\num{0.00}}} & \shortstack{\num{1.88e-07}\\{\scriptsize$\times\!/\!\div$\num{1.86}}} & \shortstack{\num{2.04e+00}\\{\scriptsize$\times\!/\!\div$\num{1.19}}} & 32 \\
+\addlinespace
+  Case~2 & \textbf{\hpVPINN-es} & 24$\times$2, tanh & 10, 3 & \shortstack{\num{0.40}\\{\scriptsize$\pm$\num{0.00}}} & \shortstack{\num{0.19}\\{\scriptsize$\pm$\num{0.02}}} & \shortstack{\num{0.59}\\{\scriptsize$\pm$\num{0.02}}} & \shortstack{\num{2.23e-06}\\{\scriptsize$\times\!/\!\div$\num{1.93}}} & \shortstack{\num{2.92e+01}\\{\scriptsize$\times\!/\!\div$\num{1.39}}} & 21 \\
+   & \hpVPINN-gb & 32$\times$2, tanh & 40, 6 & \shortstack{\num{2.52}\\{\scriptsize$\pm$\num{0.03}}} & \shortstack{\num{2.97}\\{\scriptsize$\pm$\num{0.09}}} & \shortstack{\num{5.49}\\{\scriptsize$\pm$\num{0.12}}} & \shortstack{\num{4.59e-10}\\{\scriptsize$\times\!/\!\div$\num{1.65}}} & \shortstack{\num{1.21e-01}\\{\scriptsize$\times\!/\!\div$\num{1.31}}} & 31$^\ddagger$ \\
+\addlinespace
+  Case~3 & \hpVPINN-es & 24$\times$2, sigmoid & 10, 3 & \shortstack{\num{0.45}\\{\scriptsize$\pm$\num{0.06}}} & \shortstack{\num{0.33}\\{\scriptsize$\pm$\num{0.24}}} & \shortstack{\num{0.79}\\{\scriptsize$\pm$\num{0.29}}} & \shortstack{\num{1.51e-06}\\{\scriptsize$\times\!/\!\div$\num{1.40}}} & \shortstack{\num{1.63e+01}\\{\scriptsize$\times\!/\!\div$\num{1.61}}} & 15 \\
+   & \textbf{\hpVPINN-gb} & 8$\times$3, sigmoid & 40, 6 & \shortstack{\num{1.10}\\{\scriptsize$\pm$\num{0.06}}} & \shortstack{\num{0.78}\\{\scriptsize$\pm$\num{0.05}}} & \shortstack{\num{1.88}\\{\scriptsize$\pm$\num{0.07}}} & \shortstack{\num{9.10e-10}\\{\scriptsize$\times\!/\!\div$\num{1.50}}} & \shortstack{\num{1.07e-02}\\{\scriptsize$\times\!/\!\div$\num{1.37}}} & 21 \\
+\addlinespace
+  Case~4, \num{1}\% noise & \hpVPINN-es & 24$\times$3, tanh & 20, 6 & --- & --- & --- & --- & --- & --- \\
+   & \textbf{\hpVPINN-gb} & 12$\times$3, tanh & 40, 3 & \shortstack{\num{0.60}\\{\scriptsize$\pm$\num{0.12}}} & \shortstack{\num{0.85}\\{\scriptsize$\pm$\num{0.07}}} & \shortstack{\num{1.44}\\{\scriptsize$\pm$\num{0.18}}} & \shortstack{\num{2.51e-08}\\{\scriptsize$\times\!/\!\div$\num{8.68}}} & \shortstack{\num{6.10e-01}\\{\scriptsize$\times\!/\!\div$\num{1.52}}} & 29 \\
+\bottomrule
+\end{tabular}
