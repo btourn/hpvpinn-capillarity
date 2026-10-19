@@ -56,6 +56,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from hpvpinn_capillarity import paths
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -366,8 +368,8 @@ def make_figure(df: pd.DataFrame, init_seed, path_base: Path, usetex: bool):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--root", default=str(Path(__file__).resolve().parent),
-                   help="Repository root that contains hp_vpinn/ (default: directory of this script).")
+    p.add_argument("--root", default=str(paths.results_root()),
+                   help="Results root that contains hp_vpinn/ (default: <repo>/results).")
     p.add_argument("--list-studies", action="store_true",
                    help="List the sensitivity studies under --root and exit.")
     p.add_argument("--schedule", default="gb")

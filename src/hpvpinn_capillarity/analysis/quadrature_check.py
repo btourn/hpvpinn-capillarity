@@ -44,7 +44,8 @@ from pathlib import Path
 import numpy as np
 import jax
 
-import hparam_search_grenoblesand as hs   # constants + shared data prep + model builder
+from hpvpinn_capillarity import paths
+from hpvpinn_capillarity.hpo import search_grenoblesand as hs   # constants + shared data prep + model builder
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -65,7 +66,7 @@ SEEDS = [8113, 20459, 33127, 47701, 51389, 62903, 70117, 81611, 90073, 99991]
 
 assert Q_REF not in Q_TRAIN_LIST, "Q_REF must never be a training order"
 
-DEFAULT_OUT_DIR = hs.REPO_ROOT / "hp_vpinn" / "quadrature_check_grenoblesand_1pct"
+DEFAULT_OUT_DIR = paths.model_dir() / "quadrature_check_grenoblesand_1pct"
 
 
 # ---------------------------------------------------------------------------
@@ -236,7 +237,7 @@ def main():
     p.add_argument("--epochs", type=int, default=hs.MAX_STEPS)
     p.add_argument("--precision", choices=["float64", "float32"], default="float64",
                    help="Must match the HPO runs being described (default: float64).")
-    p.add_argument("--data", default=str(hs.REPO_ROOT / "data_grenoblesand.dat"))
+    p.add_argument("--data", default=str(paths.data_file("data_grenoblesand.dat")))
     p.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     p.add_argument("--overwrite", action="store_true", help="Re-run even if the JSON exists.")
     p.add_argument("--summarize", action="store_true", help="Only aggregate existing runs.")

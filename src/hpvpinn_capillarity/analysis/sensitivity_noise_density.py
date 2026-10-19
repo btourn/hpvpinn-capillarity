@@ -72,7 +72,8 @@ from types import SimpleNamespace
 
 import numpy as np
 
-REPO_ROOT = Path(__file__).resolve().parent
+from hpvpinn_capillarity import paths
+
 MODEL = "hp_vpinn"
 
 DEFAULT_FRACTIONS = (1.0, 0.5, 0.25, 0.125)
@@ -89,7 +90,7 @@ SCHEDULES = {"gb": (0, 20_000), "es": (200_000, 0)}  # (warmup, transition)
 # ---------------------------------------------------------------------------
 
 def _search_module():
-    import hparam_search_grenoblesand as m
+    from hpvpinn_capillarity.hpo import search_grenoblesand as m
     return m
 
 
@@ -141,14 +142,14 @@ def hpo_results_path(schedule: str, noise_level: float) -> Path:
     """Stage-A results file -- mirrors hparam_search_grenoblesand.main()."""
     m = _search_module()
     sched_tag, noise_tag = _tags(schedule, noise_level)
-    return (REPO_ROOT / MODEL / f"{m.BASE_RESULTS_DIR}_{sched_tag}_{noise_tag}"
+    return (paths.model_dir(MODEL) / f"{m.BASE_RESULTS_DIR}_{sched_tag}_{noise_tag}"
             / f"hparam_results_{noise_tag}.jsonl")
 
 
 def output_dir(schedule: str, noise_level: float, subsample: str) -> Path:
     sched_tag, noise_tag = _tags(schedule, noise_level)
     suffix = "" if subsample == "stride" else f"_{subsample}"
-    return REPO_ROOT / MODEL / f"sensitivity_grenoblesand_{sched_tag}_{noise_tag}{suffix}"
+    return paths.model_dir(MODEL) / f"sensitivity_grenoblesand_{sched_tag}_{noise_tag}{suffix}"
 
 
 # ---------------------------------------------------------------------------
@@ -362,7 +363,7 @@ def main() -> None:
     p.add_argument("--n-realisations", type=int, default=DEFAULT_N_REALISATIONS)
     p.add_argument("--fractions", type=float, nargs="+", default=list(DEFAULT_FRACTIONS))
     p.add_argument("--subsample", choices=["stride", "random"], default="stride")
-    p.add_argument("--data", default=str(REPO_ROOT / "data_grenoblesand.dat"))
+    p.add_argument("--data", default=str(paths.data_file("data_grenoblesand.dat")))
     p.add_argument("--init-seed", type=int, default=None,
                    help="Override the frozen network-init seed (default: top-1's).")
     g = p.add_mutually_exclusive_group()

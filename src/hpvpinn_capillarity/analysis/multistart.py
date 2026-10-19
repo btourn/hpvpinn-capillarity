@@ -52,13 +52,9 @@ from pathlib import Path
 
 import numpy as np
 
-# multistart.py lives in <repo>/hp_vpinn/ next to final_run_common.py; the case
-# scripts (grenoblesand.py, vangenuchten.py) and hparam_search_*.py may live in
-# either <repo>/hp_vpinn/ or <repo>/, so make both importable.
-_HERE = Path(__file__).resolve().parent
-for _p in (str(_HERE), str(_HERE.parent)):
-    if _p not in sys.path:
-        sys.path.append(_p)
+from hpvpinn_capillarity import paths
+
+_CASE_PKG = "hpvpinn_capillarity.final_runs."     # the "module" column of the manifest holds the short name
 
 # ---------------------------------------------------------------------------
 # CAMPAIGN DEFINITION  (edit here)
@@ -113,13 +109,8 @@ def init_const_name(param: str) -> str:
     return param.upper() + "_INIT"
 
 
-def _root():
-    from final_run_common import find_repo_root
-    return find_repo_root("hparam_search_vangenuchten")
-
-
 def _out_dir():
-    d = _root() / "multistart"
+    d = paths.multistart_dir()
     d.mkdir(parents=True, exist_ok=True)
     return d
 
@@ -136,14 +127,14 @@ def lhs(n, d, rng):
 
 
 def cmd_manifest(a):
-    from final_run_common import read_constant
+    from hpvpinn_capillarity.final_runs.common import read_constant
     rows, rng = [], np.random.default_rng(RNG_SEED)
     for b in BLOCKS:
-        mod = importlib.import_module(b["module"])
+        mod = importlib.import_module(_CASE_PKG + b["module"])
         spec = mod.SPEC
         rng_b = RANGES[b["module"]]
         params = list(rng_b)
-        src = _root() / f"{spec.search_module}.py"
+        src = paths.module_source(spec.search_module)
         default = {p: read_constant(src, init_const_name(p),
                                     DEFAULT_START_FALLBACK.get(b["module"], {}).get(p))
                    for p in params}
@@ -196,15 +187,14 @@ def read_manifest():
 # ---------------------------------------------------------------------------
 
 def cmd_run(a):
-    from final_run_common import (build_parser, find_repo_root, read_constant, resolve_config,
-                                  run_seeds, run_tag, _write_json)
+    from hpvpinn_capillarity.final_runs.common import (build_parser, read_constant, resolve_config,
+                                                       run_seeds, run_tag, _write_json)
     tid = a.task_id if a.task_id is not None else int(os.environ["SLURM_ARRAY_TASK_ID"])
     row = next(r for r in read_manifest() if int(r["id"]) == tid)
     init, seed = json.loads(row["init"]), int(row["seed"])
 
-    mod = importlib.import_module(row["module"])
+    mod = importlib.import_module(_CASE_PKG + row["module"])
     spec = mod.SPEC
-    repo_root = find_repo_root(spec.search_module)
     argv = ["--schedule", row["schedule"], "--seeds", str(seed)]
     if row["noise"] != "":
         argv += ["--noise-level", str(float(row["noise"]))]
@@ -214,13 +204,12 @@ def cmd_run(a):
         argv += ["--winners", a.winners]
     args = build_parser(spec).parse_args(argv)
     args.noise_level_f = float(args.noise_level) if spec.noise_levels else None
-    cfg = resolve_config(spec, args, repo_root)
-    max_steps = read_constant(repo_root / f"{spec.search_module}.py", "MAX_STEPS")
+    cfg = resolve_config(spec, args)
+    max_steps = read_constant(paths.module_source(spec.search_module), "MAX_STEPS")
     if args.epochs is None:
         args.epochs = int(max_steps)
 
     # override the initial values of the search module (read at call time by _vpinn_build_pinn)
-    sys.path.insert(0, str(repo_root))
     m = importlib.import_module(spec.search_module)
     for p, v in init.items():
         c = init_const_name(p)
@@ -230,10 +219,10 @@ def cmd_run(a):
         setattr(m, c, float(v))
 
     tag = run_tag(spec.case, cfg["schedule"], args.noise_level_f, cfg["suffix"], args.epochs, max_steps)
-    run_dir = repo_root / "hp_vpinn" / "final_runs" / f"{tag}_multistart" / f"run_{tid:04d}"
+    run_dir = paths.model_dir() / "final_runs" / f"{tag}_multistart" / f"run_{tid:04d}"
     print(f"[multistart] id={tid} block={row['block']} kind={row['kind']} seed={seed}\n"
           f"             init={init}\n             run_dir={run_dir}", flush=True)
-    run_seeds(spec, args, cfg, repo_root, run_dir)
+    run_seeds(spec, args, cfg, run_dir)
 
     rp = run_dir / "seeds" / f"seed_{seed:05d}" / "record.json"
     rec = json.loads(rp.read_text())
@@ -282,11 +271,11 @@ def _load(pattern):
 
 
 def cmd_aggregate(a):
-    from final_run_common import read_constant
-    from profile_figures import ADMISSIBLE_PHYSICS, CALIBRATED_OBJ, is_qualified
-    root = _root()
-    adm = read_constant(root / "hparam_postprocess.py", "ADMISSIBLE_PHYSICS", ADMISSIBLE_PHYSICS)
-    cal = read_constant(root / "hparam_postprocess.py", "CALIBRATED_OBJ", CALIBRATED_OBJ)
+    from hpvpinn_capillarity.final_runs.common import read_constant
+    from hpvpinn_capillarity.final_runs.profile_figures import ADMISSIBLE_PHYSICS, CALIBRATED_OBJ, is_qualified
+    postprocess_src = paths.module_source("hpvpinn_capillarity.hpo.postprocess")
+    adm = read_constant(postprocess_src, "ADMISSIBLE_PHYSICS", ADMISSIBLE_PHYSICS)
+    cal = read_constant(postprocess_src, "CALIBRATED_OBJ", CALIBRATED_OBJ)
     out = _out_dir()
     man = read_manifest()
     summary = {}
@@ -295,7 +284,7 @@ def cmd_aggregate(a):
     import matplotlib.pyplot as plt
 
     for block in dict.fromkeys(r["block"] for r in man):
-        recs = [r for r in _load(str(root / "hp_vpinn/final_runs/*_multistart/run_*/seeds/seed_*/record.json"))
+        recs = [r for r in _load(str(paths.model_dir() / "final_runs/*_multistart/run_*/seeds/seed_*/record.json"))
                 if r.get("block") == block and "_ep" not in r.get("base_tag", "")]
         if not recs:
             print(f"[{block}] no completed runs")

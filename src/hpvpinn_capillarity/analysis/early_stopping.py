@@ -24,6 +24,8 @@ from pathlib import Path
 import numpy as np
 from scipy.signal import lfilter
 
+from hpvpinn_capillarity import paths
+
 BETA = 0.99                      # beta_s of eq:ema_physics  (train_vpinn.py: ema_beta + 0.09)
 TAU0, W0 = 5e-8, 10_000          # values hard-coded in train_vpinn.py
 TAUS = [1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 5e-7, 1e-6]
@@ -306,8 +308,8 @@ def figures(data, out):
 def main():
     global summaries_by_tag
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default="hp_vpinn/final_runs")
-    ap.add_argument("--out", default="hp_vpinn/Figures/early_stopping")
+    ap.add_argument("--root", default=str(paths.model_dir() / "final_runs"))
+    ap.add_argument("--out", default=str(paths.model_dir() / "Figures" / "early_stopping"))
     ap.add_argument("--tags", nargs="*", default=None, help="default: every <root>/*gb* directory")
     ap.add_argument("--ignore-params", nargs="*", default=["theta_r"], help="parameters excluded from stationarity/deviation")
     ap.add_argument("--pinn-lower-bound", type=float, default=None, help="seconds; adds PINN rows '>x' (informal)")
