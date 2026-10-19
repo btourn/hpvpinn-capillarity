@@ -127,7 +127,7 @@ class CaseSpec:
 def build_case(case: str) -> CaseSpec:
     """Build the case spec, reading constants from the matching
     hparam_search_<case>.py so that there is a single source of truth."""
-    m = importlib.import_module(f"hparam_search_{case}")
+    m = importlib.import_module(f"hpvpinn_capillarity.hpo.search_{case}")
 
     if case == "grenoblesand":
         theta_s, l_fix, theta_r = float(m.THETA_S), float(m.L_FIXED), float(m.THETA_R)
@@ -476,7 +476,7 @@ def model_from_params(case: str, prm: dict):
     """Diffusivity built from parameters in the hp-VPINN reporting convention
     (same keys as TRUE_PARAMS in hparam_search_<case>.py). Ks/alpha enters
     frontx models as Ks with alpha = 1."""
-    m = importlib.import_module(f"hparam_search_{case}")
+    m = importlib.import_module(f"hpvpinn_capillarity.hpo.search_{case}")
     if case == "grenoblesand":
         return VanGenuchten(m=prm["m"], l=float(m.L_FIXED), Ks=prm["KsAlpha"],
                             theta_range=(float(m.THETA_R), float(m.THETA_S)))

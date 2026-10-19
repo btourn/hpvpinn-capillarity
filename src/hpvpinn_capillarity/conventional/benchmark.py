@@ -57,10 +57,8 @@ from pathlib import Path
 
 import numpy as np
 
-REPO_ROOT = Path(__file__).resolve().parent
-sys.path.insert(0, str(REPO_ROOT))
-
-import conventional_inverse as ci  # noqa: E402  (sets jax_enable_x64)
+from hpvpinn_capillarity import paths
+from hpvpinn_capillarity.conventional import inverse as ci  # (sets jax_enable_x64)
 
 CASES = ("grenoblesand", "letd", "vangenuchten", "brooks_corey")
 
@@ -71,8 +69,8 @@ CASES = ("grenoblesand", "letd", "vangenuchten", "brooks_corey")
 
 def load_data(case: str, noise_level: float | None, data_path: str | None):
     """Return (train, test, full) as dicts with o, theta, sigma (physical units)."""
-    mod = importlib.import_module(f"hparam_search_{case}")
-    path = data_path or str(REPO_ROOT / f"data_{case}.dat")
+    mod = importlib.import_module(f"hpvpinn_capillarity.hpo.search_{case}")
+    path = data_path or str(paths.data_file(f"data_{case}.dat"))
 
     if case == "grenoblesand":
         if noise_level is None:
@@ -93,7 +91,7 @@ def load_data(case: str, noise_level: float | None, data_path: str | None):
 
 
 def results_path(case: str, noise_level: float | None) -> Path:
-    out_dir = REPO_ROOT / "conventional"
+    out_dir = paths.conventional_dir()
     tag = f"_{int(round(noise_level * 100))}pct_noise" if case == "grenoblesand" else ""
     return out_dir / f"results_{case}{tag}.jsonl"
 
@@ -219,7 +217,7 @@ def run_profile_scan(spec, train, full, args, out) -> None:
     noise-free reference curve. Writes conventional/profile_<case>_<noise>.json."""
     lo, hi, n = args.grid
     grid = np.linspace(lo, hi, int(n))
-    path = args.data or str(REPO_ROOT / f"data_{args.case}.dat")
+    path = args.data or str(paths.data_file(f"data_{args.case}.dat"))
     raw = np.loadtxt(path, delimiter=",")
     # same sigma as the noisy data: LM tolerances are absolute, so sigma=1 would stop it early
     clean = dict(o=raw[:, 0], theta=raw[:, 1], sigma=np.full_like(raw[:, 1], args.noise_level))
@@ -259,7 +257,7 @@ def run_profile_scan(spec, train, full, args, out) -> None:
 def run_forward_check(spec, train, test, args, out) -> None:
     """Evaluate externally estimated parameter sets (e.g. hp-VPINN runs) with
     the exact frontx forward solver on the same train/test data."""
-    names = list(ci.importlib.import_module(f"hparam_search_{args.case}").TRUE_PARAMS)
+    names = list(ci.importlib.import_module(f"hpvpinn_capillarity.hpo.search_{args.case}").TRUE_PARAMS)
     recs = []
     for path in args.forward_check:
         with open(path) as f:

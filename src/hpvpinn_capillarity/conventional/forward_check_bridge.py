@@ -28,7 +28,7 @@ import statistics as st
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+from hpvpinn_capillarity import paths
 
 # final-run tag -> (case, noise level or None, file-name tag of the forward-check output)
 TAGS = {
@@ -52,7 +52,7 @@ def load_records(run_dir: Path):
 
 
 def convert(args):
-    out_dir = ROOT / "conventional" / "forward_check_inputs"
+    out_dir = paths.conventional_dir() / "forward_check_inputs"
     out_dir.mkdir(parents=True, exist_ok=True)
     fr = Path(args.final_runs_dir)
     for tag, (case, noise, _) in TAGS.items():
@@ -78,14 +78,14 @@ def convert(args):
     print("\nNow run, from the repo root with the hp_vpinn environment active:\n")
     for tag, (case, noise, _) in TAGS.items():
         nl = f" --noise-level {noise}" if noise is not None else ""
-        print(f"JAX_PLATFORMS=cpu python3 benchmark_conventional.py --case {case}{nl} "
-              f"--forward-check conventional/forward_check_inputs/hpvpinn_{tag}.jsonl")
+        print(f"JAX_PLATFORMS=cpu python3 -m hpvpinn_capillarity.conventional.benchmark --case {case}{nl} "
+              f"--forward-check {paths.conventional_dir() / 'forward_check_inputs' / ('hpvpinn_' + tag + '.jsonl')}")
 
 
 def summarise(args):
     for tag, (case, noise, ftag) in TAGS.items():
-        fc_path = ROOT / "conventional" / f"forward_check_{case}{ftag}{args.suffix}.json"
-        inp = ROOT / "conventional" / "forward_check_inputs" / f"hpvpinn_{tag}.jsonl"
+        fc_path = paths.conventional_dir() / f"forward_check_{case}{ftag}{args.suffix}.json"
+        inp = paths.conventional_dir() / "forward_check_inputs" / f"hpvpinn_{tag}.jsonl"
         if not fc_path.exists() or not inp.exists():
             print(f"[{tag}] missing {fc_path.name if not fc_path.exists() else inp.name}, skipped")
             continue
@@ -119,7 +119,7 @@ def summarise(args):
             print(f"  medians over {len(good)} seeds: hp train {med('hp_train'):.3f} -> exact {med('ex_train'):.3f};  "
                   f"hp test {med('hp_test'):.3f} -> exact {med('ex_test'):.3f};  "
                   f"exact after scale refit {med('ex_train_scale_refit'):.3f}")
-        dest = ROOT / "conventional" / f"forward_check_summary_{tag}{args.suffix}.csv"
+        dest = paths.conventional_dir() / f"forward_check_summary_{tag}{args.suffix}.csv"
         with open(dest, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(rows[0].keys())) if rows else None
             if w:
@@ -129,7 +129,7 @@ def summarise(args):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--final-runs-dir", default=str(ROOT / "hp_vpinn" / "final_runs"))
+    ap.add_argument("--final-runs-dir", default=str(paths.model_dir() / "final_runs"))
     ap.add_argument("--summarise", action="store_true")
     ap.add_argument("--suffix", default="",
                     help="suffix of the forward-check files to summarise, e.g. _itol1e-5 reads "
