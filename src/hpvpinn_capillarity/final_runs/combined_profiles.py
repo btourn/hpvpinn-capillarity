@@ -32,8 +32,9 @@ from pathlib import Path
 
 import numpy as np
 
-import final_run_common as frc
-from profile_figures import (ADMISSIBLE_PHYSICS, CALIBRATED_OBJ, ZOOM_BY_CASE,
+from hpvpinn_capillarity import paths
+from hpvpinn_capillarity.final_runs import common as frc
+from hpvpinn_capillarity.final_runs.profile_figures import (ADMISSIBLE_PHYSICS, CALIBRATED_OBJ, ZOOM_BY_CASE,
                              band_from_pool, draw_profile, is_qualified, refit_zoom)
 
 PANELS = [  # (winners.json group key, case name for the zoom lookup)
@@ -77,14 +78,7 @@ def main():
     ap.add_argument("--show", action="store_true")
     args = ap.parse_args()
 
-    here = Path(args.repo_root).resolve() if args.repo_root else Path(__file__).resolve().parent
-    # Works both from <repo>/ and from <repo>/<MODEL>/ (script next to the case scripts).
-    if here.name == frc.MODEL or (here / "final_runs").is_dir():
-        mdir, repo = here, here
-    else:
-        mdir, repo = here / frc.MODEL, here
-    if not (repo / "hparam_postprocess.py").exists() and (repo.parent / "hparam_postprocess.py").exists():
-        repo = repo.parent
+    mdir = Path(args.repo_root).resolve() / frc.MODEL if args.repo_root else paths.model_dir(frc.MODEL)
     figs = Path(args.figures_dir) if args.figures_dir else mdir / "Figures"
     figs.mkdir(parents=True, exist_ok=True)
 
@@ -98,8 +92,8 @@ def main():
             raise SystemExit(f"No selected configuration for {missing} in {wpath}; pass --tags.")
         tags = [sel[k] for k, _ in PANELS]
 
-    adm = frc.read_constant(repo / "hparam_postprocess.py", "ADMISSIBLE_PHYSICS", ADMISSIBLE_PHYSICS)
-    cal = frc.read_constant(repo / "hparam_postprocess.py", "CALIBRATED_OBJ", CALIBRATED_OBJ)
+    adm = frc.read_constant(paths.module_source("hpvpinn_capillarity.hpo.postprocess"), "ADMISSIBLE_PHYSICS", ADMISSIBLE_PHYSICS)
+    cal = frc.read_constant(paths.module_source("hpvpinn_capillarity.hpo.postprocess"), "CALIBRATED_OBJ", CALIBRATED_OBJ)
     print(f"[gate] pde_loss_eval < {adm:g} and obj < {cal:g}")
 
     matplotlib, plt = frc._setup_matplotlib()

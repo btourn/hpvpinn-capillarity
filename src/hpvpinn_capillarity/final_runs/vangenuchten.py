@@ -31,12 +31,13 @@ Usage
     uv run python vangenuchten.py --show-config
 """
 
-from final_run_common import CaseSpec, find_repo_root, main, read_constant
+from hpvpinn_capillarity import paths
+from hpvpinn_capillarity.final_runs.common import CaseSpec, main, read_constant
 
-SEARCH_MODULE = "hparam_search_vangenuchten"
+SEARCH_MODULE = "hpvpinn_capillarity.hpo.search_vangenuchten"
 
 # Reference parameter set, read from the HPO module so it cannot drift.
-_SRC = find_repo_root(SEARCH_MODULE) / f"{SEARCH_MODULE}.py"
+_SRC = paths.module_source(SEARCH_MODULE)
 REFERENCE_PARAMS = read_constant(_SRC, "TRUE_PARAMS")
 if not REFERENCE_PARAMS:
     raise ImportError(f"Could not read TRUE_PARAMS from {_SRC}.")
@@ -49,7 +50,7 @@ def prepare_shared(m, data_path, noise_level):
 
 def reference_diffusivity(m):
     """van Genuchten D(theta) with the reference parameter set."""
-    from constitutive_model import FixedParam, VanGenuchtenDiffusivity
+    from hpvpinn_capillarity.core.constitutive_model import FixedParam, VanGenuchtenDiffusivity
     p = m.TRUE_PARAMS
     return VanGenuchtenDiffusivity(
         KsAlpha=FixedParam(p["KsAlpha"]), m=FixedParam(p["m"]),

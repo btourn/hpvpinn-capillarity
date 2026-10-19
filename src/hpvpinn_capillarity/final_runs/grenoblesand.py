@@ -30,12 +30,13 @@ from pathlib import Path
 
 import numpy as np
 
-from final_run_common import CaseSpec, find_repo_root, main, read_constant
+from hpvpinn_capillarity import paths
+from hpvpinn_capillarity.final_runs.common import CaseSpec, main, read_constant
 
-SEARCH_MODULE = "hparam_search_grenoblesand"
+SEARCH_MODULE = "hpvpinn_capillarity.hpo.search_grenoblesand"
 
 # Reference (true) parameters, read from the HPO module so they cannot drift.
-_SRC = find_repo_root(SEARCH_MODULE) / f"{SEARCH_MODULE}.py"
+_SRC = paths.module_source(SEARCH_MODULE)
 _KS, _ALPHA, _M = (read_constant(_SRC, n) for n in ("Ks_TRUE", "ALPHA_TRUE", "M_TRUE"))
 TRUE_PARAMS = dict(KsAlpha=_KS / _ALPHA, m=_M)
 
@@ -47,7 +48,7 @@ def prepare_shared(m, data_path, noise_level):
 
 def reference_diffusivity(m):
     """van Genuchten D(theta) with the true parameters and the HPO's fixed l, theta_r, theta_s."""
-    from constitutive_model import FixedParam, VanGenuchtenDiffusivity
+    from hpvpinn_capillarity.core.constitutive_model import FixedParam, VanGenuchtenDiffusivity
     return VanGenuchtenDiffusivity(
         KsAlpha=FixedParam(m.TRUE_PARAMS["KsAlpha"]), m=FixedParam(m.TRUE_PARAMS["m"]),
         l=FixedParam(m.L_FIXED), theta_r=FixedParam(m.THETA_R), theta_s=m.THETA_S,

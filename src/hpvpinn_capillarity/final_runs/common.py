@@ -83,7 +83,9 @@ from typing import Callable, Optional
 
 import numpy as np
 
-from profile_figures import (ADMISSIBLE_PHYSICS, CALIBRATED_OBJ, ZOOM_BY_CASE,
+from hpvpinn_capillarity import paths
+
+from hpvpinn_capillarity.final_runs.profile_figures import (ADMISSIBLE_PHYSICS, CALIBRATED_OBJ, ZOOM_BY_CASE,
                              band_from_pool, draw_profile, is_qualified)
 
 MODEL = "hp_vpinn"
@@ -106,7 +108,7 @@ SE_RANGE            = (1e-3, 0.999)   # D(theta) grid, as a fraction of [theta_i
 @dataclass
 class CaseSpec:
     case: str                               # 'grenoblesand', 'letd', ...
-    search_module: str                      # 'hparam_search_grenoblesand'
+    search_module: str                      # 'hpvpinn_capillarity.hpo.search_grenoblesand'
     label: str                              # 'Case 1 (Grenoble sand)'
     param_labels: dict                      # {param: LaTeX label}
     D_units: str                            # LaTeX units of D, e.g. r'cm$^2$/h'
@@ -149,14 +151,6 @@ def read_constant(path: Path, name: str, default=None):
 # ---------------------------------------------------------------------------
 # Paths and tags
 # ---------------------------------------------------------------------------
-
-def find_repo_root(search_module: str) -> Path:
-    here = Path(__file__).resolve().parent
-    for cand in (here, here.parent):
-        if (cand / f"{search_module}.py").exists():
-            return cand
-    raise ImportError(f"{search_module}.py not found next to {here} or in its parent.")
-
 
 def noise_tag(noise_level) -> str:
     return "" if noise_level is None else f"_{int(round(noise_level * 100))}pct_noise"
@@ -217,7 +211,7 @@ def arch_suffix(hp: dict) -> str:
             f"-Nel{hp['n_elements']}-p{hp['poly_degree']}")
 
 
-def resolve_config(spec: CaseSpec, args, repo_root: Path) -> dict:
+def resolve_config(spec: CaseSpec, args) -> dict:
     """Return {hparams, schedule, source} for this run."""
     noise = getattr(args, "noise_level_f", None)
     if args.arch:
@@ -227,7 +221,7 @@ def resolve_config(spec: CaseSpec, args, repo_root: Path) -> dict:
         return dict(hparams=hp, schedule=args.schedule,
                     source=dict(kind="user", arch=args.arch), suffix=arch_suffix(hp))
 
-    wpath = Path(args.winners) if args.winners else repo_root / MODEL / "Figures" / "winners.json"
+    wpath = Path(args.winners) if args.winners else paths.model_dir(MODEL) / "Figures" / "winners.json"
     if not wpath.exists():
         raise SystemExit(f"{wpath} not found. Run 'python hparam_postprocess.py --model {MODEL} "
                          f"--winners' first, or pass --winners PATH, or use --arch.")
@@ -448,7 +442,7 @@ def train_one_seed(m, spec: CaseSpec, cfg: dict, data: dict, seed: int, noise_le
     curves = dict(phi_nd=grids["phi_nd"], theta_nd=theta_pred,
                   theta=grids["theta"], D=D_curve)
     # pointwise strong-form residual on the dense grid of the HPO (same ODE, same grid as frontx)
-    from strong_form_residual import strong_form_residual
+    from hpvpinn_capillarity.core.strong_form_residual import strong_form_residual
     phi_dense = jnp.asarray(m.PHI_DENSE)
     curves["residual_phi_nd"] = np.asarray(phi_dense)
     curves["residual"] = np.asarray(
@@ -475,9 +469,8 @@ def _json_default(o):
     raise TypeError(type(o))
 
 
-def run_seeds(spec: CaseSpec, args, cfg: dict, repo_root: Path, run_dir: Path) -> None:
+def run_seeds(spec: CaseSpec, args, cfg: dict, run_dir: Path) -> None:
     """Training phase: needs JAX. Skips seeds whose record.json exists."""
-    sys.path.insert(0, str(repo_root))
     import importlib
     m = importlib.import_module(spec.search_module)       # enables x64
     m.BACKENDS[MODEL]["loader"]()
@@ -489,7 +482,7 @@ def run_seeds(spec: CaseSpec, args, cfg: dict, repo_root: Path, run_dir: Path) -
         m.MAX_STEPS = args.epochs           # read by run_vpinn_trial at call time
     _install_compile_listener()
 
-    data_path = args.data or str(repo_root / spec.default_data)
+    data_path = args.data or str(paths.data_file(spec.default_data))
     shared = spec.prepare_shared(m, data_path, args.noise_level_f)
     data = m.BACKENDS[MODEL]["prepare"](shared)
     scaling = data["scaling"]
@@ -604,16 +597,16 @@ def _stats(values) -> dict:
                 median=float(np.median(v)), min=float(v.min()), max=float(v.max()))
 
 
-def hpo_cost(repo_root: Path, spec: CaseSpec, noise_level) -> dict:
+def hpo_cost(spec: CaseSpec, noise_level) -> dict:
     """Total recorded training time of the HPO campaign for this case (both
     schedules; Stage A search and Stage B replication), from the JSONLs."""
     out = {}
-    base = read_constant(repo_root / f"{spec.search_module}.py", "BASE_RESULTS_DIR",
+    base = read_constant(paths.module_source(spec.search_module), "BASE_RESULTS_DIR",
                          f"results_{spec.case}")
     for sched in SCHEDULES:
         nt = noise_tag(noise_level)
         fname = f"hparam_results{nt}.jsonl" if nt else f"hparam_results_{spec.case}.jsonl"
-        path = repo_root / MODEL / f"{base}_{sched}{nt}" / fname
+        path = paths.model_dir(MODEL) / f"{base}_{sched}{nt}" / fname
         if not path.exists():
             out[sched] = dict(available=False, path=str(path))
             continue
@@ -922,19 +915,19 @@ def latex_timing_table(summary: dict) -> str:
     return "\n".join(L) + "\n"
 
 
-def aggregate(spec: CaseSpec, args, cfg: dict, repo_root: Path, run_dir: Path,
+def aggregate(spec: CaseSpec, args, cfg: dict, run_dir: Path,
               tag: str) -> Optional[dict]:
     runs = _load_seed_runs(run_dir)
     if not (run_dir / "reference.npz").exists() or not runs:
         print(f"No completed seeds in {run_dir}; nothing to aggregate.")
         return None
     ref = dict(np.load(run_dir / "reference.npz"))
-    figs = Path(args.figures_dir) if args.figures_dir else repo_root / MODEL / "Figures"
+    figs = Path(args.figures_dir) if args.figures_dir else paths.model_dir(MODEL) / "Figures"
     figs.mkdir(parents=True, exist_ok=True)
 
     done = [r for r in runs if not r.get("failed")]
-    adm = read_constant(repo_root / "hparam_postprocess.py", "ADMISSIBLE_PHYSICS", ADMISSIBLE_PHYSICS)
-    cal = read_constant(repo_root / "hparam_postprocess.py", "CALIBRATED_OBJ", CALIBRATED_OBJ)
+    adm = read_constant(paths.module_source("hpvpinn_capillarity.hpo.postprocess"), "ADMISSIBLE_PHYSICS", ADMISSIBLE_PHYSICS)
+    cal = read_constant(paths.module_source("hpvpinn_capillarity.hpo.postprocess"), "CALIBRATED_OBJ", CALIBRATED_OBJ)
     gate = [is_qualified(r, adm, cal) for r in done]
     conv = [r for r, (ok, _) in zip(done, gate) if ok]
     if any(k != "pde_loss_eval" for _, k in gate):
@@ -993,7 +986,7 @@ def aggregate(spec: CaseSpec, args, cfg: dict, repo_root: Path, run_dir: Path,
     envs = {(r.get("env", {}).get("hostname"), r.get("env", {}).get("cpu_model")) for r in done}
     if len(envs) > 1:
         warnings.warn(f"Seeds were run on different machines: {envs}; timings are not comparable.")
-    summary["hpo_cost"] = hpo_cost(repo_root, spec, args.noise_level_f)
+    summary["hpo_cost"] = hpo_cost(spec, args.noise_level_f)
     tot = [s["total_s"] for d in summary["hpo_cost"].values() if d.get("available")
            for s in d["stages"].values()]
     summary["hpo_total_h"] = sum(tot) / 3600 if tot else None
@@ -1003,9 +996,9 @@ def aggregate(spec: CaseSpec, args, cfg: dict, repo_root: Path, run_dir: Path,
     rep_hist = dict(np.load(rep["_dir"] / "history.npz"))
     pool_hists = [dict(np.load(r["_dir"] / "history.npz")) for r in pool]
     # 5e-8 is the value hard-coded in _train_vpinn when the constant is absent
-    ema_thr = read_constant(Path(__file__).resolve().parent / "train_vpinn.py",
+    ema_thr = read_constant(paths.module_source("hpvpinn_capillarity.core.train_vpinn"),
                             "EMA_PHYSICS_THRESHOLD", 5e-8)
-    lambda_bc = read_constant(repo_root / f"{spec.search_module}.py", "LAMBDA_BC")
+    lambda_bc = read_constant(paths.module_source(spec.search_module), "LAMBDA_BC")
     plot_losses(spec, rep_hist, pool_hists, figs / f"final_losses_{tag}.eps",
                 lambda_bc, ema_thr, args.show)
     band = band_from_pool(th_pool, args.band)
@@ -1095,17 +1088,16 @@ def build_parser(spec: CaseSpec) -> argparse.ArgumentParser:
 def main(spec: CaseSpec, argv=None) -> None:
     args = build_parser(spec).parse_args(argv)
     args.noise_level_f = float(args.noise_level) if spec.noise_levels else None
-    repo_root = find_repo_root(spec.search_module)
-    cfg = resolve_config(spec, args, repo_root)
+    cfg = resolve_config(spec, args)
 
-    max_steps = read_constant(repo_root / f"{spec.search_module}.py", "MAX_STEPS")
+    max_steps = read_constant(paths.module_source(spec.search_module), "MAX_STEPS")
     if args.epochs is None:
         if max_steps is None:
             raise SystemExit(f"Could not read MAX_STEPS from {spec.search_module}.py; pass --epochs.")
         args.epochs = int(max_steps)
     tag = run_tag(spec.case, cfg["schedule"], args.noise_level_f, cfg["suffix"],
                   args.epochs, max_steps)
-    run_dir = repo_root / MODEL / "final_runs" / tag
+    run_dir = paths.model_dir(MODEL) / "final_runs" / tag
 
     print("=" * 72)
     print(f"{spec.label} -- final runs, tag {tag}")
@@ -1127,5 +1119,5 @@ def main(spec: CaseSpec, argv=None) -> None:
         return
 
     if not args.aggregate_only:
-        run_seeds(spec, args, cfg, repo_root, run_dir)
-    aggregate(spec, args, cfg, repo_root, run_dir, tag)
+        run_seeds(spec, args, cfg, run_dir)
+    aggregate(spec, args, cfg, run_dir, tag)
