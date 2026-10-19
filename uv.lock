@@ -306,9 +306,9 @@ wheels = [
 ]
 
 [[package]]
-name = "hp-vpinn"
-version = "0.1.0"
-source = { virtual = "." }
+name = "hpvpinn-capillarity"
+version = "2.0.0.dev0"
+source = { editable = "." }
 dependencies = [
     { name = "equinox" },
     { name = "flax" },

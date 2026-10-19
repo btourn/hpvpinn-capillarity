@@ -1,19 +1,23 @@
 __pycache__/
-.venv/
 *.pyc
-src/*.egg-info/
-results/**/*.db
+.venv/
+*.egg-info/
 .vscode/
-# revision layout
+.claude/
+
+# databases, logs and large run directories
 *.db
 logs/
 logs_postprocess/
-final_runs/
-Figures/
+results/hp_vpinn/final_runs/
+
+# LaTeX artefacts
 *.aux
 *.log
 *.fls
 *.fdb_latexmk
 *.synctex.gz
 *-eps-converted-to.pdf
-.claude/
+
+# backups
+*.bak

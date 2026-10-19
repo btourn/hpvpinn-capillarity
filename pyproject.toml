@@ -1,8 +1,9 @@
 [project]
-name = "hp-vpinn"
-version = "0.1.0"
-description = "Inverse PINN porous media hyperparameter study"
+name = "hpvpinn-capillarity"
+version = "2.0.0.dev0"
+description = "hp-VPINN framework for inverse hydraulic parameter recovery in unsaturated porous media"
 readme = "README.md"
+license = { text = "Apache-2.0" }
 requires-python = ">=3.13"
 dependencies = [
     "jax>=0.9.0",
@@ -26,8 +27,12 @@ dependencies = [
     "pandas>=3.0.1",
 ]
 
-[tool.setuptools]
-packages = []
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
