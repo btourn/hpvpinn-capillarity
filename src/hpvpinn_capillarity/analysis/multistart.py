@@ -369,7 +369,7 @@ def cmd_aggregate(a):
         fig, axes = plt.subplots(1, len(params) + 1, figsize=(3.6 * (len(params) + 1), 3.6), squeeze=False)
         axes = axes[0]
         mod = next(r["module"] for r in man if r["block"] == block)
-        ref = importlib.import_module(mod).SPEC.reference_params or {}
+        ref = importlib.import_module(_CASE_PKG + mod).SPEC.reference_params or {}
         for j, p in enumerate(params):
             ax = axes[j]
             for x in rows:
