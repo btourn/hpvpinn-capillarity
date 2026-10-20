@@ -24,8 +24,9 @@ into the package layout in the commits that follow it:
 | `data/data_grenoblesand.dat` | `data_grenoblesand.dat` | moved, content unchanged |
 | `data/data_letd.dat` | `data_letd.dat` | moved, content unchanged |
 | `data/data_vangenuchten.dat` | `data_vangenuchten.dat` | moved, content unchanged |
-| `pyproject.toml` | `hp_vpinn/pyproject.toml` | moved and adapted to the package layout (similarity 69 %) |
-| `scripts/rerun_forward_check_tight.sh` | `rerun_forward_check_tight.sh` | moved, content unchanged |
+| `pyproject.toml` | `-` | new |
+| `requirements-conventional.txt` | `-` | new |
+| `scripts/rerun_forward_check_tight.sh` | `rerun_forward_check_tight.sh` | moved and adapted to the package layout (similarity 55 %) |
 | `slurm/run_hparam_grenoblesand.sh` | `slurm/run_hparam_grenoblesand.sh` | adapted to the package layout |
 | `slurm/run_hparam_letd.sh` | `slurm/run_hparam_letd.sh` | adapted to the package layout |
 | `slurm/run_hparam_vangenuchten.sh` | `slurm/run_hparam_vangenuchten.sh` | adapted to the package layout |
@@ -50,7 +51,7 @@ into the package layout in the commits that follow it:
 | `src/hpvpinn_capillarity/conventional/__init__.py` | `-` | new |
 | `src/hpvpinn_capillarity/conventional/benchmark.py` | `benchmark_conventional.py` | moved and adapted to the package layout (similarity 94 %) |
 | `src/hpvpinn_capillarity/conventional/forward_check_bridge.py` | `final_runs_to_forward_check.py` | moved and adapted to the package layout (similarity 87 %) |
-| `src/hpvpinn_capillarity/conventional/inverse.py` | `conventional_inverse.py` | moved and adapted to the package layout (similarity 99 %) |
+| `src/hpvpinn_capillarity/conventional/inverse.py` | `conventional_inverse.py` | moved and adapted to the package layout (similarity 95 %) |
 | `src/hpvpinn_capillarity/core/__init__.py` | `-` | new |
 | `src/hpvpinn_capillarity/core/constitutive_model.py` | `hp_vpinn/constitutive_model.py` | moved, content unchanged |
 | `src/hpvpinn_capillarity/core/datasets.py` | `hp_vpinn/datasets.py` | moved, content unchanged |
@@ -76,7 +77,7 @@ into the package layout in the commits that follow it:
 | `src/hpvpinn_capillarity/hpo/search_letd.py` | `hparam_search_letd.py` | moved and adapted to the package layout (similarity 75 %) |
 | `src/hpvpinn_capillarity/hpo/search_vangenuchten.py` | `hparam_search_vangenuchten.py` | moved and adapted to the package layout (similarity 76 %) |
 | `src/hpvpinn_capillarity/paths.py` | `-` | new |
-| `uv.lock` | `hp_vpinn/uv.lock` | moved and adapted to the package layout (similarity 99 %) |
+| `uv.lock` | `hp_vpinn/uv.lock` | moved and adapted to the package layout (similarity 93 %) |
 
 ## Files identical to their source
 
@@ -359,7 +360,6 @@ a5bffe82100e3660ae9c22e9fa98f1c5bf9c7cb3ef61be365e21a157d2bd0de2  results/multis
 41d7e89b85b1c83319c7e665d0874b678da0be1e1d98ffcab043f494ded96cd7  results/multistart/summary_case1_2pct_gb.csv
 7cb8ae835f1d00a9ba2ed7818ec429ec57b208d69b33a2ee775a5269adcde2aa  results/multistart/summary_case2_es.csv
 adee0aa3f375de77c4c4182e921663c34f268ec7461d5ccdaee9cff4be91d65a  results/multistart/summary_case2_gb.csv
-efabb3fb7e9ba50aff01f09289801594e89e6d8bd2141c3a87641b2d868b7388  scripts/rerun_forward_check_tight.sh
 ```
 
 ## Files adapted from the workspace
@@ -377,7 +377,6 @@ ff6fc922f95f6097f2f4088333598b420d97a8e8fac646156991c8f2bb552779  hp_vpinn/combi
 84e6b9d7fd250062fbc5a161c428bd1c0fe85b5a758e603c6ecd6f7980d8417d  hp_vpinn/grenoblesand.py  ->  src/hpvpinn_capillarity/final_runs/grenoblesand.py
 ff19b0a9dd90f344303b4905d34fdedc65588cc76135e37f3b2915410347b37d  hp_vpinn/letd.py  ->  src/hpvpinn_capillarity/final_runs/letd.py
 4f274807b2e4cc1839a19becde37236f47174068d554bd75fc1c0491b97c9416  hp_vpinn/multistart.py  ->  src/hpvpinn_capillarity/analysis/multistart.py
-f888608a48f01b32f3a90246a000f6f219c6b1d2c8e3e4e1f0bcddb4119f4252  hp_vpinn/pyproject.toml  ->  pyproject.toml
 09bf241d54ba50fb087d2e0c79ae7d9ac06ac0a2c5687c19b30c763ffa1da73c  hp_vpinn/train_vpinn.py  ->  src/hpvpinn_capillarity/core/train_vpinn.py
 c043752d7cb26f3a730c5aa67a58e34d27204495c7d95958368e82b1e5780d7b  hp_vpinn/uv.lock  ->  uv.lock
 60394ccd0415164ee4000d4ecc6135ccda26f458a758dbdc2e8d3022af8145db  hp_vpinn/vangenuchten.py  ->  src/hpvpinn_capillarity/final_runs/vangenuchten.py
@@ -388,6 +387,7 @@ a61b9dce9f4be0e0e620ec588f26dbf3b4313a0c74dcad40497822c02d5db80d  hparam_search_
 c7b0c215cbf3e9bd9ca34c0bf2a5d5b60a922a1671d54ec0d9efa6dd8283cb6c  hparam_search_vangenuchten.py  ->  src/hpvpinn_capillarity/hpo/search_vangenuchten.py
 0978f0b6a632c7c26fa60706ce7f20900aad00b5e33f8ca7b9980ec22b5f05cf  postprocess_sensitivity.py  ->  src/hpvpinn_capillarity/analysis/postprocess_sensitivity.py
 b25ec4d72a56ade0856f961ad0e37141d44dabbfd509b8e3111f4660ee8bf4f8  quadrature_check_grenoblesand.py  ->  src/hpvpinn_capillarity/analysis/quadrature_check.py
+efabb3fb7e9ba50aff01f09289801594e89e6d8bd2141c3a87641b2d868b7388  rerun_forward_check_tight.sh  ->  scripts/rerun_forward_check_tight.sh
 0a01014a2f45fb108030183f96d37131e82a1295e3b77393ebdd0ab2b15e5cc3  sensitivity_noise_density.py  ->  src/hpvpinn_capillarity/analysis/sensitivity_noise_density.py
 415ca7510dcb7a3d80e0fb9836dc77e7090aa5222c993b4ad46a2e52973462b8  slurm/run_hparam_grenoblesand.sh  ->  slurm/run_hparam_grenoblesand.sh
 80f8834f86f38a39c36eeb4c43258abe6db42ffa31c229d9f328d96bf3cdd42e  slurm/run_hparam_letd.sh  ->  slurm/run_hparam_letd.sh
@@ -404,6 +404,13 @@ abbcf4d056ca474edf0ec04d0d2cc45f5f9497de2c056b48ab27d270d06cb0bf  slurm/submit_a
 0d27a416cfaff6d88358ae9bb0a46c565a919ad2bb9f4a8bc8fb0d2d2f00d7a2  slurm/submit_all_vangenuchten.sh  ->  slurm/submit_all_vangenuchten.sh
 a3ea0978872a74fe3bfc0da56bf7fb15527274d1f204daa1453b2cefe11f4d1f  slurm/submit_sensitivity.sh  ->  slurm/submit_sensitivity.sh
 ```
+
+## Conventional inversion
+
+The files in `results/conventional/` were written with a development branch of `frontx` (version 0.1.0, commit
+`71e5787`, recorded in their `env` field). Its solver and inverse modules are identical to the public commit
+`e04d264` of https://github.com/gerlero/frontx, which `requirements-conventional.txt` installs; the forward checks of
+Cases 1 (1 % noise), 2 and 3 repeated with that public commit gave exactly the stored values in every numerical field.
 
 ## Not included on purpose
 
