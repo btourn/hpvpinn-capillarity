@@ -18,12 +18,15 @@ into the package layout in the commits that follow it:
 |---|---|---|
 | `.gitignore` | `.gitignore` | adapted to the package layout |
 | `CHANGELOG.md` | `CHANGELOG.md` | adapted to the package layout |
+| `CITATION.cff` | `CITATION.cff` | adapted to the package layout |
 | `PROVENANCE.md` | `PROVENANCE.md` | adapted to the package layout |
 | `README.md` | `README.md` | adapted to the package layout |
+| `data/README.md` | `-` | new |
 | `data/data_brooks_corey.dat` | `data_brooks_corey_new.dat` | moved, content unchanged |
 | `data/data_grenoblesand.dat` | `data_grenoblesand.dat` | moved, content unchanged |
 | `data/data_letd.dat` | `data_letd.dat` | moved, content unchanged |
 | `data/data_vangenuchten.dat` | `data_vangenuchten.dat` | moved, content unchanged |
+| `docs/new-datasets.md` | `-` | new |
 | `pyproject.toml` | `-` | new |
 | `requirements-conventional.txt` | `-` | new |
 | `scripts/rerun_forward_check_tight.sh` | `rerun_forward_check_tight.sh` | moved and adapted to the package layout (similarity 55 %) |
@@ -44,7 +47,7 @@ into the package layout in the commits that follow it:
 | `src/hpvpinn_capillarity/__init__.py` | `-` | new |
 | `src/hpvpinn_capillarity/analysis/__init__.py` | `-` | new |
 | `src/hpvpinn_capillarity/analysis/early_stopping.py` | `hp_vpinn/early_stopping_analysis.py` | moved and adapted to the package layout (similarity 95 %) |
-| `src/hpvpinn_capillarity/analysis/multistart.py` | `hp_vpinn/multistart.py` | moved and adapted to the package layout (similarity 90 %) |
+| `src/hpvpinn_capillarity/analysis/multistart.py` | `hp_vpinn/multistart.py` | moved and adapted to the package layout (similarity 89 %) |
 | `src/hpvpinn_capillarity/analysis/postprocess_sensitivity.py` | `postprocess_sensitivity.py` | moved and adapted to the package layout (similarity 97 %) |
 | `src/hpvpinn_capillarity/analysis/quadrature_check.py` | `quadrature_check_grenoblesand.py` | moved and adapted to the package layout (similarity 95 %) |
 | `src/hpvpinn_capillarity/analysis/sensitivity_noise_density.py` | `sensitivity_noise_density.py` | moved and adapted to the package layout (similarity 95 %) |
@@ -72,12 +75,12 @@ into the package layout in the commits that follow it:
 | `src/hpvpinn_capillarity/final_runs/vangenuchten.py` | `hp_vpinn/vangenuchten.py` | moved and adapted to the package layout (similarity 72 %) |
 | `src/hpvpinn_capillarity/hpo/__init__.py` | `-` | new |
 | `src/hpvpinn_capillarity/hpo/postprocess.py` | `hparam_postprocess.py` | moved and adapted to the package layout (similarity 96 %) |
-| `src/hpvpinn_capillarity/hpo/search_brooks_corey_new.py` | `hparam_search_brooks_corey_new.py` | moved and adapted to the package layout (similarity 77 %) |
-| `src/hpvpinn_capillarity/hpo/search_grenoblesand.py` | `hparam_search_grenoblesand.py` | moved and adapted to the package layout (similarity 75 %) |
-| `src/hpvpinn_capillarity/hpo/search_letd.py` | `hparam_search_letd.py` | moved and adapted to the package layout (similarity 75 %) |
+| `src/hpvpinn_capillarity/hpo/search_brooks_corey_new.py` | `hparam_search_brooks_corey_new.py` | moved and adapted to the package layout (similarity 75 %) |
+| `src/hpvpinn_capillarity/hpo/search_grenoblesand.py` | `hparam_search_grenoblesand.py` | moved and adapted to the package layout (similarity 73 %) |
+| `src/hpvpinn_capillarity/hpo/search_letd.py` | `hparam_search_letd.py` | moved and adapted to the package layout (similarity 73 %) |
 | `src/hpvpinn_capillarity/hpo/search_vangenuchten.py` | `hparam_search_vangenuchten.py` | moved and adapted to the package layout (similarity 76 %) |
 | `src/hpvpinn_capillarity/paths.py` | `-` | new |
-| `uv.lock` | `hp_vpinn/uv.lock` | moved and adapted to the package layout (similarity 93 %) |
+| `uv.lock` | `hp_vpinn/uv.lock` | moved and adapted to the package layout (similarity 73 %) |
 
 ## Files identical to their source
 
