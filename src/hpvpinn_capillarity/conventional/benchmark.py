@@ -50,7 +50,6 @@ os.environ.setdefault("JAX_PLATFORMS", "cpu")  # CPU-only timing, same as hp-VPI
 import argparse
 import importlib
 import json
-import sys
 import time
 import warnings
 from pathlib import Path

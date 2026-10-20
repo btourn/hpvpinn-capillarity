@@ -74,7 +74,6 @@ import os
 import platform
 import shutil
 import socket
-import sys
 import time
 import warnings
 from dataclasses import dataclass
