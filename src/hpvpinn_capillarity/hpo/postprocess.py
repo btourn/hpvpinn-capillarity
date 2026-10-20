@@ -18,8 +18,9 @@ The results of the searches are read from (see hpvpinn_capillarity.paths):
 
     <results>/hp_vpinn/results_<case>_<es|gb>[_<n>pct_noise]/hparam_results_*.jsonl
 
-By default, figures and LaTeX tables go to <results>/<model>/Figures;
-per-run CSVs go to the run's own results directory.
+By default, figures go to <results>/<model>/Figures and LaTeX tables and the
+winners summary to <results>/<model>/tables; per-run CSVs go to the run's own
+results directory.
 
 Usage
 -----
@@ -31,7 +32,7 @@ Usage
 --winners builds the winning-architecture summary for every case,
 configuration and noise level of one model (non-admissible winners
 included and flagged): latex_winners.tex, winners.json and winners.csv,
-all in <figures-dir> (default <repo>/<model>/Figures). The final-run scripts
+all in <tables-dir> (default <results>/<model>/tables). The final-run scripts
 (grenoblesand.py, ...) read their configuration from winners.json
 (see load_winner).
 """
@@ -90,6 +91,11 @@ def model_dir(model: str) -> Path:
     if model not in MODELS:
         raise ValueError(f"Unknown model {model!r}; expected one of {MODELS}")
     return paths.model_dir(model)
+
+
+def default_tables_dir(model: str) -> str:
+    """Default output directory for LaTeX tables and the winners summary."""
+    return str(paths.tables_dir(model))
 
 
 def default_figures_dir(model: str) -> str:
@@ -743,7 +749,7 @@ def print_top_trials_latex(
     case: str,
     n: int = 20,
     tag: str = None,
-    figures_dir: str = "./Figures",
+    tables_dir: str = "./tables",
 ) -> None:
     """
     Print (or save) a LaTeX table of the top-n trials ranked by
@@ -772,9 +778,9 @@ def print_top_trials_latex(
     case        : Case identifier ('grenoblesand', 'vangenuchten', 'letd').
     n           : Number of top trials to include (default: 20).
     tag         : If given, write the LaTeX table to
-                  <figures_dir>/latex_top20_<tag>.tex.
+                  <tables_dir>/latex_top20_<tag>.tex.
                   If None, print to stdout.
-    figures_dir : Output directory for the .tex file (default: ./Figures).
+    tables_dir : Output directory for the .tex file (default: ./tables).
     """
     import io
 
@@ -992,7 +998,7 @@ def print_top_trials_latex(
     result = out.getvalue()
 
     if tag is not None:
-        output_path = os.path.join(figures_dir, f"latex_top20_{tag}.tex")
+        output_path = os.path.join(tables_dir, f"latex_top20_{tag}.tex")
         with open(output_path, "w") as f:
             f.write(result)
         print(f"[saved] {output_path}")
@@ -1275,7 +1281,7 @@ def print_identifiability_latex(
     true_params: dict,
     case: str,
     tag: str = None,
-    figures_dir: str = "./Figures",
+    tables_dir: str = "./tables",
 ) -> None:
     """
     Print (or save) a LaTeX table summarising the multi-seed statistics of
@@ -1295,9 +1301,9 @@ def print_identifiability_latex(
     true_params : Case configuration dict.
     case        : Case identifier.
     tag         : If given, write the table to
-                  <figures_dir>/latex_identifiability_<tag>.tex.
+                  <tables_dir>/latex_identifiability_<tag>.tex.
                   If None, print to stdout.
-    figures_dir : Output directory for the .tex file (default: ./Figures).
+    tables_dir : Output directory for the .tex file (default: ./tables).
     """
     import io
 
@@ -1405,7 +1411,7 @@ def print_identifiability_latex(
     result_tex = out.getvalue()
 
     if tag is not None:
-        output_path = os.path.join(figures_dir, f"latex_identifiability_{tag}.tex")
+        output_path = os.path.join(tables_dir, f"latex_identifiability_{tag}.tex")
         with open(output_path, "w") as f:
             f.write(result_tex)
         print(f"[saved] {output_path}")
@@ -1491,15 +1497,15 @@ def count_trials(results_path: str) -> dict:
 
 def print_trial_counts_latex(
     model: str,
-    figures_dir: str = None,
+    tables_dir: str = None,
     configs: tuple = ("es", "gb"),
     save: bool = True,
 ) -> None:
     """
     Build the trial-count table (tab:si_trial_counts) for all cases,
     configurations and noise levels of one model, and write it to
-    <figures_dir>/latex_trial_counts.tex (or print it if save is False).
-    figures_dir defaults to <repo>/<model>/Figures.
+    <tables_dir>/latex_trial_counts.tex (or print it if save is False).
+    tables_dir defaults to <results>/<model>/tables.
 
     Only the tabular is generated; the caption and label stay in the SI.
     Cases are ordered by their label4latex. A missing results file gives a
@@ -1514,7 +1520,7 @@ def print_trial_counts_latex(
     """
     import io
 
-    figures_dir  = figures_dir or default_figures_dir(model)
+    tables_dir   = tables_dir or default_tables_dir(model)
     config_label = MODEL_CONFIG_LABEL[model]
 
     out = io.StringIO()
@@ -1569,8 +1575,8 @@ def print_trial_counts_latex(
 
     result = out.getvalue()
     if save:
-        os.makedirs(figures_dir, exist_ok=True)
-        path = os.path.join(figures_dir, "latex_trial_counts.tex")
+        os.makedirs(tables_dir, exist_ok=True)
+        path = os.path.join(tables_dir, "latex_trial_counts.tex")
         with open(path, "w") as f:
             f.write(result)
         print(f"[saved] {path}")
@@ -1582,7 +1588,7 @@ def print_trial_counts_latex(
 # Winning-architecture summary across all cases (input to the final runs)
 # ---------------------------------------------------------------------------
 
-WINNERS_FILE_STEM = "winners"   # <repo>/<model>/Figures/winners.{json,csv}
+WINNERS_FILE_STEM = "winners"   # <results>/<model>/tables/winners.{json,csv}
 
 # Metrics copied from the winning trial's record (when present)
 _WINNER_METRICS = [
@@ -1612,8 +1618,8 @@ def _py(v):
 
 def winners_paths(model: str, out_dir: str = None) -> tuple:
     """(json_path, csv_path) of the winners summary for one model.
-    Default directory: <repo>/<model>/Figures (same as the LaTeX tables)."""
-    base = Path(out_dir) if out_dir else Path(default_figures_dir(model))
+    Default directory: <results>/<model>/tables (same as the LaTeX tables)."""
+    base = Path(out_dir) if out_dir else Path(default_tables_dir(model))
     return (str(base / f"{WINNERS_FILE_STEM}.json"),
             str(base / f"{WINNERS_FILE_STEM}.csv"))
 
@@ -1915,11 +1921,11 @@ def _stacked_geo(st, fmt=".2e"):
             % (format(st["gmean"], fmt), st["gsd"]))
 
 
-def print_winners_latex(rows: list, model: str, figures_dir: str = None,
+def print_winners_latex(rows: list, model: str, tables_dir: str = None,
                         save: bool = True) -> None:
     """
     LaTeX tabular of the winning configuration per case, configuration and
-    noise level (<figures_dir>/latex_winners.tex). Non-admissible winners
+    noise level (<tables_dir>/latex_winners.tex). Non-admissible winners
     are marked with ^* on the trial number, as in tab:si_trial_counts;
     non-calibrated winners (obj >= CALIBRATED_OBJ) with ^dagger on obj.
     The physics column is the admissibility metric (PHYSICS_METRIC).
@@ -1933,7 +1939,7 @@ def print_winners_latex(rows: list, model: str, figures_dir: str = None,
     """
     import io
 
-    figures_dir  = figures_dir or default_figures_dir(model)
+    tables_dir   = tables_dir or default_tables_dir(model)
     config_label = MODEL_CONFIG_LABEL[model]
     has_hp_vpinn_cols = any(
         "n_elements" in r.get("hparams", {}) for r in rows if r.get("status") == "ok"
@@ -2012,8 +2018,8 @@ def print_winners_latex(rows: list, model: str, figures_dir: str = None,
 
     result = out.getvalue()
     if save:
-        os.makedirs(figures_dir, exist_ok=True)
-        path = os.path.join(figures_dir, "latex_winners.tex")
+        os.makedirs(tables_dir, exist_ok=True)
+        path = os.path.join(tables_dir, "latex_winners.tex")
         with open(path, "w") as f:
             f.write(result)
         print(f"[saved] {path}")
@@ -2021,12 +2027,12 @@ def print_winners_latex(rows: list, model: str, figures_dir: str = None,
         print(result)
 
 
-def build_winners_summary(model: str, figures_dir: str = None,
+def build_winners_summary(model: str, tables_dir: str = None,
                           out_dir: str = None,
                           configs: tuple = ("es", "gb")) -> list:
     """Collect, print, and save (LaTeX + JSON + CSV) the winners of one model."""
     rows = collect_winners(model, configs)
-    out_dir = out_dir or figures_dir   # all outputs together unless overridden
+    out_dir = out_dir or tables_dir   # all outputs together unless overridden
     selected = select_configurations(rows)
 
     print(f"\nWinning configurations -- model={model} "
@@ -2051,7 +2057,7 @@ def build_winners_summary(model: str, figures_dir: str = None,
         reason = by_tag[tag]["selection_reason"] if tag else "no results"
         print(f"  {key:28s} -> {tag or '---':32s} ({reason})")
 
-    print_winners_latex(rows, model, figures_dir=figures_dir)
+    print_winners_latex(rows, model, tables_dir=tables_dir)
     save_winners(rows, model, out_dir=out_dir)
     return rows
 
@@ -2068,8 +2074,12 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument(
         "--figures-dir", default=None,
-        help="Output directory for figures and LaTeX tables "
-             "(default: <repo>/<model>/Figures).",
+        help="Output directory for figures (default: <results>/<model>/Figures).",
+    )
+    parser.add_argument(
+        "--tables-dir", default=None,
+        help="Output directory for LaTeX tables and the winners summary "
+             "(default: <results>/<model>/tables).",
     )
     parser.add_argument(
         "--calibrated-obj", type=float, default=None,
@@ -2132,7 +2142,7 @@ def main() -> None:
         _add_common_args(parser)
         args = parser.parse_args()
         _apply_threshold_overrides(args)
-        print_trial_counts_latex(args.model, figures_dir=args.figures_dir)
+        print_trial_counts_latex(args.model, tables_dir=args.tables_dir)
         return
 
     # --winners: winning-architecture summary for all cases of one model
@@ -2149,11 +2159,11 @@ def main() -> None:
         parser.add_argument(
             "--winners-dir", default=None,
             help="Output directory for winners.json/.csv (default: same as "
-                 "--figures-dir, i.e. <repo>/<model>/Figures).",
+                 "--tables-dir, i.e. <results>/<model>/tables).",
         )
         args = parser.parse_args()
         _apply_threshold_overrides(args)
-        build_winners_summary(args.model, figures_dir=args.figures_dir,
+        build_winners_summary(args.model, tables_dir=args.tables_dir,
                               out_dir=args.winners_dir)
         return
 
@@ -2210,7 +2220,9 @@ def main() -> None:
     )
 
     figures_dir = args.figures_dir or default_figures_dir(args.model)
+    tables_dir = args.tables_dir or default_tables_dir(args.model)
     os.makedirs(figures_dir, exist_ok=True)
+    os.makedirs(tables_dir, exist_ok=True)
 
     if not os.path.exists(results_path):
         print(f"Results file not found: {results_path}")
@@ -2230,7 +2242,7 @@ def main() -> None:
         df_search, true_params, args.case,
         n=args.n_top,
         tag=tag,
-        figures_dir=figures_dir,
+        tables_dir=tables_dir,
     )
 
     print_top_trials(df_search, true_params, args.case,
@@ -2251,7 +2263,7 @@ def main() -> None:
         print_identifiability_latex(
             ident, true_params, args.case,
             tag=tag,
-            figures_dir=figures_dir,
+            tables_dir=tables_dir,
         )
 
 

@@ -82,10 +82,12 @@ hpvpinn-capillarity/
 ```
 
 `results/` has the same layout the scripts write to:
-`results/hp_vpinn/{results_<study>,Figures,sensitivity_*,quadrature_check_*}`,
-`results/multistart/` and `results/conventional/`. The repository holds the
-recorded hyperparameter-search results, the generated tables and the summaries of
-the supplementary analyses. The large outputs (final runs with their training
+`results/hp_vpinn/{results_<study>,tables,Figures,sensitivity_*,quadrature_check_*}`,
+`results/multistart/` and `results/conventional/`. `Figures/` contains only
+figures; the LaTeX tables, `winners.json`/`winners.csv` and the machine-readable
+summaries are in `tables/`. The repository holds the recorded
+hyperparameter-search results, the generated tables and the summaries of the
+supplementary analyses. The large outputs (final runs with their training
 histories, multi-start runs, Optuna databases, figures) are archived on Zenodo
 with the release; extract that archive inside `results/` so that
 `results/hp_vpinn/final_runs/<tag>/` exists. The location of the results and of
@@ -140,7 +142,7 @@ python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --trial-counts
 python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --winners
 ```
 
-`--winners` writes `winners.json`, which the final-run scripts read.
+`--winners` writes `winners.json` (in `results/hp_vpinn/tables/`), which the final-run scripts read.
 
 **3. Final runs.** The selected configuration is trained from ten new
 initialisation seeds (1000-1009) and the ensemble is reported.
@@ -154,8 +156,9 @@ python -m hpvpinn_capillarity.final_runs.grenoblesand --noise-level 0.01 --aggre
 ```
 
 `--arch "W=16,L=2,act=tanh,Nel=30,p=5" --schedule gb` bypasses `winners.json`.
-Outputs are written to `results/hp_vpinn/final_runs/<tag>/` and
-`results/hp_vpinn/Figures/`. Case 4 has a search driver but no final-run script.
+Outputs are written to `results/hp_vpinn/final_runs/<tag>/`, `results/hp_vpinn/Figures/`
+(figures) and `results/hp_vpinn/tables/` (tables, curves and summaries). Case 4 has
+a search driver but no final-run script.
 
 **4. Figures, tables and supplementary analyses.** Modules are run with
 `python -m hpvpinn_capillarity.<module>`.

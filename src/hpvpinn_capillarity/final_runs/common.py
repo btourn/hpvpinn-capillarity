@@ -50,10 +50,11 @@ Outputs
     seeds/seed_<n>/history.npz        full training history
     seeds/seed_<n>/curves.npz         theta~(phi~) and D(theta) of the trained model
     seeds/seed_<n>/model.eqx          trained PINN
-<repo>/hp_vpinn/Figures/   (--figures-dir)
+<results>/hp_vpinn/Figures/   (--figures-dir)
     final_losses_<tag>.eps            loss and parameter evolution
     final_profile_<tag>.eps           wetting profile
     final_diffusivity_<tag>.eps       D(theta)  (R1-07)
+<results>/hp_vpinn/tables/    (--tables-dir)
     final_diffusivity_<tag>.csv       D(theta) curves, for the cross-case figure
     latex_final_params_<tag>.tex      parameter and metric statistics
     latex_final_timing_<tag>.tex      computing time (R1-14)
@@ -221,7 +222,7 @@ def resolve_config(spec: CaseSpec, args) -> dict:
         return dict(hparams=hp, schedule=args.schedule,
                     source=dict(kind="user", arch=args.arch), suffix=arch_suffix(hp))
 
-    wpath = Path(args.winners) if args.winners else paths.model_dir(MODEL) / "Figures" / "winners.json"
+    wpath = Path(args.winners) if args.winners else paths.tables_dir(MODEL) / "winners.json"
     if not wpath.exists():
         raise SystemExit(f"{wpath} not found. Run 'python -m hpvpinn_capillarity.hpo.postprocess --model {MODEL} "
                          f"--winners' first, or pass --winners PATH, or use --arch.")
@@ -922,8 +923,10 @@ def aggregate(spec: CaseSpec, args, cfg: dict, run_dir: Path,
         print(f"No completed seeds in {run_dir}; nothing to aggregate.")
         return None
     ref = dict(np.load(run_dir / "reference.npz"))
-    figs = Path(args.figures_dir) if args.figures_dir else paths.model_dir(MODEL) / "Figures"
+    figs = Path(args.figures_dir) if args.figures_dir else paths.figures_dir(MODEL)
     figs.mkdir(parents=True, exist_ok=True)
+    tabs = Path(args.tables_dir) if args.tables_dir else paths.tables_dir(MODEL)
+    tabs.mkdir(parents=True, exist_ok=True)
 
     done = [r for r in runs if not r.get("failed")]
     adm = read_constant(paths.module_source("hpvpinn_capillarity.hpo.postprocess"), "ADMISSIBLE_PHYSICS", ADMISSIBLE_PHYSICS)
@@ -1014,7 +1017,7 @@ def aggregate(spec: CaseSpec, args, cfg: dict, run_dir: Path,
             ("D_median", np.median(D_pool, 0)), ("D_min", D_pool.min(0)), ("D_max", D_pool.max(0))]
     if "D_ref" in ref:
         cols.append(("D_ref", ref["D_ref"]))
-    dpath = figs / f"final_diffusivity_{tag}.csv"
+    dpath = tabs / f"final_diffusivity_{tag}.csv"
     np.savetxt(dpath, np.column_stack([c for _, c in cols]), delimiter=",", fmt="%.10e",
                header=",".join(n for n, _ in cols)
                + f"\n# data-supported theta range: {ref['theta_data_range'][0]:.6g} "
@@ -1024,10 +1027,10 @@ def aggregate(spec: CaseSpec, args, cfg: dict, run_dir: Path,
     # ---- tables and summary ----
     for name, text in ((f"latex_final_params_{tag}.tex", latex_params_table(spec, summary)),
                        (f"latex_final_timing_{tag}.tex", latex_timing_table(summary))):
-        (figs / name).write_text(text)
-        print(f"[saved] {figs / name}")
-    _write_json(figs / f"final_summary_{tag}.json", summary)
-    print(f"[saved] {figs / f'final_summary_{tag}.json'}")
+        (tabs / name).write_text(text)
+        print(f"[saved] {tabs / name}")
+    _write_json(tabs / f"final_summary_{tag}.json", summary)
+    print(f"[saved] {tabs / f'final_summary_{tag}.json'}")
 
     # ---- console digest ----
     print(f"\n  Parameters over {len(pool)} seeds (mean +- std [min, max]):")
@@ -1063,7 +1066,7 @@ def build_parser(spec: CaseSpec) -> argparse.ArgumentParser:
     g.add_argument("--arch", default=None,
                    help='User-defined configuration, e.g. "W=16,L=2,act=tanh,Nel=30,p=5".')
     g.add_argument("--winners", default=None,
-                   help=f"winners.json (default: <repo>/{MODEL}/Figures/winners.json).")
+                   help=f"winners.json (default: <results>/{MODEL}/tables/winners.json).")
     s = p.add_argument_group("seeds")
     s.add_argument("--n-seeds", type=int, default=DEFAULT_N_SEEDS)
     s.add_argument("--seed-offset", type=int, default=DEFAULT_SEED_OFFSET)
@@ -1076,7 +1079,8 @@ def build_parser(spec: CaseSpec) -> argparse.ArgumentParser:
     p.add_argument("--band", choices=["minmax", "p5-95"], default="minmax",
                    help="Seed envelope of the profile figure: pointwise min-max (default) "
                         "or 5th-95th percentiles.")
-    p.add_argument("--figures-dir", default=None, help=f"Default: <repo>/{MODEL}/Figures.")
+    p.add_argument("--figures-dir", default=None, help=f"Figures. Default: <results>/{MODEL}/Figures.")
+    p.add_argument("--tables-dir", default=None, help=f"Tables, summaries and curves. Default: <results>/{MODEL}/tables.")
     p.add_argument("--aggregate-only", action="store_true",
                    help="No training: rebuild figures/tables from the saved seeds.")
     p.add_argument("--show-config", action="store_true", help="Print the configuration and exit.")

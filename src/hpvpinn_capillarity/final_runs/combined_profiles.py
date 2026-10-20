@@ -23,7 +23,7 @@ Usage
 
 Default run tags: the configurations selected in winners.json for
 grenoblesand (1%, 2% noise), vangenuchten and letd. Output (default
-<repo>/hp_vpinn/Figures): final_profiles_combined.eps and .png.
+<results>/hp_vpinn/Figures): final_profiles_combined.eps and .png.
 """
 import argparse
 import json
@@ -66,7 +66,7 @@ def load_panel(run_dir: Path, adm, cal, rule):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--winners", default=None, help="winners.json (default: <model dir>/Figures/winners.json).")
+    ap.add_argument("--winners", default=None, help="winners.json (default: <model dir>/tables/winners.json).")
     ap.add_argument("--tags", nargs=4, default=None, metavar="TAG",
                     help="Four run tags (panels a-d); default: selected in winners.json.")
     ap.add_argument("--band", choices=["minmax", "p5-95"], default="minmax")
@@ -81,11 +81,12 @@ def main():
     mdir = Path(args.repo_root).resolve() / frc.MODEL if args.repo_root else paths.model_dir(frc.MODEL)
     figs = Path(args.figures_dir) if args.figures_dir else mdir / "Figures"
     figs.mkdir(parents=True, exist_ok=True)
+    tabs = mdir / "tables"
 
     if args.tags:
         tags = list(args.tags)
     else:
-        wpath = Path(args.winners) if args.winners else figs / "winners.json"
+        wpath = Path(args.winners) if args.winners else tabs / "winners.json"
         sel = json.loads(wpath.read_text()).get("selected", {})
         missing = [k for k, _ in PANELS if k not in sel]
         if missing:

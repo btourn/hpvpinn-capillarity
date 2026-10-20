@@ -3,7 +3,8 @@
 Layout of a clone (the package is installed in editable mode by ``uv sync``)::
 
     <root>/data/                      input data files (data_<case>.dat)
-    <root>/results/hp_vpinn/          results_<study>/, final_runs/, Figures/,
+    <root>/results/hp_vpinn/          results_<study>/, final_runs/, Figures/ (figures only),
+                                      tables/ (LaTeX tables, winners.*, summaries),
                                       sensitivity_*/, quadrature_check_*/
     <root>/results/multistart/        multi-start summaries
     <root>/results/conventional/      conventional-inversion outputs
@@ -42,6 +43,16 @@ def results_root() -> Path:
 def model_dir(model: str = MODEL) -> Path:
     """Directory of the results of one model (``<results>/<model>``)."""
     return results_root() / model
+
+
+def figures_dir(model: str = MODEL) -> Path:
+    """Figures only (EPS, PNG, PDF)."""
+    return model_dir(model) / "Figures"
+
+
+def tables_dir(model: str = MODEL) -> Path:
+    """LaTeX tables, ``winners.json/csv`` and the machine-readable summaries."""
+    return model_dir(model) / "tables"
 
 
 def multistart_dir() -> Path:

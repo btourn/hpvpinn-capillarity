@@ -309,7 +309,8 @@ def main():
     global summaries_by_tag
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=str(paths.model_dir() / "final_runs"))
-    ap.add_argument("--out", default=str(paths.model_dir() / "Figures" / "early_stopping"))
+    ap.add_argument("--out", default=str(paths.figures_dir() / "early_stopping"), help="Figures.")
+    ap.add_argument("--tables-out", default=str(paths.tables_dir() / "early_stopping"), help="CSV, JSON and LaTeX tables.")
     ap.add_argument("--tags", nargs="*", default=None, help="default: every <root>/*gb* directory")
     ap.add_argument("--ignore-params", nargs="*", default=["theta_r"], help="parameters excluded from stationarity/deviation")
     ap.add_argument("--pinn-lower-bound", type=float, default=None, help="seconds; adds PINN rows '>x' (informal)")
@@ -333,13 +334,14 @@ def main():
             print(f"   conjunctive eps={float(eps) * 100:g}%: {c['n_stop']}/{S['n']} stop, epoch {c['stop_med']:.0f}, dev {100 * c['dev_med']:.1f}% (max {100 * c['dev_max']:.1f}%)")
     summaries_by_tag = {S["tag"]: S for S in summaries}
     keys = sorted({k for r in allrows for k in r})
-    with open(out / "early_stopping_per_seed.csv", "w", newline="") as f:
+    tout = Path(a.tables_out); tout.mkdir(parents=True, exist_ok=True)
+    with open(tout / "early_stopping_per_seed.csv", "w", newline="") as f:
         w = csv.DictWriter(f, keys); w.writeheader(); w.writerows(allrows)
-    (out / "early_stopping_summary.json").write_text(json.dumps(summaries, indent=1, default=float))
-    (out / "latex_early_stopping_main.tex").write_text(latex_main(summaries, a.pinn_lower_bound))
-    (out / "latex_early_stopping_si.tex").write_text(latex_si(summaries))
+    (tout / "early_stopping_summary.json").write_text(json.dumps(summaries, indent=1, default=float))
+    (tout / "latex_early_stopping_main.tex").write_text(latex_main(summaries, a.pinn_lower_bound))
+    (tout / "latex_early_stopping_si.tex").write_text(latex_si(summaries))
     figures(data, out)
-    print(f"\n[saved] CSV, JSON, LaTeX tables and figures in {out}")
+    print(f"\n[saved] CSV, JSON and LaTeX tables in {tout}; figures in {out}")
 
 
 if __name__ == "__main__":

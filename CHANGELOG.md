@@ -52,6 +52,9 @@ are not comparable number by number with those of the original submission.
   environment variables `HPVPINN_DATA` and `HPVPINN_RESULTS`.
 - The collocation-PINN (`frontx`) backend of the search drivers is not part of
   the package; the search drivers accept only `--model hp_vpinn`.
+- Figures and tables are written to different directories: `results/hp_vpinn/Figures/`
+  holds only figures; LaTeX tables, `winners.*` and the machine-readable summaries are
+  in `results/hp_vpinn/tables/` (`--tables-dir`).
 - The scripts are run as modules (`python -m hpvpinn_capillarity....`); the SLURM
   launchers in `slurm/` do the same and change to the repository root themselves.
 - `PROVENANCE.md` records where every file comes from and how it changed.
