@@ -6,7 +6,7 @@ authors:
   - family-names: "Tourn"
     given-names: "Benjamin A."
     orcid: "https://orcid.org/0009-0003-1345-4693"
-    affiliation: "Centro de Investigación y Transferencia (CIT) Rafaela, Universidad Nacional de Rafaela (UNRaf) / CONICET"
+    affiliation: "Universidad Nacional de Rafaela (UNRaf)"
 license: Apache-2.0
 repository-code: "https://github.com/btourn/hpvpinn-capillarity"
 identifiers:
