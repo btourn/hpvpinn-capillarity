@@ -29,7 +29,7 @@ are not comparable number by number with those of the original submission.
   quadrature evaluation of the physics loss and the classification of trials
   (admissible, calibrated, qualified) used to select the winners.
 - Multi-seed final runs of the selected configurations
-  (`hp_vpinn/final_run_common.py` and one driver per case).
+  (`final_runs/common.py` and one driver per case).
 - Early-stopping analysis, multi-start campaign, quadrature check,
   noise-realisation and data-density sensitivity, and conventional-inversion
   benchmark with forward check.
@@ -54,7 +54,10 @@ are not comparable number by number with those of the original submission.
   the package; the search drivers accept only `--model hp_vpinn`. The scripts of
   `conventional/` use the public `frontx` (commit `e04d264`), installed from
   `requirements-conventional.txt`.
-- The unused `torch`, `torchvision` and `torchaudio` dependencies are removed.
+- The dependencies that nothing in the package imports are removed (`torch`,
+  `torchvision`, `torchaudio`, `flax`, `orbax-checkpoint`, `rich`, `plotly`,
+  `optuna-dashboard`); `jaxtyping` remains as a dependency of `equinox`.
+- `data/README.md` documents the data files and the origin of the experimental data.
 - Figures and tables are written to different directories: `results/hp_vpinn/Figures/`
   holds only figures; LaTeX tables, `winners.*` and the machine-readable summaries are
   in `results/hp_vpinn/tables/` (`--tables-dir`).

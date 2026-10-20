@@ -72,7 +72,7 @@ hpvpinn-capillarity/
 │   │   ├── constitutive_model.py  #   van Genuchten, LETd, Brooks and Corey diffusivities
 │   │   ├── train_vpinn.py         #   Adam training loop, adaptive weighting
 │   │   ├── vpinn_loss.py          #   weak-form (hp-VPINN) loss
-│   │   └── strong_form_residual.py#   strong-form residual on a fine grid (diagnostic)
+│   │   └── strong_form_residual.py #  strong-form residual on a fine grid (diagnostic)
 │   ├── hpo/                       # Optuna searches (search_<case>.py) and post-processing
 │   ├── final_runs/                # multi-seed final runs, wetting-profile figures
 │   ├── analysis/                  # early stopping, multi-start, quadrature check, sensitivity
@@ -314,24 +314,6 @@ r = 0..24; the initialisation seed of a search trial is its Optuna trial
 number; the final runs use seeds 1000-1009.
 `PROVENANCE.md` lists the source commits and the sha256 of every file copied
 from the development workspace.
-
----
-
-<!--
-## Citation
-
-If you use this code in your research, please cite:
-
-```bibtex
-@article{tourn2026hpvpinn,
-  author  = {Tourn, Benjamin and xxxxxxx},
-  title   = {xxxx},
-  journal = {Transport in Porous Media},
-  year    = {2026},
-  note    = {Under review}
-}
-```
--->
 
 ---
 
