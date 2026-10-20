@@ -1,0 +1,18 @@
+# Packages needed by hpvpinn_capillarity.conventional (conventional inversion with the exact
+# forward solver). They are not part of uv.lock: frontx declares newer lower bounds for jax,
+# equinox, numpy, optax and scipy than the versions locked here, so install them without
+# resolving dependencies, after `uv sync`:
+#
+#     uv pip install --no-deps -r requirements-conventional.txt
+#
+# (`uv sync` removes packages that are not in uv.lock; if you run it again, use
+# `uv sync --inexact` or repeat the command above.)
+#
+# frontx: upstream https://github.com/gerlero/frontx, commit e04d264 (2026-09-18, version 0.1.3).
+# The other packages have the versions recorded with the results in results/conventional.
+frontx @ git+https://github.com/gerlero/frontx@e04d26400d11a7e7c1ae4355e3ead45b396d1525
+diffrax==0.7.2
+interpax==0.3.15
+lineax==0.1.0
+optimistix==0.1.0
+parametrix==0.1.8

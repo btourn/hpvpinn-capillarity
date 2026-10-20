@@ -43,6 +43,7 @@ from __future__ import annotations
 import dataclasses
 import importlib
 import importlib.metadata
+import json
 import os
 import platform
 import subprocess
@@ -58,8 +59,15 @@ import jax.numpy as jnp
 import numpy as np
 from scipy.optimize import differential_evolution
 
-import frontx
-from frontx.models import BrooksAndCorey, LETd, VanGenuchten
+try:
+    import frontx
+    from frontx.models import BrooksAndCorey, LETd, VanGenuchten
+except ImportError as exc:
+    raise ImportError(
+        "The conventional inversion needs the public package frontx "
+        "(https://github.com/gerlero/frontx, commit e04d264). Install it with: "
+        "uv pip install --no-deps -r requirements-conventional.txt"
+    ) from exc
 
 try:
     from frontx import ScaledSolution
@@ -440,7 +448,12 @@ def environment_info() -> dict:
             ["git", "-C", info["frontx_path"], "rev-parse", "--short", "HEAD"],
             text=True, stderr=subprocess.DEVNULL).strip()
     except Exception:  # noqa: BLE001
-        info["frontx_git"] = "unknown"
+        # not a git checkout: take the commit from the installation record (pip/uv VCS install)
+        try:
+            direct_url = json.loads(importlib.metadata.distribution("frontx").read_text("direct_url.json"))
+            info["frontx_git"] = direct_url["vcs_info"]["commit_id"][:7]
+        except Exception:  # noqa: BLE001
+            info["frontx_git"] = "unknown"
     return info
 
 
