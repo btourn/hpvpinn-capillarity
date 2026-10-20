@@ -55,7 +55,7 @@ from optuna.samplers import TPESampler
 #
 # KsAlpha_TRUE is NOT taken from nominal Ks/alpha (4.27 / (1/11.43) ~ 48.8): the
 # generator's actual Ks, alpha and units are unknown. It is the value implied
-# by the data file itself (Bruce-Klute inversion of data_brooks_corey_new.dat
+# by the data file itself (Bruce-Klute inversion of data_brooks_corey.dat
 # with n=1.2876, l=1, theta_s=0.312 gives a constant 0.017559 at all theta).
 # It is used ONLY to report err_KsAlpha / obj_recovery -- never for fitting or
 # for the Optuna objective (chi2_train + chi2_test).
@@ -426,7 +426,7 @@ def main():
         description="hp-VPINN hyperparameter search — Brooks and Corey (new, noisy)"
     )
     parser.add_argument("--model", required=True, choices=["hp_vpinn"])
-    parser.add_argument("--data", default=str(paths.data_file("data_brooks_corey_new.dat")),
+    parser.add_argument("--data", default=str(paths.data_file("data_brooks_corey.dat")),
                         help="Path to the single canonical noise-free, comma-separated "
                              "reference curve (o, theta), shared by both models.")
     parser.add_argument("--n-trials", type=int, default=50)

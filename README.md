@@ -41,7 +41,7 @@ The four cases of the manuscript, with the *hp*-VPINN formulation (`-es` and
 | 1 | Grenoble sand, synthetic, 1 % and 2 % noise | van Genuchten | `data_grenoblesand.dat` |
 | 2 | Whatman No. 1 paper, experimental | van Genuchten | `data_vangenuchten.dat` |
 | 3 | Whatman No. 1 paper, experimental | LETd | `data_letd.dat` |
-| 4 | Grenoble sand, synthetic, 1 % noise | Brooks and Corey | `data_brooks_corey_new.dat` |
+| 4 | Grenoble sand, synthetic, 1 % noise | Brooks and Corey | `data_brooks_corey.dat` |
 
 The data files of Cases 1 and 4 hold the noise-free reference curve
 (columns: similarity variable, moisture content); the noise and the train/test
