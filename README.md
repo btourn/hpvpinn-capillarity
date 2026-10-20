@@ -83,8 +83,7 @@ hpvpinn-capillarity/
 ├── scripts/                       # rerun_forward_check_tight.sh
 ├── slurm/                         # cluster launchers (see below)
 ├── pyproject.toml, uv.lock        # pinned environment
-├── requirements-conventional.txt  # frontx (public) and its packages, for conventional/
-└── PROVENANCE.md                  # origin of every file
+└── requirements-conventional.txt  # frontx (public) and its packages, for conventional/
 ```
 
 `results/` has the same layout the scripts write to:
@@ -93,7 +92,10 @@ hpvpinn-capillarity/
 figures; the LaTeX tables, `winners.json`/`winners.csv` and the machine-readable
 summaries are in `tables/`. The repository holds the recorded
 hyperparameter-search results, the generated tables and the summaries of the
-supplementary analyses. The large outputs (final runs with their training
+supplementary analyses. In `tables/winners.json` and `tables/winners.csv`, in the
+`config.json` of the sensitivity study and in `results/conventional/results_*.jsonl`,
+absolute paths of the development machine were replaced by repository-relative
+paths. The large outputs (final runs with their training
 histories, multi-start runs, Optuna databases, figures) are archived on Zenodo
 with the release; extract that archive inside `results/` so that
 `results/hp_vpinn/final_runs/<tag>/` exists. The location of the results and of
@@ -248,8 +250,9 @@ Seeds: noise seed 42 in Case 1 and split seed 7 in all cases (SI, "Notes on
 reproducibility"); the noise seed of the noise-realisation study is 42 + r,
 r = 0..24; the initialisation seed of a search trial is its Optuna trial
 number; the final runs use seeds 1000-1009.
-`PROVENANCE.md` lists the source commits and the sha256 of every file copied
-from the development workspace.
+The files of this repository come from the development workspace of the
+manuscript; the origin of each file and the sha256 of the copies are listed in
+`PROVENANCE.md`, distributed with the Zenodo archive of the release.
 
 ---
 

@@ -63,4 +63,5 @@ are not comparable number by number with those of the original submission.
   in `results/hp_vpinn/tables/` (`--tables-dir`).
 - The scripts are run as modules (`python -m hpvpinn_capillarity....`); the SLURM
   launchers in `slurm/` do the same and change to the repository root themselves.
-- `PROVENANCE.md` records where every file comes from and how it changed.
+- The origin of the files and the sha256 of the copies are documented in `PROVENANCE.md`,
+  distributed with the Zenodo archive and not in the repository.
