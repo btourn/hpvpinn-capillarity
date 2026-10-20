@@ -337,7 +337,7 @@ def cmd_aggregate(a):
                   + " ".join(f"{v:.3g}" for v in s["obj_all_completed_sorted"]))
         # seed ensemble of the same configuration (final run) for comparison
         base = recs[0]["base_tag"]
-        ens = [r for r in _load(str(root / f"hp_vpinn/final_runs/{base}/seeds/seed_*/record.json"))
+        ens = [r for r in _load(str(paths.model_dir() / f"final_runs/{base}/seeds/seed_*/record.json"))
                if not r.get("failed") and "metrics" in r and is_qualified(r, adm, cal)[0]]
         if len(ens) >= 2 and "params" in s:
             E = np.array([[r["params"][p] for p in params] for r in ens])
