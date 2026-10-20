@@ -51,7 +51,10 @@ are not comparable number by number with those of the original submission.
   `results/conventional/`). The location of data and results can be set with the
   environment variables `HPVPINN_DATA` and `HPVPINN_RESULTS`.
 - The collocation-PINN (`frontx`) backend of the search drivers is not part of
-  the package; the search drivers accept only `--model hp_vpinn`.
+  the package; the search drivers accept only `--model hp_vpinn`. The scripts of
+  `conventional/` use the public `frontx` (commit `e04d264`), installed from
+  `requirements-conventional.txt`.
+- The unused `torch`, `torchvision` and `torchaudio` dependencies are removed.
 - Figures and tables are written to different directories: `results/hp_vpinn/Figures/`
   holds only figures; LaTeX tables, `winners.*` and the machine-readable summaries are
   in `results/hp_vpinn/tables/` (`--tables-dir`).
