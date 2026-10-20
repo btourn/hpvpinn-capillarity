@@ -80,8 +80,8 @@ BLOCKS = [
     #      det=["default", "reference"]),            # optional; add RANGES["letd"] below
 ]
 
-# Sampling ranges of the random starts: (scale, low, high). TODO: set to the
-# ranges of tab:init_case* of the SI (the values below are placeholders).
+# Sampling ranges of the random starts: (scale, low, high), as in
+# tab:si_multistart_ranges of the SI.
 # Starts must lie inside the bounds of the Param objects (m in (0,1),
 # theta_r in (0,THETA_I), KsAlpha > 0).
 RANGES = {
@@ -98,7 +98,7 @@ DEFAULT_START_FALLBACK = {"grenoblesand": {"KsAlpha": 1.0, "m": 0.5}}
 
 # Extra deterministic starts (e.g. the second literature parameter set of Case 2).
 EXTRA_STARTS = {
-    "vangenuchten": {"ref_B": None},   # TODO: {"KsAlpha": ..., "m": ..., "l": ..., "theta_r": ...}; None -> skipped
+    "vangenuchten": {"ref_B": None},   # optional second literature set {"KsAlpha", "m", "l", "theta_r"}; None -> skipped (not used)
 }
 
 INIT_RTOL = 0.05          # tolerance of the epoch-0 check of the requested start
