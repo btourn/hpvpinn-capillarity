@@ -1,46 +1,27 @@
-"""
-benchmark_conventional.py
-=========================
-Driver for the conventional inverse-modelling benchmark (R1-22, R2-M09, R3-M2).
-Place it at the repo root, next to hparam_search_<case>.py and
-conventional_inverse.py; the data and the train/test split are taken from
-each case's prepare_shared_data(), so both methods see identical arrays.
+"""Driver of the conventional inverse-modelling benchmark. The data and the train/test split come from each
+case's prepare_shared_data(), so both methods see identical arrays.
 
-Modes
------
---dry-run     Print data summary, bounds, x0, reference values, planned runs and
-              a cost-evaluation sanity check (chi2_nu at x0 and at the reference
-              parameters; implied scale vs reference -> unit check); estimated
-              run time. No optimisation, no files written. Combine with
-              --pilot or --seeds to preview those runs.
---pilot       Phase 0, seed 0 only. Three runs per case:
-                (a) frontx_fit preset (maxiter=15, polish) on the train split,
-                (b) upstream preset (to convergence)   on the train split,
-                (c) upstream preset                    on the FULL data set
-                    (reproduction check against the reference parameters).
-              Prints a summary with per-evaluation time, to size the seed budget.
---profile-scan  grenoblesand only: chi2_nu(m) on a grid with Ks/alpha profiled,
-              on train / full / noise-free data; prints 68%/95% profile intervals.
-(default)     Benchmark: --seeds ... with --preset (default: converged) on
-              --data-mode. Per-generation progress is printed; --max-minutes caps
-              a run (flagged stopped_by_time); --maxiter/--tol/--atol/--polish
-              override the preset.
---forward-check FILE.jsonl [--where stage=replication] | --params k=v ...
-              chi2_nu of given (e.g. hp-VPINN) parameter sets with the exact
-              forward solver on the same train/test split.
+Modes:
+  --dry-run       data summary, bounds, x0, reference values, planned runs and a cost sanity check
+                  (chi2_nu at x0 and at the reference parameters); no optimisation, no files written.
+  --pilot         seed 0 only, three runs per case: frontx_fit preset (maxiter=15, polish) on the train
+                  split; upstream preset (to convergence) on the train split and on the full data set.
+  --profile-scan  grenoblesand only: chi2_nu(m) on a grid with Ks/alpha profiled, on train / full /
+                  noise-free data; prints 68%/95% profile intervals.
+  (default)       benchmark over --seeds with --preset (default: converged) on --data-mode;
+                  --max-minutes caps a run (flagged stopped_by_time); --maxiter/--tol/--atol/--polish
+                  override the preset.
+  --forward-check FILE.jsonl [--where stage=replication] | --params k=v ...
+                  chi2_nu of given (e.g. hp-VPINN) parameter sets with the exact forward solver on the
+                  same train/test split.
 
-Usage
------
+Usage:
     python -m hpvpinn_capillarity.conventional.benchmark --case letd --pilot --dry-run
     python -m hpvpinn_capillarity.conventional.benchmark --case grenoblesand --noise-level 0.02 --profile-scan
-    python -m hpvpinn_capillarity.conventional.benchmark --case letd --seeds 0 --max-minutes 60
-    python -m hpvpinn_capillarity.conventional.benchmark --case grenoblesand --noise-level 0.02 --pilot
-    python -m hpvpinn_capillarity.conventional.benchmark --case letd --pilot
     python -m hpvpinn_capillarity.conventional.benchmark --case vangenuchten --seeds 0 1 2 3 4 5 6 7 8 9
     python -m hpvpinn_capillarity.conventional.benchmark --case brooks_corey --seeds 0-19 --preset upstream
 
-Results are appended (one JSON record per line) to
-    conventional/results_<case>[_<k>pct_noise].jsonl
+Results are appended, one JSON record per line, to <results>/conventional/results_<case>[_<k>pct_noise].jsonl
 """
 
 import os

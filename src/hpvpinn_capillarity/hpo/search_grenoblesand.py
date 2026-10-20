@@ -1,15 +1,7 @@
-"""
-hpvpinn_capillarity.hpo.search_grenoblesand
-==============================
-Unified Optuna hyperparameter search for the Grenoble sand inverse problem,
-for the hp-VPINN model (selected with --model hp_vpinn):
+"""Optuna hyperparameter search for the Grenoble sand inverse problem, for the hp-VPINN model
+(--model hp_vpinn). Results go under <results>/hp_vpinn/ (see hpvpinn_capillarity.paths).
 
-    --model hp_vpinn hp-VPINN weak-form model      (hp_vpinn/)
-
-Results are written under <results>/hp_vpinn/ (see hpvpinn_capillarity.paths).
-
-Usage
------
+Usage:
     python -m hpvpinn_capillarity.hpo.search_grenoblesand --model hp_vpinn --noise-level 0.02
 """
 
@@ -22,7 +14,7 @@ import warnings
 import jax
 
 # Must run before any local module (hp_vpinn.* or frontx.*) creates a JAX
-# array -- item 9. Setting this twice (frontx.neural also sets it at import
+# array. Setting this twice (frontx.neural also sets it at import
 # time) is harmless.
 jax.config.update("jax_enable_x64", True)  # noqa: FBT003
 
@@ -66,7 +58,7 @@ LR_INIT, LR_END, LR_STEPS = 1e-3, 1e-4, 100_000
 # Shared BC weighting
 LAMBDA_BC = 10.0
 
-# Dense grid for the post-hoc strong-form residual diagnostic (R2-m07).
+# Dense grid for the post-hoc strong-form residual diagnostic.
 # Nondimensional [0, 1]; shared by both models so strong_form_rms is
 # evaluated on literally the same grid in both.
 N_GRID = 2000
@@ -147,7 +139,7 @@ def prepare_shared_data(data_path: str, noise_level: float) -> dict:
     train and test arrays, all in physical units, plus `oi` (== phi_ref)
     computed from the FULL dataset before the split.
     """
-    raw = np.loadtxt(data_path, delimiter=",")  # float64 by default -- item 9
+    raw = np.loadtxt(data_path, delimiter=",")  # float64 by default
     o_all, theta_clean = raw[:, 0], raw[:, 1]
 
     # phi_ref (VPINN) / oi (frontx): same quantity, computed once from the

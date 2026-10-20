@@ -1,40 +1,21 @@
-"""
-hparam_postprocess.py
-=====================
-Post-process Optuna hyperparameter search results and generate
-publication-quality compound figures for the Supplementary Information.
+"""Post-process Optuna hyperparameter search results and generate summary figures and LaTeX tables.
 
-Two figures are produced per study:
+Two figures per study: A (all cases) chi2_nu_train vs chi2_nu_test with marginal box plots; B (Case 1
+only) parameter-recovery scatter, one panel per recovered parameter.
 
-  Figure A  (all cases)   — chi2_nu_train vs chi2_nu_test  (left)
-                            + marginal box plots             (right)
+Input: <results>/hp_vpinn/results_<case>_<es|gb>[_<n>pct_noise]/hparam_results_*.jsonl (see
+hpvpinn_capillarity.paths). By default figures go to <results>/<model>/Figures, LaTeX tables and the winners
+summary to <results>/<model>/tables, and per-run CSVs to the run's own results directory.
 
-  Figure B  (Case 1 only) — parameter recovery scatter,
-                            one panel per recovered parameter
+--winners builds the winning-architecture summary of every case, configuration and noise level of one model
+(non-admissible winners included and flagged): latex_winners.tex, winners.json and winners.csv in
+<tables-dir>. The final-run scripts read their configuration from winners.json (see load_winner).
 
-Location and layout
--------------------
-The results of the searches are read from (see hpvpinn_capillarity.paths):
-
-    <results>/hp_vpinn/results_<case>_<es|gb>[_<n>pct_noise]/hparam_results_*.jsonl
-
-By default, figures go to <results>/<model>/Figures and LaTeX tables and the
-winners summary to <results>/<model>/tables; per-run CSVs go to the run's own
-results directory.
-
-Usage
------
+Usage:
     python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --case letd --es-or-gb gb
     python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --case brooks_corey_new --es-or-gb es --noise-level 0.01
     python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --trial-counts
     python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --winners
-
---winners builds the winning-architecture summary for every case,
-configuration and noise level of one model (non-admissible winners
-included and flagged): latex_winners.tex, winners.json and winners.csv,
-all in <tables-dir> (default <results>/<model>/tables). The final-run scripts
-(grenoblesand.py, ...) read their configuration from winners.json
-(see load_winner).
 """
 
 import argparse
@@ -1007,7 +988,7 @@ def print_top_trials_latex(
 
 
 # ---------------------------------------------------------------------------
-# Multi-seed identifiability statistics (R1-06, R1-09, R2-M05)
+# Multi-seed identifiability statistics
 # ---------------------------------------------------------------------------
 
 def _param_label(true_params: dict, name: str) -> str:
@@ -1136,9 +1117,8 @@ def compute_identifiability_stats(
     results_dir: str = None,
 ):
     """
-    Statistics over the repeated runs of the winning combination (R1-09),
-    and the correlation structure between the recovered physical parameters
-    (R1-06, R2-M05).
+    Statistics over the repeated runs of the winning combination, and the
+    correlation structure between the recovered physical parameters.
 
     The winning combination is selected by _select_winning_architecture
     (search trials only). The statistics are computed over ALL its
@@ -1152,10 +1132,10 @@ def compute_identifiability_stats(
     in the NN-weight seed and in the TPE-driven history of the search; the
     combination is chosen from the same trials, so the statistics are
     slightly optimistic (selection effect). The fresh-seed final runs are
-    the unbiased check. This function answers R1-09 (reproducibility under
-    repeated independent training). It is not on its own evidence of
-    identifiability (R1-06/R2-M05), which requires varying the physical-
-    parameter starting guess (multi-start campaign).
+    the unbiased check. This function measures reproducibility under
+    repeated independent training. It is not on its own evidence of
+    identifiability, which requires varying the physical-parameter
+    starting guess (multi-start campaign).
 
     Parameters
     ----------
@@ -1213,7 +1193,7 @@ def compute_identifiability_stats(
         print("  Fewer than 2 runs -- statistics not computed.")
         return None
 
-    # --- Marginal statistics (R1-09) ---
+    # --- Marginal statistics ---
     param_cols = [p for p in true_params if p in sub.columns]
     err_cols   = [f"err_{p}" for p in true_params if f"err_{p}" in sub.columns]
     for col in err_cols:
@@ -1232,7 +1212,7 @@ def compute_identifiability_stats(
           f"(err_* in %):")
     print(summary.to_string(float_format="{:.4g}".format))
 
-    # --- Joint correlation structure (R1-06, R2-M05) ---
+    # --- Joint correlation structure ---
     corr_pearson  = None
     corr_spearman = None
     if len(param_cols) >= 2:
@@ -1420,7 +1400,7 @@ def print_identifiability_latex(
 
 
 # ---------------------------------------------------------------------------
-# Trial counts across all cases (tab:si_trial_counts)
+# Trial counts across all cases
 # ---------------------------------------------------------------------------
 
 def resolve_run(model: str, case: str, es_or_gb: str = None,
@@ -1458,7 +1438,7 @@ def resolve_run(model: str, case: str, es_or_gb: str = None,
 
 def count_trials(results_path: str) -> dict:
     """
-    Trial counts for one results file, as reported in tab:si_trial_counts
+    Trial counts for one results file, as reported in the trial-count table
     (search trials only).
 
     completed             : non-failed trials (pruned trials included)
@@ -1502,7 +1482,7 @@ def print_trial_counts_latex(
     save: bool = True,
 ) -> None:
     """
-    Build the trial-count table (tab:si_trial_counts) for all cases,
+    Build the trial-count table for all cases,
     configurations and noise levels of one model, and write it to
     <tables_dir>/latex_trial_counts.tex (or print it if save is False).
     tables_dir defaults to <results>/<model>/tables.
@@ -1651,7 +1631,7 @@ def collect_winners(model: str, configs: tuple = ("es", "gb")) -> list:
 
     If no combination is reproducibly admissible, the rank-1 trial is
     still reported, flagged admissible=False (the '---' rows of
-    tab:si_trial_counts), so every study has a reported configuration.
+    the trial-count table), so every study has a reported configuration.
     Calibration (obj < CALIBRATED_OBJ) is reported as a flag. Missing
     results files give status="missing".
 
@@ -1726,7 +1706,7 @@ def collect_winners(model: str, configs: tuple = ("es", "gb")) -> list:
                     n_completed     = int(len(search)),
                     calibrated      = calibrated,
                     admissible      = admissible,
-                    physics_converged = admissible,   # alias read by final_run_common.py
+                    physics_converged = admissible,   # alias read by final_runs/common.py
                     physics_metric  = dict(name=PHYSICS_METRIC,
                                            value=_py(winner["physics_metric"])),
                     n_admissible_in_search = int(is_admissible(search).sum()),
@@ -1926,7 +1906,7 @@ def print_winners_latex(rows: list, model: str, tables_dir: str = None,
     """
     LaTeX tabular of the winning configuration per case, configuration and
     noise level (<tables_dir>/latex_winners.tex). Non-admissible winners
-    are marked with ^* on the trial number, as in tab:si_trial_counts;
+    are marked with ^* on the trial number, as in the trial-count table;
     non-calibrated winners (obj >= CALIBRATED_OBJ) with ^dagger on obj.
     The physics column is the admissibility metric (PHYSICS_METRIC).
     The configuration selected for the final runs (select_configurations)
@@ -1934,7 +1914,7 @@ def print_winners_latex(rows: list, model: str, tables_dir: str = None,
     N is the number of runs of the winning combination behind its
     statistics (qualified runs; admissible runs, marked ^ddagger, when the
     combination was selected on the admissible basis). Runs out of the
-    combination's completed runs are in tab:si_trial_counts. Caption and
+    combination's completed runs are in the trial-count table. Caption and
     label stay in the SI.
     """
     import io
@@ -2130,7 +2110,7 @@ def _apply_threshold_overrides(args) -> None:
 
 
 def main() -> None:
-    # --trial-counts: build tab:si_trial_counts for all cases of one model and exit
+    # --trial-counts: build the trial-count table for all cases of one model and exit
     parser_tc = argparse.ArgumentParser(add_help=False)
     parser_tc.add_argument("--trial-counts", action="store_true")
     args_tc, _ = parser_tc.parse_known_args()

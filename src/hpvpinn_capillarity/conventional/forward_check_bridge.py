@@ -1,25 +1,17 @@
 #!/usr/bin/env python3
-"""
-final_runs_to_forward_check.py
-==============================
-Bridge between the hp-VPINN final runs and the exact-solver forward check
-(benchmark_conventional.py --forward-check).
+"""Bridge between the hp-VPINN final runs and the exact-solver forward check
+(conventional.benchmark --forward-check).
 
-  1. convert   (default)  hp_vpinn/final_runs/<tag>/seeds/seed_*/record.json
-                          -> conventional/forward_check_inputs/hpvpinn_<tag>.jsonl
-                          One JSON line per seed, with the recovered parameters under
-                          the keys that --forward-check expects (the TRUE_PARAMS keys of
-                          hparam_search_<case>.py), trial = seed, and, for reference, the
-                          hp-VPINN's own chi2 values and a `qualified` flag.
-  2. --summarise          joins conventional/forward_check_<case>[_<k>pct_noise].json
-                          (written by --forward-check) with the hp-VPINN's own chi2 values
-                          and prints one table per tag (also written to
-                          conventional/forward_check_summary_<tag>.csv).
+  1. convert (default)  <results>/hp_vpinn/final_runs/<tag>/seeds/seed_*/record.json
+                        -> <results>/conventional/forward_check_inputs/hpvpinn_<tag>.jsonl
+                        One JSON line per seed with the recovered parameters (the TRUE_PARAMS keys of the
+                        search module), trial = seed, the hp-VPINN's own chi2 values and a `qualified` flag.
+  2. --summarise        joins <results>/conventional/forward_check_<case>[_<k>pct_noise].json (written by
+                        --forward-check) with the hp-VPINN's own chi2 values and prints one table per tag
+                        (also written to <results>/conventional/forward_check_summary_<tag>.csv).
 
-Place it at the repo root (next to benchmark_conventional.py) and run it from there.
-
-    python3 -m hpvpinn_capillarity.conventional.forward_check_bridge                 # convert the four tags below
-    python3 -m hpvpinn_capillarity.conventional.forward_check_bridge --summarise     # after the forward checks
+    python -m hpvpinn_capillarity.conventional.forward_check_bridge                 # convert the four tags below
+    python -m hpvpinn_capillarity.conventional.forward_check_bridge --summarise     # after the forward checks
 """
 import argparse
 import csv

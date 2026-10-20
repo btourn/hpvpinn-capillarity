@@ -1,27 +1,20 @@
-"""
-profile_figures.py
-==================
-Wetting-profile drawing shared by final_run_common.py (one figure per final
+"""Wetting-profile drawing shared by final_runs/common.py (one figure per final
 run) and combined_profiles.py (2x2 figure of the four case studies).
 NumPy + Matplotlib only.
 
-Seed band: NOT drawn any more (draw_* ignore the `band` argument; the helper
-band_from_pool is kept only for backward compatibility). Historical note on
-the band is NOT a confidence interval: it is the pointwise envelope of
-the trained profiles over the qualified fresh-seed runs, i.e. it reflects the
+Seed band (not drawn by default; the draw_* functions ignore the `band` argument): it is not a confidence
+interval but the pointwise envelope of the trained profiles over the qualified fresh-seed runs, i.e. the
 network-initialisation spread only (the data are fixed). Two envelopes:
-    "minmax"  : pointwise min--max over the seeds (default)
-    "p5-95"   : pointwise 5th--95th percentiles (robust to a single outlier)
-The band (and its legend entry) is drawn only if its largest width exceeds
-BAND_MIN_VISIBLE (in normalised theta units); otherwise the seeds coincide at
-plot resolution and the legend entry would refer to an invisible object.
+    "minmax"  pointwise min--max over the seeds (default)
+    "p5-95"   pointwise 5th--95th percentiles (robust to a single outlier)
+It is drawn only if its largest width exceeds BAND_MIN_VISIBLE (in normalised theta units).
 """
 import numpy as np
 
 BAND_COLOR = "#c6dbef"        # opaque light blue (PostScript has no transparency)
 BAND_MIN_VISIBLE = 5e-3       # normalised theta
 
-# Same thresholds as hparam_postprocess.py (overridden by read_constant there)
+# Same thresholds as hpo/postprocess.py (overridden by read_constant there)
 ADMISSIBLE_PHYSICS = 1e-5
 CALIBRATED_OBJ = 4.0
 

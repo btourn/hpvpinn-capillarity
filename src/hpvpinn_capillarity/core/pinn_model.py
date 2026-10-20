@@ -1,12 +1,7 @@
-"""
-pinn_model.py
-=============
-PINN module: bundles the neural network and the physical model.
+"""PINN module: bundles the neural network and the physical model.
 
-The pde_residual method from the original version is removed — it called the
-strong-form residual which is no longer used.  The PINN class now acts purely
-as a container that allows equinox to partition the trainable leaves (network
-weights + diffusivity parameters) from the static structure.
+It acts as a container that lets equinox partition the trainable leaves (network weights and diffusivity
+parameters) from the static structure.
 """
 
 import equinox as eqx

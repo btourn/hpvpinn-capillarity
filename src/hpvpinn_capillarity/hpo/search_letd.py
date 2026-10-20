@@ -1,17 +1,8 @@
-"""
-hpvpinn_capillarity.hpo.search_letd
-=======================
-Unified Optuna hyperparameter search for the LETd EXPERIMENTAL inverse
-problem, for the hp-VPINN model (selected with --model hp_vpinn):
+"""Optuna hyperparameter search for the LETd experimental inverse problem, for the hp-VPINN model
+(--model hp_vpinn). Same structure as search_vangenuchten.py; results go under <results>/hp_vpinn/.
+prepare_shared_data() is the only place where the dataset is loaded and split.
 
-    --model hp_vpinn hp-VPINN weak-form model      (hp_vpinn/)
-
-Same architecture as search_vangenuchten.py (see that file's docstring for
-the full rationale) -- results land under <results>/hp_vpinn/, and
-prepare_shared_data() is the ONLY place the dataset is loaded and split.
-
-Usage
------
+Usage:
     python -m hpvpinn_capillarity.hpo.search_letd --model hp_vpinn
 """
 
@@ -51,7 +42,7 @@ TRUE_PARAMS = dict(
 )
 
 # Fixed physical constants, shared by both models (same dataset as
-# hparam_search_vangenuchten.py)
+# search_vangenuchten.py)
 THETA_S = 0.7
 THETA_I = 0.025
 THETA_B = THETA_S - 1e-7

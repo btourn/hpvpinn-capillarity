@@ -1,7 +1,4 @@
-"""
-vpinn_loss.py
-=============
-Precomputed hp-quadrature grid and weak-form residual evaluation for the
+"""Precomputed hp-quadrature grid and weak-form residual evaluation for the
 capillarity Boltzmann ODE.
 
 Mathematical background

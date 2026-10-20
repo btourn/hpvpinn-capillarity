@@ -1,17 +1,8 @@
-"""
-pde.py
-======
-Holds the physical parameters of the capillarity Boltzmann problem.
+"""Physical parameters of the capillarity Boltzmann problem.
 
-The strong-form residual and boundary condition classes that were present in
-the original pde.py are removed: they are not needed for the hp-VPINN
-formulation, where the physics loss is computed entirely via the weak form
-in vpinn_loss.py.
-
-What remains is the CapillarityBoltzmannPDE container, which carries the
-trainable diffusivity model and the fixed scaling / phi_ref, and is embedded
-inside the PINN module so that the diffusivity parameters are updated by
-gradient descent alongside the network weights.
+CapillarityBoltzmannPDE carries the trainable diffusivity model and the fixed scaling / phi_ref. It is
+embedded in the PINN module so that the diffusivity parameters are updated by gradient descent alongside the
+network weights. The physics loss is computed in vpinn_loss.py.
 """
 
 import equinox as eqx

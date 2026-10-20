@@ -1,12 +1,9 @@
-"""
-vangenuchten.py
-===============
-Final hp-VPINN runs for Case 2 (Whatman No. 1 filter paper, experimental
+"""Final hp-VPINN runs for Case 2 (Whatman No. 1 filter paper, experimental
 data, van Genuchten model with trainable Ks/alpha, m, l and theta_r). See
-final_run_common.py for what a final run is, the outputs, and the options.
+final_runs/common.py for the outputs and the options.
 
 There is no ground truth for this case: the reference parameter set
-(TRUE_PARAMS in hparam_search_vangenuchten.py, the literature values for
+(TRUE_PARAMS in hpo/search_vangenuchten.py, the literature values for
 this dataset) is drawn for comparison in the parameter panels, the D(theta)
 figure and the parameter table ("Ref." column), but no recovery error or
 bias is computed. The measurement uncertainty is the per-point std shipped

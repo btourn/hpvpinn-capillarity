@@ -1,41 +1,24 @@
-"""
-conventional_inverse.py
-=======================
-Conventional (forward-solver-in-the-loop) inverse modelling baseline for the
-hp-VPINN benchmark (R1-22, R2-M09, R3-M2).
+"""Conventional (forward solver in the loop) inverse-modelling baseline for the hp-VPINN benchmark. It follows
+the reference example of frontx (examples/inverse/validity/letd.py, commit e04d264):
 
-Procedure -- follows frontx's own reference example
-(frontx/examples/inverse/validity/letd.py, upstream commit e04d264):
+  * outer loop  scipy.optimize.differential_evolution (DE) over the shape parameters of the diffusivity model;
+  * forward     frontx.solve: shooting method on the Boltzmann-transformed ODE;
+  * scale       the diffusivity scale (Ks/alpha or Dwt) is fixed at a reference value inside the model and
+                profiled out by frontx.ScaledSolution.fitting_data (Levenberg-Marquardt on D0);
+                estimated scale = reference value * D0;
+  * objective   reduced chi-square on the fitting points, sum(((theta - theta_model)/sigma)^2) / (N - n_params).
 
-  * outer loop  : scipy.optimize.differential_evolution (DE) over the SHAPE
-                  parameters of the diffusivity model;
-  * forward     : frontx.solve -- shooting method on the Boltzmann-transformed
-                  ODE (bisection on dtheta/do at o=0, Kvaerno5 integration);
-  * scale       : the diffusivity scale (Ks/alpha or Dwt) is held at a fixed
-                  reference value inside the model and profiled out by
-                  frontx.ScaledSolution.fitting_data (Levenberg-Marquardt on
-                  D0, exploiting theta(o; D0*D) = theta(o/sqrt(D0); D));
-                  estimated scale = reference value * D0;
-  * objective   : reduced chi-square on the fitting points,
-                  sum(((theta - theta_model)/sigma)^2) / (N - n_params).
+Differences from frontx.fit / de_fit (none changes the optimisation problem): DE seed, popsize, tol, atol,
+maxiter and polish are exposed; the OptimizeResult (nfev, nit, success, message) is kept; an initial guess x0
+(the hp-VPINN starting point) is passed to DE; failed forward solves return a large finite penalty instead of
++inf; compilation, single-evaluation and DE times are measured separately.
 
-Differences from frontx.fit / de_fit, all needed for the benchmark and none
-of which change the optimisation problem:
-  * DE seed, popsize, tol, atol, maxiter and polish are exposed;
-  * the OptimizeResult (nfev, nit, success, message) is kept;
-  * an initial guess x0 (the hp-VPINN starting point) is passed to DE;
-  * failed forward solves return a large finite penalty instead of +inf so
-    that DE's population-spread convergence test stays well defined;
-  * compilation time, single-evaluation time and DE time are measured
-    separately.
-
-Case parametrisations (see the benchmark plan):
-  grenoblesand : VG, l=0.5 and theta_r=0 fixed; DE over m;              scale Ks/alpha
-  letd         : LETd; DE over L, E, T, theta_r (upstream bounds);      scale Dwt
-  vangenuchten : VG; DE over m, l, theta_r;                             scale Ks/alpha
-  brooks_corey : BC; DE over p = l + 1 + 1/n and theta_r;               scale A = (Ks/alpha)/n
-                 (only A, p, theta_r are identifiable from theta(o) data:
-                  D = A/(theta_s - theta_r) * Se**p).
+Cases:
+  grenoblesand  VG, l=0.5 and theta_r=0 fixed; DE over m;          scale Ks/alpha
+  letd          LETd; DE over L, E, T, theta_r (upstream bounds);  scale Dwt
+  vangenuchten  VG; DE over m, l, theta_r;                         scale Ks/alpha
+  brooks_corey  BC; DE over p = l + 1 + 1/n and theta_r;           scale A = (Ks/alpha)/n
+                (only A, p, theta_r are identifiable from theta(o): D = A/(theta_s - theta_r) * Se**p)
 """
 
 from __future__ import annotations
@@ -134,7 +117,7 @@ class CaseSpec:
 
 def build_case(case: str) -> CaseSpec:
     """Build the case spec, reading constants from the matching
-    hparam_search_<case>.py so that there is a single source of truth."""
+    hpo/search_<case>.py so that there is a single source of truth."""
     m = importlib.import_module(f"hpvpinn_capillarity.hpo.search_{case}")
 
     if case == "grenoblesand":
@@ -487,7 +470,7 @@ def profile_scan(spec: CaseSpec, data: dict, grid, itol: float | None = None) ->
 
 def model_from_params(case: str, prm: dict):
     """Diffusivity built from parameters in the hp-VPINN reporting convention
-    (same keys as TRUE_PARAMS in hparam_search_<case>.py). Ks/alpha enters
+    (same keys as TRUE_PARAMS in hpo/search_<case>.py). Ks/alpha enters
     frontx models as Ks with alpha = 1."""
     m = importlib.import_module(f"hpvpinn_capillarity.hpo.search_{case}")
     if case == "grenoblesand":

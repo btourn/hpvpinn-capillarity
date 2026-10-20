@@ -1,52 +1,30 @@
-"""
-postprocess_sensitivity.py
-==========================
-Aggregate the runs written by sensitivity_noise_density.py and produce
+"""Aggregate the runs written by sensitivity_noise_density.py. Outputs, in the study directory (or --out):
 
-  latex_noise_realisations_<tag>.tex   init-seed spread (fixed noise) vs
-                                       noise-realisation spread (fixed init)
+  latex_noise_realisations_<tag>.tex   init-seed spread (fixed noise) vs noise-realisation spread (fixed init)
   latex_data_density_<tag>.tex         recovery vs N_train
-  sensitivity_<tag>.{eps,pdf}          (a) K_s/alpha-m plane, both ensembles
-                                       (b), (c) relative errors vs N_train
+  sensitivity_<tag>.{eps,pdf}          (a) K_s/alpha-m plane, both ensembles; (b), (c) relative errors vs N_train
   sensitivity_<tag>_summary.csv        every number in the two tables
-  sensitivity_<tag>_runs.csv           one row per run (for inspection)
+  sensitivity_<tag>_runs.csv           one row per run
 
-All outputs go to the study directory (or --out), which is printed at the
-start and at the end. `--list-studies` lists every sensitivity study found
-under --root, with its modification time, number of runs and frozen trial,
-so the directory of a given run can always be identified.
+`--list-studies` lists the studies found under --root (modification time, number of runs, frozen trial).
+NumPy/pandas/Matplotlib only; no JAX.
 
-Pure numpy/pandas/matplotlib: no JAX needed.
+Acceptance gate (uses observables only, never the true parameters). A run is accepted if it did not
+diverge and is
+  admissible  physics metric < 1e-5; by default (--physics-metric eval) the weak-form PDE loss on the
+              held-out quadrature (`pde_loss_eval`). If a run does not store it, both ensembles fall back
+              to the training-quadrature loss (`final_physics`) with a warning;
+  calibrated  obj = chi2_train + chi2_test < 4, recomputed for every run.
 
-Acceptance gate (observable only, never uses the true parameters)
------------------------------------------------------------------
-A run is ACCEPTED if it did not diverge, is admissible and is calibrated:
+Statistics are computed over accepted runs (medians, interquartile ranges, median-based bias and relative
+error, Pearson r); rejected runs are counted in "Acc./Total" and kept in the per-run CSV. The init-seed
+ensemble is filtered with the same gate.
 
-  admissible  physics metric < 1e-5. Default metric (--physics-metric eval):
-              the weak-form PDE loss on the held-out quadrature
-              (`pde_loss_eval`), as in the search tables of the SI. If a
-              run file does not store it, BOTH ensembles fall back to the
-              training-quadrature loss (`final_physics`) with a warning, so
-              the two rows of the noise table always use the same gate.
-  calibrated  obj = chi2_train + chi2_test < 4 (mean chi2_nu < 2), recomputed
-              for every run and trial (the stored `obj` is not trusted).
-
-Statistics are computed over accepted runs; rejected runs are counted in
-"Acc./Total", drawn as crosses in the figure and kept in the per-run CSV.
-The init-seed ensemble (all search trials of the frozen combination, fixed
-noise draw) is filtered with the same gate.
-
-Statistics: medians and interquartile ranges, median-based bias and relative
-error, Pearson r between the recovered parameters, median chi2_nu over ALL
-non-diverged runs, and the largest physics-metric value among accepted runs
-(reported so that the gate can be stated quantitatively in the SI).
-
-Usage
------
+Usage:
   python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --list-studies
   python -m hpvpinn_capillarity.analysis.postprocess_sensitivity                        # gb, 1%, stride
-  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --noise-level 0.02     # the 2% case
-  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --physics-metric train # previous rule
+  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --noise-level 0.02
+  python -m hpvpinn_capillarity.analysis.postprocess_sensitivity --physics-metric train
 """
 
 import argparse

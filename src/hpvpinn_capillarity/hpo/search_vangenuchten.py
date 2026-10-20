@@ -1,34 +1,11 @@
-"""
-hpvpinn_capillarity.hpo.search_vangenuchten
-==============================
-Unified Optuna hyperparameter search for the van Genuchten EXPERIMENTAL
-inverse problem, for the hp-VPINN model (selected with --model hp_vpinn):
+"""Optuna hyperparameter search for the van Genuchten experimental inverse problem, for the hp-VPINN model
+(--model hp_vpinn). Same structure as search_grenoblesand.py; results go under <results>/hp_vpinn/.
+prepare_shared_data() is the only place where the dataset is loaded and split.
 
-    --model hp_vpinn hp-VPINN weak-form model      (hp_vpinn/)
+Ks and alpha are not separately identifiable from theta(o), since D depends on them only through Ks/alpha.
+The trainable parameter is KsAlpha = Ks/alpha.
 
-Same architecture as hparam_search_grenoblesand.py (see that file's
-docstring for the rationale) -- lives at the repo root, results land under
-each model's own subdirectory, and prepare_shared_data() is the ONLY place
-the dataset is loaded and split, consumed by both branches.
-
-KsAlpha vs alpha (frontx)
---------------------------
-hp-VPINN's VanGenuchtenDiffusivity only exposes the combined ratio KsAlpha
-as one trainable parameter (Ks and alpha are not separately identifiable
-from theta(o) data alone -- D depends on them only through Ks/alpha).
-frontx's VanGenuchten class instead fixes the intrinsic permeability k
-(Ks is derived from it via Darcy's law: Ks = g*rho*k/mu, using the class's
-own defaults) and trains alpha freely. Since alpha ranges over all of
-(0, inf) and Ks_fixed is a positive constant, Ks_fixed/alpha sweeps
-exactly the same space KsAlpha does on the hp-VPINN side -- so this is a
-different, but equally valid, reparametrisation of the same search, not
-an approximation of it. frontx's own trainable parameter is left
-unchanged; only the REPORTED quantity is transformed post-hoc from alpha
-to KsAlpha = Ks_fixed / alpha, so both branches report the same recovery
-diagnostic under the same key.
-
-Usage
------
+Usage:
     python -m hpvpinn_capillarity.hpo.search_vangenuchten --model hp_vpinn
 """
 

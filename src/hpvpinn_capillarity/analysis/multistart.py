@@ -1,44 +1,25 @@
-"""
-multistart.py
-=============
-Multi-start campaign over the INITIAL VALUES of the trainable hydraulic
-parameters (SI sec:si_multistart), for the frozen hp-VPINN winners.
+"""Multi-start campaign over the initial values of the trainable hydraulic parameters, for the frozen
+hp-VPINN winners.
 
-One run = one (block, start) pair = one SLURM array task. Everything else
-(data, split, schedule, budget, metrics, admissibility gate) is exactly that
-of final_run_common.py / the HPO: each task calls final_run_common.run_seeds()
-for a single seed after overriding the module constants KSALPHA_INIT, M_INIT,
-... of hparam_search_<case>.py.
+One run = one (block, start) pair = one SLURM array task. Data, split, schedule, budget, metrics and
+admissibility gate are those of final_runs.common; each task calls run_seeds() for a single seed after
+overriding the initial-value constants (KSALPHA_INIT, M_INIT, ...) of the search module.
 
-Place this file in <repo>/hp_vpinn/ next to final_run_common.py. Run all commands
-from the repo root (the SLURM script does so).
+Workflow (from the repo root):
+  1. python -m hpvpinn_capillarity.analysis.multistart manifest   # <results>/multistart/manifest.csv (no JAX)
+  2. sbatch --array=0-<N-1>%100 slurm/slurm_run_multistart.sh
+  3. python -m hpvpinn_capillarity.analysis.multistart aggregate  # tables, figures, digest (no JAX)
 
-Workflow
---------
-  1. python -m hpvpinn_capillarity.analysis.multistart manifest     # writes <results>/multistart/manifest.csv (no JAX)
-  2. sbatch --array=0-<N-1>%100 slurm_run_multistart.sh
-  3. python -m hpvpinn_capillarity.analysis.multistart aggregate    # tables, figures, console digest (no JAX)
-
-Smoke test (2000 epochs, separate run directory with suffix _ep2000; ignored by aggregate):
+Smoke test (2000 epochs, separate directory with suffix _ep2000, ignored by aggregate):
   python -m hpvpinn_capillarity.analysis.multistart run --task-id 0 --epochs 2000
 
-Outputs
--------
-  <repo>/hp_vpinn/final_runs/<tag>_multistart/run_<id>/seeds/seed_<seed>/...   (as final runs)
-  <results>/multistart/manifest.csv
-  <repo>/multistart/summary_<block>.csv, latex_multistart_<block>.tex,
-  <repo>/multistart/multistart_<block>.eps, multistart_summary.json
+Outputs:
+  <results>/hp_vpinn/final_runs/<tag>_multistart/run_<id>/seeds/seed_<seed>/...   (as final runs)
+  <results>/multistart/{manifest.csv, summary_<block>.csv, latex_multistart_<block>.tex,
+                        multistart_<block>.eps, multistart_summary.json}
 
-Requirement for Case 1
-----------------------
-hparam_search_grenoblesand.py hard-codes the initial values in _vpinn_build_pinn.
-Replace them by module constants (behaviour unchanged):
-    KSALPHA_INIT = 1.0
-    M_INIT       = 0.5
-    ...  KsAlpha = LowerBoundedParam(value=KSALPHA_INIT, min=0.0),
-         m       = BoundedParam(value=M_INIT, min=0.0, max=1.0),
-The 'run' command aborts with a message if a constant is missing, and checks
-after every run that the parameter value at epoch 0 equals the requested start.
+Case 1 requires the module constants KSALPHA_INIT and M_INIT in hpo/search_grenoblesand.py (as in the
+other search modules); `run` aborts if a constant is missing.
 """
 
 import argparse
@@ -81,7 +62,7 @@ BLOCKS = [
 ]
 
 # Sampling ranges of the random starts: (scale, low, high), as in
-# tab:si_multistart_ranges of the SI.
+# the SI.
 # Starts must lie inside the bounds of the Param objects (m in (0,1),
 # theta_r in (0,THETA_I), KsAlpha > 0).
 RANGES = {
@@ -105,7 +86,7 @@ INIT_RTOL = 0.05          # tolerance of the epoch-0 check of the requested star
 
 
 def init_const_name(param: str) -> str:
-    """KsAlpha -> KSALPHA_INIT, theta_r -> THETA_R_INIT (convention of hparam_search_*.py)."""
+    """KsAlpha -> KSALPHA_INIT, theta_r -> THETA_R_INIT (convention of the hpo/search_*.py modules)."""
     return param.upper() + "_INIT"
 
 

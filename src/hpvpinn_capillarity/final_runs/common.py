@@ -1,69 +1,37 @@
-"""
-final_run_common.py
-===================
-Shared machinery for the final hp-VPINN runs of each case study
-(grenoblesand.py, vangenuchten.py, letd.py, brooks_corey.py), which produce
-the results used for R1-07, R1-14, R1-22 and R3-M02.
+"""Shared machinery of the final hp-VPINN runs of each case study (grenoblesand.py, vangenuchten.py,
+letd.py).
 
-What a final run is
--------------------
-The *configuration* (architecture + hp discretisation + schedule) is fixed;
-the network-initialisation *seed* is not. Each case script trains the
-configuration with N fresh seeds, one after another on the same machine,
-and reports the ensemble:
+A final run fixes the configuration (architecture, hp discretisation, schedule) and trains it with N
+fresh network-initialisation seeds, one after another on the same machine. It reports the ensemble:
+figures from a representative run chosen by a fixed rule (bands over the converged seeds), parameter and
+metric statistics over the converged seeds, and computing time (JIT compilation, training, per epoch)
+as median and range over all seeds, plus the total cost of the HPO campaign.
 
-  * figures from a representative run chosen by a rule fixed in advance,
-    with bands over the converged seeds;
-  * parameter and metric statistics over the converged seeds;
-  * computing time (JIT compilation, training for the full budget, per
-    epoch) as median and range over all seeds, plus the total cost of the
-    HPO campaign read from the HPO results files.
+Configuration: by default the winner selected for the case, winners.json["selected"][<case>], from
+    python -m hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --winners
+  --schedule es|gb                       use that schedule's winner instead
+  --arch "W=..,L=..,act=..,Nel=..,p=.."  user-defined configuration (with --schedule)
 
-Configuration
--------------
-Default: the configuration selected for the case by
-    hpvpinn_capillarity.hpo.postprocess --model hp_vpinn --winners
-i.e. winners.json["selected"][<case>[_<n>pct_noise]] (the -es/-gb winner
-whose final_physics is below the threshold).
-    --schedule es|gb     use that schedule's winner instead
-    --arch "W=..,L=..,act=..,Nel=..,p=.."  --schedule es|gb
-                         user-defined configuration (seeds come from --seeds)
+Training: each seed runs the HPO's own run_vpinn_trial() with the seed as trial number, so data, model,
+settings and metrics are those of the HPO. Seeds run sequentially, never in parallel, so that timings
+are not affected by contention.
 
-Training
---------
-Each seed is trained through the HPO's own run_vpinn_trial() (in
-hparam_search_<case>.py), with the network seed passed as the trial number.
-The trainer class is wrapped only to capture the training history, the
-trained model and the timing, so the data, model construction, training
-settings and metrics are exactly those of the HPO. If the trainer supports
-held-out quadrature tracking (q_eval), the held-out PDE loss is recorded
-along training as well.
-
-Seeds are run sequentially in one process, never in parallel, so that
-timings are not affected by contention.
-
-Outputs
--------
-<repo>/hp_vpinn/final_runs/<tag>/
+Outputs:
+<results>/hp_vpinn/final_runs/<tag>/
     reference.npz                     data, noise-free curve, reference D(theta)
     seeds/seed_<n>/record.json        config, metrics, parameters, timing, environment
-    seeds/seed_<n>/history.npz        full training history
+    seeds/seed_<n>/history.npz        training history
     seeds/seed_<n>/curves.npz         theta~(phi~) and D(theta) of the trained model
     seeds/seed_<n>/model.eqx          trained PINN
 <results>/hp_vpinn/Figures/   (--figures-dir)
-    final_losses_<tag>.eps            loss and parameter evolution
-    final_profile_<tag>.eps           wetting profile
-    final_diffusivity_<tag>.eps       D(theta)  (R1-07)
+    final_losses_<tag>.eps, final_profile_<tag>.eps, final_diffusivity_<tag>.eps
 <results>/hp_vpinn/tables/    (--tables-dir)
-    final_diffusivity_<tag>.csv       D(theta) curves, for the cross-case figure
-    latex_final_params_<tag>.tex      parameter and metric statistics
-    latex_final_timing_<tag>.tex      computing time (R1-14)
-    final_summary_<tag>.json          everything above, machine-readable
+    final_diffusivity_<tag>.csv, latex_final_params_<tag>.tex, latex_final_timing_<tag>.tex,
+    final_summary_<tag>.json
 
 tag = <case>_<es|gb>[_<n>pct_noise][_arch-...][_ep<epochs>]
 
-The training part needs JAX; the aggregation part (--aggregate-only) needs
-only NumPy and Matplotlib.
+Training needs JAX; aggregation (--aggregate-only) needs only NumPy and Matplotlib.
 """
 
 import argparse
@@ -157,7 +125,7 @@ def noise_tag(noise_level) -> str:
 
 
 def group_key(case: str, noise_level) -> str:
-    """Same key as hparam_postprocess.group_key (winners.json['selected'])."""
+    """Same key as hpo.postprocess.group_key (winners.json['selected'])."""
     return f"{case}{noise_tag(noise_level)}"
 
 
@@ -1011,7 +979,7 @@ def aggregate(spec: CaseSpec, args, cfg: dict, run_dir: Path,
                      cfg["schedule"], args.show)
     summary["profile_band_max_abs"] = float(np.max(th_pool.max(0) - th_pool.min(0)))
 
-    # ---- D(theta) curves for the cross-case figure (R1-07) ----
+    # ---- D(theta) curves for the cross-case figure ----
     cols = [("theta", ref["theta"]), ("D_representative", D_pool[i_rep]),
             ("D_median", np.median(D_pool, 0)), ("D_min", D_pool.min(0)), ("D_max", D_pool.max(0))]
     if "D_ref" in ref:

@@ -1,9 +1,5 @@
-"""
-grenoblesand.py
-===============
-Final hp-VPINN runs for Case 1 (Grenoble sand, synthetic data, van Genuchten
-model with trainable Ks/alpha and m). See final_run_common.py for what a
-final run is, the outputs, and the options.
+"""Final hp-VPINN runs for Case 1 (Grenoble sand, synthetic data, van Genuchten
+model with trainable Ks/alpha and m). See final_runs/common.py for the outputs and the options.
 
 Usage
 -----

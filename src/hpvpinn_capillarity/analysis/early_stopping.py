@@ -1,23 +1,21 @@
 #!/usr/bin/env python
-"""Post-hoc validation of the EMA/patience early-stopping rule (R2-M08). NumPy/SciPy/Matplotlib only.
+"""Post-hoc validation of the EMA/patience early-stopping rule.
 
-Reads the stored histories of the final runs, hp_vpinn/final_runs/<tag>/seeds/seed_<n>/{record.json,history.npz}
-(written by final_run_common.py), and, WITHOUT training anything, evaluates:
+Reads the stored histories of the final runs
+(<results>/hp_vpinn/final_runs/<tag>/seeds/seed_<n>/{record.json,history.npz}) and, without training,
+evaluates:
 
-  1. the rule of the manuscript (EMA of the physics loss, beta_s=0.99, below tau for W consecutive epochs)
-     -> reproduces ema_freeze_epoch of every record (consistency check), the projected stop time, and how far
-        the hydraulic parameters / chi2 still are from their end-of-training values at the stop epoch;
+  1. the rule used in training (EMA of the physics loss, beta_s=0.99, below tau for W consecutive epochs):
+     consistency with the stored ema_freeze_epoch, projected stop time, and distance of the parameters
+     and chi2 to their end-of-training values at the stop epoch;
   2. its sensitivity to (tau, W);
-  3. a conjunctive variant: the same rule AND stationarity of the parameters (relative change over the last W
-     epochs below eps for every identified parameter).
+  3. a variant that also requires stationarity of the identified parameters.
 
-Any stopping rule that only reads the past is evaluated exactly by truncating a stored history, so the stop
-epoch below is the one an online implementation would produce; only the stop *time* is a projection
-(t_compile + stop_epoch * per_epoch).
+The stop epoch is exact (a rule that only reads the past can be evaluated on a stored history); the stop
+time is a projection (t_compile + stop_epoch * per_epoch).
 
 Usage (from the repo root):
-  python -m hpvpinn_capillarity.analysis.early_stopping
-  # optional: --tags grenoblesand_gb_1pct_noise grenoblesand_gb_2pct_noise letd_gb
+  python -m hpvpinn_capillarity.analysis.early_stopping [--tags <tag> ...]
 """
 import argparse, csv, json
 from pathlib import Path
@@ -26,15 +24,15 @@ from scipy.signal import lfilter
 
 from hpvpinn_capillarity import paths
 
-BETA = 0.99                      # beta_s of eq:ema_physics  (train_vpinn.py: ema_beta + 0.09)
+BETA = 0.99                      # beta_s of the EMA of the physics loss  (train_vpinn.py: ema_beta + 0.09)
 TAU0, W0 = 5e-8, 10_000          # values hard-coded in train_vpinn.py
 TAUS = [1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 5e-7, 1e-6]
 WS = [1_000, 5_000, 10_000, 20_000]
 EPS_GRID = [0.0025, 0.005, 0.01, 0.02, 0.05]
 EPS0 = 0.01                      # fixed a priori (well below the seed-to-seed spread of the parameters)
 MIN_ABS = 1e-6                   # parameters below this (bound-hugging) are not tested
-IGNORE = {"theta_r"}             # parameters not identified by the data (SI sec:comparison_with_fronts_detail); set by --ignore-params
-QUAL_OBJ, QUAL_PDE = 4.0, 1e-5   # calibrated / admissible thresholds of sec:hpsearch
+IGNORE = {"theta_r"}             # parameters not identified by the data (see the SI); set by --ignore-params
+QUAL_OBJ, QUAL_PDE = 4.0, 1e-5   # calibrated / admissible thresholds of the hyperparameter search
 TRUTH = {"grenoblesand": {"KsAlpha": 355.783, "m": 0.5096}}   # consistent with rel_errors stored in the records
 LABELS = {"grenoblesand_gb_1pct_noise": r"Case~1, \num{1}\% noise", "grenoblesand_gb_2pct_noise": r"Case~1, \num{2}\% noise",
           "letd_gb": "Case~3"}

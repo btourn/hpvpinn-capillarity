@@ -1,38 +1,19 @@
-"""
-quadrature_check_grenoblesand.py
-================================
-Quadrature convergence / aliasing check (SI, sec:quadrature_check) for the
-hp-VPINN on Case 1 (Grenoble sand), using the CURRENT pipeline: the same
-data preparation, model construction, training schedule and precision as
-hparam_search_grenoblesand.py.
+"""Quadrature convergence / aliasing check for the hp-VPINN on Case 1 (Grenoble sand), with the same data
+preparation, model construction, schedule and precision as hpo/search_grenoblesand.py.
 
 For each training quadrature order Q_train and each seed:
-  1. train one hp-VPINN with the fixed architecture below (gb schedule,
-     200k steps, same settings as the HPO);
-  2. freeze it and evaluate the weak-form PDE loss at every Q_eval in
-     Q_EVAL_LIST, plus at Q_train itself (training-order value);
-  3. record the "honest floor" at Q_REF = max(Q_EVAL_LIST), which is never a
-     training order, the ratio floor / training-order value, the strong-form
-     residual RMS on a dense grid, chi2 (train/test) and parameter recovery.
+  1. train one hp-VPINN with the fixed architecture below (gb schedule, 200k steps);
+  2. freeze it and evaluate the weak-form PDE loss at every Q_eval in Q_EVAL_LIST and at Q_train;
+  3. record the floor at Q_REF = max(Q_EVAL_LIST) (never a training order), the ratio floor / training-order
+     value, the strong-form residual RMS on a dense grid, chi2 (train/test) and parameter recovery.
 
-Results are written as one JSON per (Q_train, seed) run, so runs can be
-split across SLURM jobs and resumed; `--summarize` aggregates whatever runs
-exist (geometric means across seeds, since losses span orders of magnitude).
+One JSON is written per (Q_train, seed), so runs can be split across SLURM jobs and resumed; `--summarize`
+aggregates the existing runs (geometric means across seeds).
 
-Place at the repo root, next to hparam_search_grenoblesand.py.
-
-Usage
------
-    # everything, serially (slow: see README note in the job commands)
-    python -m hpvpinn_capillarity.analysis.quadrature_check
-
-    # one Q_train, all seeds (one SLURM job per Q_train)
-    python -m hpvpinn_capillarity.analysis.quadrature_check --q-train 16
-
-    # smoke test (seconds): one run, few steps
-    python -m hpvpinn_capillarity.analysis.quadrature_check --q-train 10 --seeds 1 --epochs 2000 --out-dir /tmp/qc_smoke
-
-    # aggregate existing runs
+Usage:
+    python -m hpvpinn_capillarity.analysis.quadrature_check                       # everything, serially
+    python -m hpvpinn_capillarity.analysis.quadrature_check --q-train 16          # one Q_train, all seeds
+    python -m hpvpinn_capillarity.analysis.quadrature_check --q-train 10 --seeds 1 --epochs 2000 --out-dir <dir>  # smoke test
     python -m hpvpinn_capillarity.analysis.quadrature_check --summarize
 """
 

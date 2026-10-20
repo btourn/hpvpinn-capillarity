@@ -1,35 +1,18 @@
-"""
-strong_form_residual.py
-========================
-Pointwise strong-form residual of the capillarity Boltzmann ODE, evaluated
-on a dense grid of nodes for a frozen, converged model.
+"""Pointwise strong-form residual of the capillarity Boltzmann ODE, evaluated on a dense grid of nodes for a
+frozen, converged model.
 
-Purpose
--------
-This is a post-hoc diagnostic only -- it is never used inside the training
-loop (see pde.py and pinn_model.py for why the strong form was removed from
-the trainable path: its second-derivative term is what caused the
-instabilities that motivated the hp-VPINN weak-form reformulation).
+Post-hoc diagnostic only: it is never used in the training loop. The pointwise strong-form residual and the
+element-wise weak-form residual of the hp-VPINN are different quantities, so both are evaluated on the same
+dense grid to give a common metric.
 
-It exists in response to reviewer comment R2-m07: because the pointwise
-strong-form residual and the element-wise hp-VPINN weak-form residual are
-different quantities (one lives on discrete points, the other on
-element/test-function pairs), they should not be compared directly in
-magnitude. Evaluating both on the same dense grid gives an independent,
-common metric for comparison instead.
-
-Governing ODE (nondimensional phi in [0, 1])
----------------------------------------------
+Governing ODE (nondimensional phi in [0, 1]):
     -phi/2 * dtheta/dphi = (1/phi_ref^2) * d/dphi( D(theta) * dtheta/dphi )
 
-Rearranged to zero-residual form:
-
+Zero-residual form:
     r(phi) = -phi/2 * dtheta/dphi - (1/phi_ref^2) * d/dphi( D(theta) * dtheta/dphi )
 
-D(.) takes the DIMENSIONAL theta -- nn_model outputs theta_tilde
-(nondimensional), so it must be un-normalized via scaling.theta_inverse
-before being passed to pde.diffusivity, exactly as in vpinn_loss.py's
-_element_residual.
+D(.) takes the dimensional theta: nn_model outputs theta_tilde, which is un-normalised via
+scaling.theta_inverse before being passed to pde.diffusivity, as in vpinn_loss.py's _element_residual.
 """
 
 import jax

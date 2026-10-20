@@ -1,18 +1,7 @@
-"""
-train_vpinn.py
-==============
-Self-contained hp-VPINN trainer for the capillarity Boltzmann ODE.
+"""Self-contained hp-VPINN trainer for the capillarity Boltzmann ODE.
 
-Design principles
------------------
-* No dependency on train.py.  All training logic lives here.
-* The loss function keeps a minimal signature.
-* The JIT-compiled scan loop uses the same warm-up / transition / adaptive
-  gradient-balancing structure as train_pinn.py.
-* The spike-score and residual-cutoff logic from the strong-form PINN is
-  intentionally omitted.
-* Validation-based early stopping is preserved.
-* An optional L-BFGS refinement stage follows the Adam stage.
+The JIT-compiled scan loop uses a warm-up / transition / adaptive gradient-balancing schedule, with
+validation-based early stopping and an optional L-BFGS refinement stage after the Adam stage.
 
 History tuple returned by fit()
 --------------------------------

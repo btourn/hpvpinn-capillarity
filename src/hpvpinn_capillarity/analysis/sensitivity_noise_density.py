@@ -1,65 +1,37 @@
 """
-sensitivity_noise_density.py
-============================
-Post-hoc sensitivity of the frozen Case 1 winner (Grenoble sand, hp-VPINN,
-default: gb schedule, 1% noise) to
+Post-hoc sensitivity of the frozen Case 1 winner to the noise realisation and the data density.
 
-  (A) the noise realisation          -- R2-m08, R2-M03 (second half)
-  (B) the training-data density       -- R1-19, R2-m08
+Study (A): the noise realisation. Study (B): the training-data density. Default: hp-VPINN, gb schedule,
+1% noise.
 
 Everything except the quantity under study is held fixed:
+  * architecture / N_el / p      the top-1 combination of the HPO results, ranked by (obj, final_physics),
+                                 without ground truth
+  * network-initialisation seed  that of the top-1 trial (override with --init-seed)
+  * parameter initial values     bound midpoint, as in the search
+  * train/test split             SEED_SPLIT of hpo/search_grenoblesand (same test set in every run)
+  * budget / schedule            MAX_STEPS and the selected schedule
 
-  * architecture / N_el / p        -> the Stage-A top-1 combination, resolved
-                                      from the existing HPO results with the
-                                      SAME observable-only criterion as
-                                      hparam_confirm_top1.py, i.e. rank by
-                                      (obj, final_physics); no ground truth
-  * network-initialisation seed    -> the top-1 trial's own init_seed
-                                      (override with --init-seed)
-  * physical-parameter init        -> bound midpoint, as in the search
-  * train/test split               -> SEED_SPLIT of hparam_search_grenoblesand
-                                      (the test set is identical in every run)
-  * training budget / schedule     -> MAX_STEPS, warm-up/transition of the
-                                      selected schedule
+Run plan, one training run per entry:
+  realisation r = 0..R-1  ->  noise seed = SEED_NOISE + r (r = 0 reproduces the HPO noise draw, so
+                              (r=0, f=1.0) is a regression check against the top-1 trial)
+  fraction f in FRACTIONS ->  training subset of size round(f * N_pool) from the fixed training pool
+For a given r the noise is drawn once over the full curve, so every fraction sees the same noisy values
+at the points it keeps. The f = 1.0 column is study (A); all fractions together are (B).
 
-Run plan (one entry per training run)
--------------------------------------
-  realisation r = 0..R-1   ->  noise seed = SEED_NOISE + r
-                               (r = 0 reproduces the Stage-A noise draw,
-                                so (r=0, f=1.0) is a bitwise regression check
-                                against the top-1 trial on the same machine)
-  fraction f in FRACTIONS  ->  training subset of size round(f * N_pool)
-                               taken from the fixed training pool
+Subsampling (--subsample):
+  stride  (default)  every (1/f)-th point of the sorted pool (coarser sensor resolution)
+  random             nested random subsets, permutation seeded by SUBSAMPLE_SEED + r (irregular observations)
 
-For a given r the noise vector is drawn ONCE over the full curve, so every
-fraction of that realisation sees the same noisy values at the points it
-keeps (paired design; subsets are nested for --subsample random, and for
-stride whenever 1/f are integers dividing one another, e.g. 1, 1/2, 1/4,
-1/8). The f = 1.0 column is study (A); all fractions together are (B).
+Output: one JSON per run under <results>/hp_vpinn/sensitivity_grenoblesand_<sched>_<noise>pct_noise[_random]/runs/;
+existing runs are skipped (resumable). Aggregation: postprocess_sensitivity.py.
 
-Subsampling modes
------------------
-  stride  (default) every (1/f)-th point of the sorted training pool:
-          models a coarser sensor/pixel resolution; variability across r is
-          then due to noise only.
-  random  nested random subsets, permutation seeded by SUBSAMPLE_SEED + r:
-          models missing/irregular observations; variability across r mixes
-          noise and sampling locations.
-
-Output
-------
-One JSON per run under
-  ./hp_vpinn/sensitivity_grenoblesand_<sched>_<noise>pct_noise[_random]/runs/
-Runs whose JSON already exists are skipped (resumable). Aggregation is done by
-postprocess_sensitivity.py.
-
-Usage
------
+Usage:
   python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --list
-  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --show-winner      # check the frozen config, no training
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --show-winner      # frozen config, no training
   python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --task-id 0 --n-tasks 20
-  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --run-index 0          # single run
-  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --schedule gb --noise-level 0.01 \\
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --run-index 0      # single run
+  python -m hpvpinn_capillarity.analysis.sensitivity_noise_density --schedule gb --noise-level 0.01 \
          --n-realisations 25 --fractions 1.0 0.5 0.25 0.125 --subsample stride
 """
 
@@ -95,11 +67,8 @@ def _search_module():
 
 
 # ---------------------------------------------------------------------------
-# Top-1 ranking -- same criterion as hparam_confirm_top1.py (_load_ok_trials,
-# _top1_and_count), reproduced here so this script does not import that file.
-# Importing it would pull in all four hparam_search_<case>.py modules, and,
-# once the hp_vpinn backend loader has put ./hp_vpinn at the front of
-# sys.path, could resolve to a different copy of the file.
+# Top-1 ranking: successful, non-pruned trials sorted by (obj, final_physics), without ground truth.
+# Reproduced here so that this script does not import the four search modules.
 # ---------------------------------------------------------------------------
 
 HP_COLS = ["nn_n_layers", "nn_width", "activation", "n_elements", "poly_degree"]
@@ -139,7 +108,7 @@ def _tags(schedule: str, noise_level: float):
 
 
 def hpo_results_path(schedule: str, noise_level: float) -> Path:
-    """Stage-A results file -- mirrors hparam_search_grenoblesand.main()."""
+    """Stage-A results file -- mirrors hpo.search_grenoblesand.main()."""
     m = _search_module()
     sched_tag, noise_tag = _tags(schedule, noise_level)
     return (paths.model_dir(MODEL) / f"{m.BASE_RESULTS_DIR}_{sched_tag}_{noise_tag}"
@@ -157,8 +126,8 @@ def output_dir(schedule: str, noise_level: float, subsample: str) -> Path:
 # ---------------------------------------------------------------------------
 
 def resolve_winner(schedule: str, noise_level: float) -> dict:
-    """Top-1 combo + its init seed, ranked exactly as hparam_confirm_top1.py
-    does: successful, non-pruned trials sorted by (obj, final_physics). No
+    """Top-1 combo + its init seed, ranked by
+    (obj, final_physics) among successful, non-pruned trials. No
     parameter-error column is read. Restricted to stage == 'search' so the
     frozen seed is the one that won the search, not a later replicate."""
     hp_cols = HP_COLS
@@ -206,7 +175,7 @@ def build_plan(n_realisations: int, fractions) -> list[dict]:
 
 # ---------------------------------------------------------------------------
 # Data preparation -- mirrors prepare_shared_data() in
-# hparam_search_grenoblesand.py line by line, with the noise seed and the
+# hpo/search_grenoblesand.py line by line, with the noise seed and the
 # training subset as the only free inputs.
 # ---------------------------------------------------------------------------
 

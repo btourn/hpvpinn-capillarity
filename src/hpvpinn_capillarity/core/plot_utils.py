@@ -1,7 +1,4 @@
-"""
-plot_utils.py
-=============
-Shared plotting utilities for hp-VPINN driver scripts.
+"""Shared plotting utilities for hp-VPINN driver scripts.
 
 Functions
 ---------

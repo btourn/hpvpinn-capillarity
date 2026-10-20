@@ -1,24 +1,21 @@
-"""
-combined_profiles.py
-====================
-Combined 2x2 wetting-profile figure (fig:wetting_profiles) from the saved
+"""Combined 2x2 wetting-profile figure from the saved
 final runs of the four case studies. No training and no JAX: it reads
-<repo>/hp_vpinn/final_runs/<tag>/ (reference.npz, seeds/*/record.json,
+<results>/hp_vpinn/final_runs/<tag>/ (reference.npz, seeds/*/record.json,
 seeds/*/curves.npz), written by grenoblesand.py, vangenuchten.py, letd.py.
 
     a) Case 1, 1% noise     b) Case 1, 2% noise
     c) Case 2 (with zoomed inset of the wetting front)   d) Case 3
 
 Labels a)-d) sit at the top right of each panel. Each panel shows the
-representative run of the qualified seeds (same gate as final_run_common:
+representative run of the qualified seeds (same gate as final_runs/common.py:
 held-out PDE loss below the admissibility threshold and obj below the
 calibration threshold), with the seed envelope where it is visible.
 
 Usage
 -----
-    python combined_profiles.py
-    python combined_profiles.py --band p5-95 --representative median-obj
-    python combined_profiles.py --tags grenoblesand_gb_1pct_noise \\
+    python -m hpvpinn_capillarity.final_runs.combined_profiles
+    python -m hpvpinn_capillarity.final_runs.combined_profiles --band p5-95 --representative median-obj
+    python -m hpvpinn_capillarity.final_runs.combined_profiles --tags grenoblesand_gb_1pct_noise \\
         grenoblesand_gb_2pct_noise vangenuchten_es letd_gb
 
 Default run tags: the configurations selected in winners.json for

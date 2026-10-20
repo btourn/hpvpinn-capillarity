@@ -1,19 +1,11 @@
-"""
-hpvpinn_capillarity.hpo.search_brooks_corey_new
-==============================
-Unified Optuna hyperparameter search for the Brooks-Corey inverse problem
-(synthetic case derived from Grenoble sand: exact curve generated with frontx,
-then corrupted with Gaussian noise), for the hp-VPINN model (selected with
---model hp_vpinn):
+"""Optuna hyperparameter search for the Brooks-Corey inverse problem (synthetic case derived from Grenoble
+sand: exact curve generated with frontx, then corrupted with Gaussian noise), for the hp-VPINN model
+(--model hp_vpinn).
 
-    --model hp_vpinn hp-VPINN weak-form model
+Unknowns (2): KsAlpha = Ks/alpha and n. Fixed: l = 1, theta_r = 0, alpha = 1 (only Ks/alpha is identifiable,
+so alpha is pinned to 1 and the fitted Ks is KsAlpha). Results go under <results>/hp_vpinn/.
 
-Unknowns (2): KsAlpha = Ks/alpha  and  n.   Fixed: l = 1, theta_r = 0, alpha = 1
-(only Ks/alpha is identifiable, so alpha is pinned to 1 and the fitted Ks IS
-KsAlpha). Results are written under <results>/hp_vpinn/.
-
-Usage
------
+Usage:
     python -m hpvpinn_capillarity.hpo.search_brooks_corey_new --model hp_vpinn --noise-level 0.01
 """
 
