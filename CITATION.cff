@@ -5,7 +5,8 @@ type: software
 authors:
   - family-names: "Tourn"
     given-names: "Benjamin A."
-    # TODO(release): add ORCID, affiliation and the co-authors the authors agree to list.
+    orcid: "https://orcid.org/0009-0003-1345-4693"
+    affiliation: "Centro de Investigación y Transferencia (CIT) Rafaela, Universidad Nacional de Rafaela (UNRaf) / CONICET"
 license: Apache-2.0
 repository-code: "https://github.com/btourn/hpvpinn-capillarity"
 identifiers:
