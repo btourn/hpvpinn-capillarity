@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .venv/
+.ruff_cache/
 *.egg-info/
 .vscode/
 .claude/
@@ -10,6 +11,7 @@ __pycache__/
 logs/
 logs_postprocess/
 results/hp_vpinn/final_runs/
+results/hp_vpinn/Figures/
 
 # LaTeX artefacts
 *.aux
