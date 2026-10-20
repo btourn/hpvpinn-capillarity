@@ -77,7 +77,8 @@ hpvpinn-capillarity/
 │   ├── final_runs/                # multi-seed final runs, wetting-profile figures
 │   ├── analysis/                  # early stopping, multi-start, quadrature check, sensitivity
 │   └── conventional/              # conventional inversion and forward checks (need frontx, see below)
-├── data/                          # data_<case>.dat
+├── data/                          # data_<case>.dat and data/README.md (origin of the data)
+├── docs/                          # guide for new datasets
 ├── results/                       # recorded outputs (see below)
 ├── scripts/                       # rerun_forward_check_tight.sh
 ├── slurm/                         # cluster launchers (see below)
