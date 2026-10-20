@@ -414,7 +414,7 @@ Cases 1 (1 % noise), 2 and 3 repeated with that public commit gave exactly the s
 
 ## Not included on purpose
 
-- The collocation PINN (frontx) code, results and final-run drivers: available upon reasonable request. The `--model frontx` backends and the conventional-inversion scripts require the `frontx` package.
+- The collocation PINN (frontx) code, results and final-run drivers: available upon reasonable request. The `--model frontx` backend of the search drivers was removed; the scripts of `conventional/` use the public `frontx` (see `requirements-conventional.txt`).
 - Scripts of the superseded experimental Brooks and Corey variant, the Stage B (replication) tooling, and workspace utilities that only serve the development workspace.
 - Generators of main-text figures 4-6 and of the bounds-test figure.
 
