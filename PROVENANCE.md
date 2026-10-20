@@ -18,7 +18,9 @@ into the package layout in the commits that follow it:
 |---|---|---|
 | `.gitignore` | `.gitignore` | adapted to the package layout |
 | `CHANGELOG.md` | `CHANGELOG.md` | adapted to the package layout |
-| `data/data_brooks_corey_new.dat` | `data_brooks_corey_new.dat` | moved, content unchanged |
+| `PROVENANCE.md` | `PROVENANCE.md` | adapted to the package layout |
+| `README.md` | `README.md` | adapted to the package layout |
+| `data/data_brooks_corey.dat` | `data_brooks_corey_new.dat` | moved, content unchanged |
 | `data/data_grenoblesand.dat` | `data_grenoblesand.dat` | moved, content unchanged |
 | `data/data_letd.dat` | `data_letd.dat` | moved, content unchanged |
 | `data/data_vangenuchten.dat` | `data_vangenuchten.dat` | moved, content unchanged |
@@ -40,7 +42,7 @@ into the package layout in the commits that follow it:
 | `slurm/submit_sensitivity.sh` | `slurm/submit_sensitivity.sh` | adapted to the package layout |
 | `src/hpvpinn_capillarity/__init__.py` | `-` | new |
 | `src/hpvpinn_capillarity/analysis/__init__.py` | `-` | new |
-| `src/hpvpinn_capillarity/analysis/early_stopping.py` | `hp_vpinn/early_stopping_analysis.py` | moved and adapted to the package layout (similarity 98 %) |
+| `src/hpvpinn_capillarity/analysis/early_stopping.py` | `hp_vpinn/early_stopping_analysis.py` | moved and adapted to the package layout (similarity 95 %) |
 | `src/hpvpinn_capillarity/analysis/multistart.py` | `hp_vpinn/multistart.py` | moved and adapted to the package layout (similarity 90 %) |
 | `src/hpvpinn_capillarity/analysis/postprocess_sensitivity.py` | `postprocess_sensitivity.py` | moved and adapted to the package layout (similarity 97 %) |
 | `src/hpvpinn_capillarity/analysis/quadrature_check.py` | `quadrature_check_grenoblesand.py` | moved and adapted to the package layout (similarity 95 %) |
@@ -61,14 +63,14 @@ into the package layout in the commits that follow it:
 | `src/hpvpinn_capillarity/core/transformations.py` | `hp_vpinn/transformations.py` | moved, content unchanged |
 | `src/hpvpinn_capillarity/core/vpinn_loss.py` | `hp_vpinn/vpinn_loss.py` | moved, content unchanged |
 | `src/hpvpinn_capillarity/final_runs/__init__.py` | `-` | new |
-| `src/hpvpinn_capillarity/final_runs/combined_profiles.py` | `hp_vpinn/combined_profiles.py` | moved and adapted to the package layout (similarity 86 %) |
-| `src/hpvpinn_capillarity/final_runs/common.py` | `hp_vpinn/final_run_common.py` | moved and adapted to the package layout (similarity 95 %) |
+| `src/hpvpinn_capillarity/final_runs/combined_profiles.py` | `hp_vpinn/combined_profiles.py` | moved and adapted to the package layout (similarity 83 %) |
+| `src/hpvpinn_capillarity/final_runs/common.py` | `hp_vpinn/final_run_common.py` | moved and adapted to the package layout (similarity 94 %) |
 | `src/hpvpinn_capillarity/final_runs/grenoblesand.py` | `hp_vpinn/grenoblesand.py` | moved and adapted to the package layout (similarity 66 %) |
 | `src/hpvpinn_capillarity/final_runs/letd.py` | `hp_vpinn/letd.py` | moved and adapted to the package layout (similarity 73 %) |
 | `src/hpvpinn_capillarity/final_runs/profile_figures.py` | `hp_vpinn/profile_figures.py` | moved, content unchanged |
 | `src/hpvpinn_capillarity/final_runs/vangenuchten.py` | `hp_vpinn/vangenuchten.py` | moved and adapted to the package layout (similarity 72 %) |
 | `src/hpvpinn_capillarity/hpo/__init__.py` | `-` | new |
-| `src/hpvpinn_capillarity/hpo/postprocess.py` | `hparam_postprocess.py` | moved and adapted to the package layout (similarity 98 %) |
+| `src/hpvpinn_capillarity/hpo/postprocess.py` | `hparam_postprocess.py` | moved and adapted to the package layout (similarity 96 %) |
 | `src/hpvpinn_capillarity/hpo/search_brooks_corey_new.py` | `hparam_search_brooks_corey_new.py` | moved and adapted to the package layout (similarity 77 %) |
 | `src/hpvpinn_capillarity/hpo/search_grenoblesand.py` | `hparam_search_grenoblesand.py` | moved and adapted to the package layout (similarity 75 %) |
 | `src/hpvpinn_capillarity/hpo/search_letd.py` | `hparam_search_letd.py` | moved and adapted to the package layout (similarity 75 %) |
@@ -113,41 +115,41 @@ e1805490771ba34e0e266e55c4505ce1eca407b594be8e1c2e478e4fb29373a7  results/conven
 c94a40104be4808b22178a774b4b547a484d37b26ac0be2a1c4275910b73879f  results/conventional/results_grenoblesand_2pct_noise.jsonl
 f8d695884342fb079bdd8210827983239a1e168315d58b0e1c55c8fb965c69e0  results/conventional/results_letd.jsonl
 84e3de7ebb2a8b0ca6a5a9379fc2dcde3d88b95f4172159adfebe20f869bc416  results/conventional/results_vangenuchten.jsonl
-baef76fe1808e7763edb37ce48856814d5c218816e6bee3d257fdb1f43aa1ebb  data/data_brooks_corey_new.dat
+baef76fe1808e7763edb37ce48856814d5c218816e6bee3d257fdb1f43aa1ebb  data/data_brooks_corey.dat
 b3cd3a895de1a4eb0ed0db96fc3302a76bd6ae46df4bfcc835fe8aec0233282e  data/data_grenoblesand.dat
 e8d7f88aba24181e884f1a342a4c56b7b41c53acb02f725b4bef900f18f5faf8  data/data_letd.dat
 e8d7f88aba24181e884f1a342a4c56b7b41c53acb02f725b4bef900f18f5faf8  data/data_vangenuchten.dat
-5f47cb9b266ea00f18d46cce94f827289366e9edaf87ceaa468fbf17007c4125  results/hp_vpinn/Figures/latex_final_params_grenoblesand_gb_1pct_noise.tex
-1214984f859a3538b3ec9d776f37db0b75dd22640e3a7f78431ca266459bcd19  results/hp_vpinn/Figures/latex_final_params_grenoblesand_gb_2pct_noise.tex
-0458bd9ee424a9e62c29deeee646741199f04a2a576b80498b5e3e11313ed21d  results/hp_vpinn/Figures/latex_final_params_letd_es.tex
-f844bf21d953a055bf4d4b81e369c587dc563adb1d29b64f0341b29cd4915b2b  results/hp_vpinn/Figures/latex_final_params_letd_gb.tex
-17d49832a034b37d54a078c844b3be48af882d28944cc384a7c68baff223de79  results/hp_vpinn/Figures/latex_final_params_vangenuchten_es.tex
-71ac37fc84460392206b82c2b634f25fe9f6a46a9e7cb01ed1a06513debc8f1f  results/hp_vpinn/Figures/latex_final_timing_grenoblesand_gb_1pct_noise.tex
-fd434db19bc8364c98647ee8071ca566ee5892543cfa0cd9c4f6952a7654cc31  results/hp_vpinn/Figures/latex_final_timing_grenoblesand_gb_2pct_noise.tex
-9c499212744d46d15560f624da1daeaa418b3a1deb39f3b4ac497f19d56a2aa9  results/hp_vpinn/Figures/latex_final_timing_letd_es.tex
-47f406e1d077e865e2792eb4ca5e35bd43e39caff7279c36595df91e96eebed2  results/hp_vpinn/Figures/latex_final_timing_letd_gb.tex
-e8cdcdacab315959afad973bec1ca7a47fc36d11cc8d6d36b05454daaf53ebdb  results/hp_vpinn/Figures/latex_final_timing_vangenuchten_es.tex
-b3a2aa280c57706c88415c71877535074f3aade8b32222c1c7eb7b8cd69492f2  results/hp_vpinn/Figures/latex_identifiability_brooks_corey_new_gb_1pct_noise.tex
-e98b613929231c51853a3f92787d9e278cd5a17ac20f939b1026f2819724a868  results/hp_vpinn/Figures/latex_identifiability_grenoblesand_gb_1pct_noise.tex
-828ae60bc4ae13c37e8a579f56ca8b6399265ead0cf943199b39cdc1dd08e9eb  results/hp_vpinn/Figures/latex_identifiability_grenoblesand_gb_2pct_noise.tex
-cbf1217e3aa035d88f5e722dc57f7d3978fd0cedb96c289736607006c7ee14a3  results/hp_vpinn/Figures/latex_identifiability_letd_es.tex
-f074b311cb50b6acf3b595052640a13d905cb00b093962bd53a8f86dded8a6c1  results/hp_vpinn/Figures/latex_identifiability_letd_gb.tex
-32f2ce4f0c6fad288ff466ba00b222eb6e432c1aa6a50468b11ba1dafdc9f323  results/hp_vpinn/Figures/latex_identifiability_vangenuchten_es.tex
-d8bf322bb63fdd1a4a00d1507bae7bd19c929eb9c356dbe36dd9800a34d8bde0  results/hp_vpinn/Figures/latex_identifiability_vangenuchten_gb.tex
-88f5c675850ec760bb613eb51d06f3a76685c658e095f3a0feb1a5ebb6aea33d  results/hp_vpinn/Figures/latex_top20_brooks_corey_new_es_1pct_noise.tex
-1dda84ad16cdae6a706fe8085deb68db2a5008abb847b81cfed628ecb7e697e2  results/hp_vpinn/Figures/latex_top20_brooks_corey_new_gb_1pct_noise.tex
-f3fb41cba3b66c7d6d1a7a96c121f9eac979e14ac5c40c693d6814a0826a1149  results/hp_vpinn/Figures/latex_top20_grenoblesand_es_1pct_noise.tex
-7694c6176fc5016cd391b993c54b8187850d851d98b60547a6c0e68814763854  results/hp_vpinn/Figures/latex_top20_grenoblesand_es_2pct_noise.tex
-c3c45ee40dd41a6ff9db05e7b042f6e5ffb4b3f29ec3ca8db313dcd727813af2  results/hp_vpinn/Figures/latex_top20_grenoblesand_gb_1pct_noise.tex
-3b7ac42baa5a79da30b4007582c268f9220b8827586fbd28319956929eb76ab7  results/hp_vpinn/Figures/latex_top20_grenoblesand_gb_2pct_noise.tex
-0a7f7e5d644167d3d41618eb2125793749ce271fe9b21b04e3d0e3bfd6c52259  results/hp_vpinn/Figures/latex_top20_letd_es.tex
-29651750031f4a23d4290ef33f5aeea34e590cb816b2a04fa19a1db473796a8b  results/hp_vpinn/Figures/latex_top20_letd_gb.tex
-12b48ad11abe5b3778592fe726e6fae61ac3bfb9fe1bc2b8fbba98f9ae561152  results/hp_vpinn/Figures/latex_top20_vangenuchten_es.tex
-4e71f13e40bc6f61bdbc7d8aa16ef0938bb0a2d8cfb7cf5a14a86a684cc3a4a3  results/hp_vpinn/Figures/latex_top20_vangenuchten_gb.tex
-6b7ac1d213d035978af0a63f7b1d003ffaed92d68dd5f80272d33d2b7951dc8f  results/hp_vpinn/Figures/latex_trial_counts.tex
-dd2fde1562df43f89a46364c33bfb72cc5c28af2fd26692e74b036123c058964  results/hp_vpinn/Figures/latex_winners.tex
-2502057869c10479c9de41cd041c9065e76508f8f374efb3b2328adb6b4b2bcd  results/hp_vpinn/Figures/winners.csv
-02d97317c6ce0663b07f74e7272b98aed91e1d174838aca33527c36511e752d9  results/hp_vpinn/Figures/winners.json
+5f47cb9b266ea00f18d46cce94f827289366e9edaf87ceaa468fbf17007c4125  results/hp_vpinn/tables/latex_final_params_grenoblesand_gb_1pct_noise.tex
+1214984f859a3538b3ec9d776f37db0b75dd22640e3a7f78431ca266459bcd19  results/hp_vpinn/tables/latex_final_params_grenoblesand_gb_2pct_noise.tex
+0458bd9ee424a9e62c29deeee646741199f04a2a576b80498b5e3e11313ed21d  results/hp_vpinn/tables/latex_final_params_letd_es.tex
+f844bf21d953a055bf4d4b81e369c587dc563adb1d29b64f0341b29cd4915b2b  results/hp_vpinn/tables/latex_final_params_letd_gb.tex
+17d49832a034b37d54a078c844b3be48af882d28944cc384a7c68baff223de79  results/hp_vpinn/tables/latex_final_params_vangenuchten_es.tex
+71ac37fc84460392206b82c2b634f25fe9f6a46a9e7cb01ed1a06513debc8f1f  results/hp_vpinn/tables/latex_final_timing_grenoblesand_gb_1pct_noise.tex
+fd434db19bc8364c98647ee8071ca566ee5892543cfa0cd9c4f6952a7654cc31  results/hp_vpinn/tables/latex_final_timing_grenoblesand_gb_2pct_noise.tex
+9c499212744d46d15560f624da1daeaa418b3a1deb39f3b4ac497f19d56a2aa9  results/hp_vpinn/tables/latex_final_timing_letd_es.tex
+47f406e1d077e865e2792eb4ca5e35bd43e39caff7279c36595df91e96eebed2  results/hp_vpinn/tables/latex_final_timing_letd_gb.tex
+e8cdcdacab315959afad973bec1ca7a47fc36d11cc8d6d36b05454daaf53ebdb  results/hp_vpinn/tables/latex_final_timing_vangenuchten_es.tex
+b3a2aa280c57706c88415c71877535074f3aade8b32222c1c7eb7b8cd69492f2  results/hp_vpinn/tables/latex_identifiability_brooks_corey_new_gb_1pct_noise.tex
+e98b613929231c51853a3f92787d9e278cd5a17ac20f939b1026f2819724a868  results/hp_vpinn/tables/latex_identifiability_grenoblesand_gb_1pct_noise.tex
+828ae60bc4ae13c37e8a579f56ca8b6399265ead0cf943199b39cdc1dd08e9eb  results/hp_vpinn/tables/latex_identifiability_grenoblesand_gb_2pct_noise.tex
+cbf1217e3aa035d88f5e722dc57f7d3978fd0cedb96c289736607006c7ee14a3  results/hp_vpinn/tables/latex_identifiability_letd_es.tex
+f074b311cb50b6acf3b595052640a13d905cb00b093962bd53a8f86dded8a6c1  results/hp_vpinn/tables/latex_identifiability_letd_gb.tex
+32f2ce4f0c6fad288ff466ba00b222eb6e432c1aa6a50468b11ba1dafdc9f323  results/hp_vpinn/tables/latex_identifiability_vangenuchten_es.tex
+d8bf322bb63fdd1a4a00d1507bae7bd19c929eb9c356dbe36dd9800a34d8bde0  results/hp_vpinn/tables/latex_identifiability_vangenuchten_gb.tex
+88f5c675850ec760bb613eb51d06f3a76685c658e095f3a0feb1a5ebb6aea33d  results/hp_vpinn/tables/latex_top20_brooks_corey_new_es_1pct_noise.tex
+1dda84ad16cdae6a706fe8085deb68db2a5008abb847b81cfed628ecb7e697e2  results/hp_vpinn/tables/latex_top20_brooks_corey_new_gb_1pct_noise.tex
+f3fb41cba3b66c7d6d1a7a96c121f9eac979e14ac5c40c693d6814a0826a1149  results/hp_vpinn/tables/latex_top20_grenoblesand_es_1pct_noise.tex
+7694c6176fc5016cd391b993c54b8187850d851d98b60547a6c0e68814763854  results/hp_vpinn/tables/latex_top20_grenoblesand_es_2pct_noise.tex
+c3c45ee40dd41a6ff9db05e7b042f6e5ffb4b3f29ec3ca8db313dcd727813af2  results/hp_vpinn/tables/latex_top20_grenoblesand_gb_1pct_noise.tex
+3b7ac42baa5a79da30b4007582c268f9220b8827586fbd28319956929eb76ab7  results/hp_vpinn/tables/latex_top20_grenoblesand_gb_2pct_noise.tex
+0a7f7e5d644167d3d41618eb2125793749ce271fe9b21b04e3d0e3bfd6c52259  results/hp_vpinn/tables/latex_top20_letd_es.tex
+29651750031f4a23d4290ef33f5aeea34e590cb816b2a04fa19a1db473796a8b  results/hp_vpinn/tables/latex_top20_letd_gb.tex
+12b48ad11abe5b3778592fe726e6fae61ac3bfb9fe1bc2b8fbba98f9ae561152  results/hp_vpinn/tables/latex_top20_vangenuchten_es.tex
+4e71f13e40bc6f61bdbc7d8aa16ef0938bb0a2d8cfb7cf5a14a86a684cc3a4a3  results/hp_vpinn/tables/latex_top20_vangenuchten_gb.tex
+6b7ac1d213d035978af0a63f7b1d003ffaed92d68dd5f80272d33d2b7951dc8f  results/hp_vpinn/tables/latex_trial_counts.tex
+dd2fde1562df43f89a46364c33bfb72cc5c28af2fd26692e74b036123c058964  results/hp_vpinn/tables/latex_winners.tex
+2502057869c10479c9de41cd041c9065e76508f8f374efb3b2328adb6b4b2bcd  results/hp_vpinn/tables/winners.csv
+02d97317c6ce0663b07f74e7272b98aed91e1d174838aca33527c36511e752d9  results/hp_vpinn/tables/winners.json
 80f17afb19b2a0dda44e2356b487cffd43fc3b7f3ceb37e6d1214196d52fd8f7  src/hpvpinn_capillarity/core/constitutive_model.py
 7b512d127ff6e287dc73b7ac6cfbfdbff550d135c5b489ec4cfbd9e3e7b3a72b  src/hpvpinn_capillarity/core/datasets.py
 73f0af043590ee2a61b6446918b3f534be38d5c4dc7e6db1c414bb1db34acb5b  src/hpvpinn_capillarity/core/nn_model.py
@@ -416,15 +418,15 @@ a3ea0978872a74fe3bfc0da56bf7fb15527274d1f204daa1453b2cefe11f4d1f  slurm/submit_s
 
 ## Recorded results
 
-Outputs of the scripts above, written by the workspace that produced the manuscript, at the same relative paths the scripts use: HPO records of ten studies (`results/hp_vpinn/results_*`), generated tables (`results/hp_vpinn/Figures/latex_*`, `winners.*`), the noise-realisation study (`results/hp_vpinn/sensitivity_*`), the quadrature check (`hp_vpinn/quadrature_check_*`), multi-start summaries (`multistart/`) and the conventional-inversion benchmark (`conventional/`). They are under `results/` at the paths the scripts write to.
+Outputs of the scripts above, written by the workspace that produced the manuscript, at the same relative paths the scripts use: HPO records of ten studies (`results/hp_vpinn/results_*`), generated tables (`results/hp_vpinn/tables/latex_*`, `winners.*`), the noise-realisation study (`results/hp_vpinn/sensitivity_*`), the quadrature check (`hp_vpinn/quadrature_check_*`), multi-start summaries (`multistart/`) and the conventional-inversion benchmark (`conventional/`). They are under `results/` at the paths the scripts write to.
 
 Not included here (archived with the release on Zenodo, or not published): Optuna databases, final-run directories with the saved training histories, multi-start runs, EPS/PNG figures of the post-processing, and the outputs of scripts that are not part of this repository.
 
 Anonymisation: in the seven files below, the absolute path prefixes of the development workspace and of the cluster were removed, so that the paths are relative to the repository root. Nothing else was changed. The sha256 listed is that of the file as published.
 
 ```
-results/hp_vpinn/Figures/winners.csv
-results/hp_vpinn/Figures/winners.json
+results/hp_vpinn/tables/winners.csv
+results/hp_vpinn/tables/winners.json
 results/hp_vpinn/sensitivity_grenoblesand_gb_1pct_noise/config.json
 results/conventional/results_grenoblesand_1pct_noise.jsonl
 results/conventional/results_grenoblesand_2pct_noise.jsonl
@@ -432,4 +434,4 @@ results/conventional/results_letd.jsonl
 results/conventional/results_vangenuchten.jsonl
 ```
 
-The tables `results/hp_vpinn/Figures/latex_winners.tex`, `latex_trial_counts.tex` and `latex_top20_brooks_corey_new_{es,gb}_1pct_noise.tex` are the output of the scripts at the source commit; the versions pasted in the manuscript and in the SI differ from them.
+The tables `results/hp_vpinn/tables/latex_winners.tex`, `latex_trial_counts.tex` and `latex_top20_brooks_corey_new_{es,gb}_1pct_noise.tex` are the output of the scripts at the source commit; the versions pasted in the manuscript and in the SI differ from them.
