@@ -4,22 +4,21 @@
 # tolerance of the exact solver (--itol 1e-5 instead of frontx's default 1e-3),
 # WITHOUT overwriting the results already obtained.
 #
-# Run from the repo root (where benchmark_conventional.py lives) with the
-# hp_vpinn environment active:
-#     bash rerun_forward_check_tight.sh            # all four tags
-#     DRY=1 bash rerun_forward_check_tight.sh      # only print the solver commands
-#     CASES="vangenuchten" bash rerun_forward_check_tight.sh   # only Case 2
+# Needs frontx (see requirements-conventional.txt). Run with the environment active:
+#     bash scripts/rerun_forward_check_tight.sh            # all four tags
+#     DRY=1 bash scripts/rerun_forward_check_tight.sh      # only print the solver commands
+#     CASES="vangenuchten" bash scripts/rerun_forward_check_tight.sh   # only Case 2
 #
 # What it does
 #   0. Renames the existing results of the default-tolerance run:
-#        conventional/forward_check_<case>[_kpct_noise].json      -> ..._itol1e-3.json
-#        conventional/forward_check_summary_<tag>.csv             -> ..._itol1e-3.csv
+#        results/conventional/forward_check_<case>[_kpct_noise].json      -> ..._itol1e-3.json
+#        results/conventional/forward_check_summary_<tag>.csv             -> ..._itol1e-3.csv
 #      (skipped for files already renamed; it never overwrites anything).
-#   1. Runs benchmark_conventional.py --forward-check ... --itol 1e-5 and moves each
+#   1. Runs conventional.benchmark --forward-check ... --itol 1e-5 and moves each
 #      output to ..._itol1e-5.json (the driver always writes the unsuffixed name).
 #   2. Summarises each tolerance separately.
 set -euo pipefail
-cd "$(dirname "${BASH_SOURCE[0]}")"
+cd "$(dirname "${BASH_SOURCE[0]}")/.."   # repository root
 
 ITOL=1e-5
 NEW=_itol1e-5
@@ -43,17 +42,17 @@ declare -A STEM=( [grenoblesand1]=grenoblesand_1pct_noise [grenoblesand2]=grenob
 declare -A TAG=(  [grenoblesand1]=grenoblesand_gb_1pct_noise [grenoblesand2]=grenoblesand_gb_2pct_noise
                   [vangenuchten]=vangenuchten_es [letd]=letd_gb )
 
-[[ -f benchmark_conventional.py ]] || { echo "run this from the repo root"; exit 1; }
+[[ -f pyproject.toml ]] || { echo "run this from the repo root"; exit 1; }
 for k in $CASES; do
-  [[ -f conventional/forward_check_inputs/hpvpinn_${TAG[$k]}.jsonl ]] || \
-    { echo "missing conventional/forward_check_inputs/hpvpinn_${TAG[$k]}.jsonl: run  python3 final_runs_to_forward_check.py  first"; exit 1; }
+  [[ -f results/conventional/forward_check_inputs/hpvpinn_${TAG[$k]}.jsonl ]] || \
+    { echo "missing results/conventional/forward_check_inputs/hpvpinn_${TAG[$k]}.jsonl: run  python3 -m hpvpinn_capillarity.conventional.forward_check_bridge  first"; exit 1; }
 done
 
 echo "== 0. keep the default-tolerance results =="
 for k in $CASES; do
-  f=conventional/forward_check_${STEM[$k]}.json
+  f=results/conventional/forward_check_${STEM[$k]}.json
   [[ -f $f ]] && mvsafe "$f" "${f%.json}${OLD}.json"
-  c=conventional/forward_check_summary_${TAG[$k]}.csv
+  c=results/conventional/forward_check_summary_${TAG[$k]}.csv
   [[ -f $c ]] && mvsafe "$c" "${c%.csv}${OLD}.csv"
 done
 
@@ -61,16 +60,16 @@ echo "== 1. forward check with --itol $ITOL =="
 for k in $CASES; do
   echo "-- ${TAG[$k]}"
   # shellcheck disable=SC2086
-  run python3 benchmark_conventional.py ${ARGS[$k]} --itol $ITOL \
-      --forward-check conventional/forward_check_inputs/hpvpinn_${TAG[$k]}.jsonl
-  f=conventional/forward_check_${STEM[$k]}.json
+  run python3 -m hpvpinn_capillarity.conventional.benchmark ${ARGS[$k]} --itol $ITOL \
+      --forward-check results/conventional/forward_check_inputs/hpvpinn_${TAG[$k]}.jsonl
+  f=results/conventional/forward_check_${STEM[$k]}.json
   if [[ "$DRY" != 1 ]]; then mvsafe "$f" "${f%.json}${NEW}.json"; fi
 done
 
 echo "== 2. summaries =="
 if [[ "$DRY" != 1 ]]; then
-  python3 final_runs_to_forward_check.py --summarise --suffix $OLD
-  python3 final_runs_to_forward_check.py --summarise --suffix $NEW
+  python3 -m hpvpinn_capillarity.conventional.forward_check_bridge --summarise --suffix $OLD
+  python3 -m hpvpinn_capillarity.conventional.forward_check_bridge --summarise --suffix $NEW
 fi
 echo
-echo "Send back: conventional/forward_check_*${NEW}.json and conventional/forward_check_summary_*${NEW}.csv"
+echo "Send back: results/conventional/forward_check_*${NEW}.json and results/conventional/forward_check_summary_*${NEW}.csv"
