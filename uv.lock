@@ -216,7 +216,7 @@ wheels = [
 
 [[package]]
 name = "hpvpinn-capillarity"
-version = "2.0.0.dev0"
+version = "2.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "equinox" },

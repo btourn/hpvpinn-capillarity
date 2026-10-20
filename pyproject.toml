@@ -1,6 +1,6 @@
 [project]
 name = "hpvpinn-capillarity"
-version = "2.0.0.dev0"
+version = "2.0.0"
 description = "hp-VPINN framework for inverse hydraulic parameter recovery in unsaturated porous media"
 readme = "README.md"
 license = "Apache-2.0"

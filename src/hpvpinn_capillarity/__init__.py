@@ -14,4 +14,4 @@ os.environ.setdefault("JAX_ENABLE_X64", "1")
 if "jax" in sys.modules:
     sys.modules["jax"].config.update("jax_enable_x64", True)
 
-__version__ = "2.0.0.dev0"
+__version__ = "2.0.0"
