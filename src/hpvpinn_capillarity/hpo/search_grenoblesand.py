@@ -93,13 +93,10 @@ ACTIVATIONS_NAMES = ["tanh", "sigmoid", "swish", "gelu"]
 # Per-model fixed settings that legitimately differ (item 11: no action)
 N_STARTUP_TRIALS = dict(hp_vpinn=25)
 STUDY_NAME_PREFIX = dict(hp_vpinn="vpinn_hparam_search")
-BASE_RESULTS_DIR  = "results_grenoblesand"  # same base name for both models -- they're
-                                              # already disambiguated by which model
-                                              # subdirectory they're written under
+BASE_RESULTS_DIR  = "results_grenoblesand"  # written under <results>/<model>/
 
-# --model's accepted values ("hp_vpinn"/"frontx") are now the same strings
-# as the result/log subdirectory names, so no separate MODEL_SUBDIR mapping
-# is needed -- `model` is used directly as the subdirectory name below.
+# --model's only accepted value, "hp_vpinn", is the name of the results
+# subdirectory, so `model` is used directly as the subdirectory name below.
 
 
 # ---------------------------------------------------------------------------

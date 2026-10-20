@@ -6,10 +6,9 @@ problem, for the hp-VPINN model (selected with --model hp_vpinn):
 
     --model hp_vpinn hp-VPINN weak-form model      (hp_vpinn/)
 
-Same architecture as hparam_search_vangenuchten.py (see that file's
-docstring for the full rationale) -- lives at the repo root, results land
-under each model's own subdirectory, and prepare_shared_data() is the ONLY
-place the dataset is loaded and split, consumed by both branches.
+Same architecture as search_vangenuchten.py (see that file's docstring for
+the full rationale) -- results land under <results>/hp_vpinn/, and
+prepare_shared_data() is the ONLY place the dataset is loaded and split.
 
 Usage
 -----
@@ -95,7 +94,7 @@ E_INIT       = 1.0
 T_INIT       = 0.0
 THETA_R_INIT = 0.01
 
-N_STARTUP_TRIALS = dict(hp_vpinn=25)   # matches search-space dimensionality (5 vs 3)
+N_STARTUP_TRIALS = dict(hp_vpinn=25)   # initial random trials of the TPE sampler
 STUDY_NAME_PREFIX = dict(hp_vpinn="vpinn_hparam_search_letd")
 BASE_RESULTS_DIR = "results_letd"   # same base name for both models, disambiguated
                                      # by which model subdirectory they're written under

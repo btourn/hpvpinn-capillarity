@@ -3,18 +3,14 @@ hpvpinn_capillarity.hpo.search_brooks_corey_new
 ==============================
 Unified Optuna hyperparameter search for the Brooks-Corey inverse problem
 (synthetic case derived from Grenoble sand: exact curve generated with frontx,
-then corrupted with Gaussian noise), covering BOTH candidate models via a
-single --model flag:
+then corrupted with Gaussian noise), for the hp-VPINN model (selected with
+--model hp_vpinn):
 
-    --model hp_vpinn hp-VPINN weak-form model      (hp_vpinn/)
+    --model hp_vpinn hp-VPINN weak-form model
 
 Unknowns (2): KsAlpha = Ks/alpha  and  n.   Fixed: l = 1, theta_r = 0, alpha = 1
-(frontx side: only Ks/alpha is identifiable, so alpha is pinned to 1 and the
-fitted Ks IS KsAlpha).
-
-This file lives at the repo root, as a sibling of the "hp_vpinn" and
-"frontx" directories. Results for each model are written under that
-model's own subdirectory.
+(only Ks/alpha is identifiable, so alpha is pinned to 1 and the fitted Ks IS
+KsAlpha). Results are written under <results>/hp_vpinn/.
 
 Usage
 -----

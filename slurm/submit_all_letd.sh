@@ -1,20 +1,19 @@
 #!/bin/bash
 # submit_all_letd.sh
-# Submits parallel Optuna workers for each (model, schedule) combination
+# Submits parallel Optuna workers (hp-VPINN) for each schedule combination
 # of the LETd case.
 #
-# Full matrix (when --model is omitted):
-#   model              warmup=0,      transition=20000
-#   hp_vpinn, frontx   warmup=200000, transition=0
+# Full matrix:
+#   warmup=0,      transition=20000
+#   warmup=200000, transition=0
 #
-# The unified Python script (--model flag) handles all internal directory
-# and study naming; each model's results land under its own subdirectory
-# (hp_vpinn/... or frontx/...).
+# The Python script handles all internal directory and study naming; the results
+# land under results/hp_vpinn/.
 #
 # Usage:
 #   bash slurm/submit_all_letd.sh
-#   bash slurm/submit_all_letd.sh --model hp_vpinn
-#   bash slurm/submit_all_letd.sh --model frontx --dry-run
+#   bash slurm/submit_all_letd.sh --model hp_vpinn   # same: hp_vpinn is the only model
+#   bash slurm/submit_all_letd.sh --dry-run
 #   bash slurm/submit_all_letd.sh --dependency afterany:111:222:333
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."   # repository root
@@ -66,13 +65,9 @@ fi
 
 N_WORKERS=5
 
-# Total trial BUDGET differs by model: hp_vpinn's weak-form search space is
-# 5-dimensional (nn_n_layers, nn_width, activation, n_elements, poly_degree)
-# and gets the full 250-trial budget; frontx's strong-form search space is
-# only 3-dimensional (no n_elements/poly_degree -- no quadrature to tune),
-# so 120 trials is enough. N_WORKERS stays the same for both so the two
-# models keep the same degree of SLURM parallelism; only the per-worker
-# trial count changes.
+# Trial budget: the hp-VPINN weak-form search space is 5-dimensional
+# (nn_n_layers, nn_width, activation, n_elements, poly_degree); 5 workers x 50
+# trials give the 250 trials of each study.
 declare -A TRIALS_PER_WORKER=( [hp_vpinn]=50 )   # 5 workers * 50 = 250 trials
 
 # ---------------------------------------------------------------------------

@@ -1,23 +1,21 @@
 #!/bin/bash
 # submit_all_grenoblesand.sh
-# Submits parallel Optuna workers for each (model, noise_level, schedule)
-# combination.
+# Submits parallel Optuna workers (hp-VPINN) for each (noise_level, schedule) combination
+# of the Grenoble sand case.
 #
-# Full matrix (when --model is omitted):
-#   model      0.01 × warmup=0,      transition=20000
-#   hp_vpinn,  0.01 × warmup=200000, transition=0
-#   frontx     0.02 × warmup=0,      transition=20000
-#              0.02 × warmup=200000, transition=0
+# Full matrix:
+#   0.01 × warmup=0,      transition=20000
+#   0.01 × warmup=200000, transition=0
+#   0.02 × warmup=0,      transition=20000
+#   0.02 × warmup=200000, transition=0
 #
-# The unified Python script (--model flag) handles all internal directory
-# and study naming; each model's results land under its own subdirectory
-# (hp_vpinn/... or frontx/...), same base results-dir name for both.
+# The Python script handles all internal directory and study naming; the results
+# land under results/hp_vpinn/.
 #
 # Usage:
-#   bash slurm/submit_all_grenoblesand.sh                       # both models, full matrix
-#   bash slurm/submit_all_grenoblesand.sh --model hp_vpinn       # one model only, full matrix
-#   bash slurm/submit_all_grenoblesand.sh --model frontx --dry-run
-#   bash slurm/submit_all_grenoblesand.sh --dry-run --model hp_vpinn   # order doesn't matter
+#   bash slurm/submit_all_grenoblesand.sh
+#   bash slurm/submit_all_grenoblesand.sh --model hp_vpinn   # same: hp_vpinn is the only model
+#   bash slurm/submit_all_grenoblesand.sh --dry-run
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."   # repository root
 
@@ -54,13 +52,9 @@ fi
 
 N_WORKERS=5
 
-# Total trial BUDGET differs by model: hp_vpinn's weak-form search space is
-# 5-dimensional (nn_n_layers, nn_width, activation, n_elements, poly_degree)
-# and gets the full 250-trial budget; frontx's strong-form search space is
-# only 3-dimensional (no n_elements/poly_degree -- no quadrature to tune),
-# so 120 trials is enough. N_WORKERS stays the same for both so the two
-# models keep the same degree of SLURM parallelism; only the per-worker
-# trial count changes.
+# Trial budget: the hp-VPINN weak-form search space is 5-dimensional
+# (nn_n_layers, nn_width, activation, n_elements, poly_degree); 5 workers x 50
+# trials give the 250 trials of each study.
 declare -A TRIALS_PER_WORKER=( [hp_vpinn]=50 )   # 5 workers * 50 = 250 trials
 
 # ---------------------------------------------------------------------------

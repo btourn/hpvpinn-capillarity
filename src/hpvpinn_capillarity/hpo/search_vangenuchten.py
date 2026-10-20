@@ -116,7 +116,7 @@ STAGE = "search"
 
 ACTIVATIONS_NAMES = ["tanh", "sigmoid", "swish", "gelu"]
 
-N_STARTUP_TRIALS = dict(hp_vpinn=25)   # matches search-space dimensionality (5 vs 3)
+N_STARTUP_TRIALS = dict(hp_vpinn=25)   # initial random trials of the TPE sampler
 STUDY_NAME_PREFIX = dict(hp_vpinn="vpinn_hparam_search_vangenuchten")
 BASE_RESULTS_DIR = "results_vangenuchten"   # same base name for both models, disambiguated
                                              # by which model subdirectory they're written under

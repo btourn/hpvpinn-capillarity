@@ -12,15 +12,10 @@
 # script file. Create the model's log dir first (--output/--error must
 # already exist when the job starts), then submit, e.g.:
 #
-#   mkdir -p hp_vpinn/logs
+#   mkdir -p results/hp_vpinn/logs
 #   sbatch --export=MODEL=hp_vpinn,NOISE_LEVEL=0.02,NOISE_LABEL=2pct \
-#       --output=hp_vpinn/logs/%x_%j.out --error=hp_vpinn/logs/%x_%j.err \
-#       run_hparam_grenoblesand.sh
-#
-#   mkdir -p frontx/logs
-#   sbatch --export=MODEL=frontx,NOISE_LEVEL=0.02,NOISE_LABEL=2pct \
-#       --output=frontx/logs/%x_%j.out --error=frontx/logs/%x_%j.err \
-#       run_hparam_grenoblesand.sh
+#       --output=results/hp_vpinn/logs/%x_%j.out --error=results/hp_vpinn/logs/%x_%j.err \
+#       slurm/run_hparam_grenoblesand.sh
 
 echo "=============================="
 echo "Job ID     : $SLURM_JOB_ID"

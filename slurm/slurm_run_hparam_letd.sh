@@ -23,10 +23,8 @@ cd "${HPVPINN_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}"   # clone of the repository (sub
 source .venv/bin/activate
 
 # Stagger workers to avoid SQLite race condition on schema creation.
-# Each (model, schedule) combination writes to its own results_dir
-# (hp_vpinn/... or frontx/...) and therefore its own study.db, so adding
-# MODEL to the matrix does not introduce any new cross-worker contention
-# beyond what already existed per schedule combination.
+# Each (noise, schedule) combination writes to its own results directory
+# (results/hp_vpinn/...) and therefore to its own study.db.
 SLEEP_S=$(( RANDOM % 60 ))
 echo "Sleeping ${SLEEP_S}s before starting to stagger DB access..."
 sleep $SLEEP_S
