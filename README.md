@@ -255,5 +255,5 @@ from the development workspace.
 
 ## Licence
 
-Copyright 2025 Benjamin Tourn.
+Copyright 2026 Benjamin Tourn.
 Licensed under the [Apache License 2.0](LICENSE).
