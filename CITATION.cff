@@ -13,5 +13,4 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.20419270"
     description: "Concept DOI: all archived versions"
-# TODO(release): add `version` and `date-released` of the revised release, and the
-# paper as `preferred-citation` once its reference is available.
+version: "2.0.0"

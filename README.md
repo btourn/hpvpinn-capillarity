@@ -2,12 +2,13 @@
 
 This repository contains the implementation of the *hp*-variational
 physics-informed neural network (*hp*-VPINN) framework for inverse modelling
-of horizontal capillary flow, developed alongside the manuscript:
+of horizontal capillary flow, developed alongside a manuscript that is
+currently under revision.
 
-<!--
+<!-- Add the reference once the paper is accepted:
 > B. A. Tourn, S. Palavecino, P. A. Kler, G. S. Gerlero —
 > *Inverse parameter estimation of horizontal capillary flow in porous media with hp-variational physics-informed neural networks* -
-> *Transport in Porous Media*, 2026 (under review).
+> *Transport in Porous Media*, 2026.
 -->
 
 The framework recovers unknown hydraulic parameters from sparse, noisy
@@ -19,11 +20,9 @@ neural network architecture trained with JAX.
 
 | What | Where |
 |---|---|
-| Latest version (code of the revised manuscript) | branch `main` (this file) |
+| Latest version (code of the revised manuscript) | branch `main` (this file), tag `v2.0-revision` |
 | Code of the original submission | tag `v1.0-submission`, Zenodo [10.5281/zenodo.20419271](https://doi.org/10.5281/zenodo.20419271) |
 | All archived versions | Zenodo concept DOI [10.5281/zenodo.20419270](https://doi.org/10.5281/zenodo.20419270) |
-
-<!-- TODO(release): add the tag and the version DOI of the revised release once the Zenodo version exists. -->
 
 The layout of the original submission (`src/`, `experiments/`,
 `postprocessing/`, `figures/`, `results/`, `data/`) is **not** used by the code
