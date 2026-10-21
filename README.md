@@ -95,10 +95,10 @@ supplementary analyses. In `tables/winners.json` and `tables/winners.csv`, in th
 `config.json` of the sensitivity study and in `results/conventional/results_*.jsonl`,
 absolute paths of the development machine were replaced by repository-relative
 paths. The large outputs (final runs with their training
-histories, multi-start runs, Optuna databases, figures) are archived on Zenodo
-with the release; extract that archive inside `results/` so that
-`results/hp_vpinn/final_runs/<tag>/` exists. The location of the results and of
-the data can be changed with the environment variables `HPVPINN_RESULTS` and
+histories, multi-start runs, Optuna databases, figures) are not included in the
+repository and are available from the author upon request; the scripts of
+`final_runs/` write them to `results/hp_vpinn/final_runs/<tag>/`. The location of
+the results and of the data can be changed with the environment variables `HPVPINN_RESULTS` and
 `HPVPINN_DATA` (see `src/hpvpinn_capillarity/paths.py`).
 
 ---
@@ -250,8 +250,7 @@ reproducibility"); the noise seed of the noise-realisation study is 42 + r,
 r = 0..24; the initialisation seed of a search trial is its Optuna trial
 number; the final runs use seeds 1000-1009.
 The files of this repository come from the development workspace of the
-manuscript; the origin of each file and the sha256 of the copies are listed in
-`PROVENANCE.md`, distributed with the Zenodo archive of the release.
+manuscript.
 
 ---
 
