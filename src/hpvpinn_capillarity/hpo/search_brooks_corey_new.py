@@ -1,5 +1,6 @@
 """Optuna hyperparameter search for the Brooks-Corey inverse problem (synthetic case derived from Grenoble
-sand: exact curve generated with frontx, then corrupted with Gaussian noise), for the hp-VPINN model
+sand: reference curve generated with porousMicroTransport, a finite-volume solver of the full PDE, then
+corrupted with Gaussian noise), for the hp-VPINN model
 (--model hp_vpinn).
 
 Unknowns (2): KsAlpha = Ks/alpha and n. Fixed: l = 1, theta_r = 0, alpha = 1 (only Ks/alpha is identifiable,
@@ -146,7 +147,7 @@ def prepare_shared_data(data_path: str, noise_level: float) -> dict:
     noise once, split once -- and hand identical arrays to both model branches.
 
     `data_path` must point at the ONE canonical, noise-free, comma-separated
-    reference curve (o, theta in physical units), generated once via frontx.
+    reference curve (o, theta in physical units), generated once with porousMicroTransport.
 
     Returns the split/noised train and test arrays, all in physical units,
     plus `oi` (== phi_ref) computed from the FULL dataset before the split.

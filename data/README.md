@@ -8,7 +8,7 @@ The first column is the Boltzmann variable `o = x / sqrt(t)`, the second the moi
 | `data_grenoblesand.dat` | 1 | 100 | `o`, `theta` | Noise-free reference curve of the van Genuchten model (`K_s = 15.37 cm/h`, `alpha = 0.0432 1/cm`, `m = 0.5096`, `l = 0.5`, `theta_s = 0.312`, `theta_r = 0`), computed once with the exact solver of [`frontx`](https://github.com/gerlero/frontx). `o` in `cm h^-1/2`. |
 | `data_vangenuchten.dat` | 2 | 141 | `o`, `theta`, `std` | Experimental profile of Whatman No. 1 paper, from the data set of Gerlero et al. (2022). Same file as `data_letd.dat`. `o` in `m s^-1/2`. |
 | `data_letd.dat` | 3 | 141 | `o`, `theta`, `std` | The same experimental profile, used with the LETd model. |
-| `data_brooks_corey.dat` | 4 | 5000 | `o`, `theta` | Noise-free reference curve of the Brooks and Corey model, computed with the exact solver of `frontx` (see the docstring of `hpo/search_brooks_corey_new.py` for its parameters). |
+| `data_brooks_corey.dat` | 4 | 5000 | `o`, `theta` | Noise-free reference curve of the Brooks and Corey model for Grenoble sand, generated with porousMicroTransport (Gerlero et al. 2024, *Talanta Open* 10, 100350), which solves the complete governing PDE with the finite-volume method; the reference parameters are those reported in the manuscript. |
 
 The data files of Cases 1 and 4 hold the noise-free curve: the noise and the train/test split are generated
 by the search drivers from fixed seeds (see "Reproducibility" in the main README).
